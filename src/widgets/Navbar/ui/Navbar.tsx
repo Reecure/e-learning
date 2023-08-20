@@ -53,7 +53,7 @@ const Navbar: FC<Props> = ({className, theme, toggleTheme}) => {
                     <Menu menuOpen={menuOpen} setMenuOpen={setMenuOpen}
                           buttonChildren={<Button theme={ButtonThemes.CLEAR}
                                                   onClick={() => setMenuOpen(!menuOpen)}
-                                                  className={'text-2xl flex justify-center p-1 rounded-md items-center hover:bg-black/30 duration-150'}><AiOutlineUser/></Button>}
+                                                  className={'text-2xl flex justify-center p-1 rounded-md items-center hover:bg-light-primary-main/10 dark:hover:bg-dark-primary-main/10'}><AiOutlineUser/></Button>}
                           className={'top-[40px]'}>
                         <div className={'flex justify-between items-center'}>
                             <p>Theme</p>

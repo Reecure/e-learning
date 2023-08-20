@@ -4,11 +4,10 @@ interface Props {
 }
 
 const AboutUsPage: FC<Props> = () => {
-
     return (
-        <div>
-            <div>AboutUsPage< /div>
-        < /div>
+        <>
+            <div>AboutUsPage</div>
+        </>
     );
 };
 export default AboutUsPage;
