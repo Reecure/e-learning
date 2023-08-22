@@ -1,17 +1,33 @@
-import {FC, Fragment, ReactNode} from 'react';
-import Navbar from "@/widgets/Navbar/ui/Navbar";
+import {FC, ReactNode, useEffect, useState} from 'react';
 import {Roboto} from 'next/font/google'
-import {Themes} from "@/widgets/ThemeTogler/ui/ThemeToggle";
+import {Themes} from "@/widgets/ThemeTogler";
+import {Navbar} from "@/widgets/Navbar";
 
 const roboto = Roboto({subsets: ['latin'], style: ['normal'], weight: ['400']})
 
 interface Props {
     children: ReactNode | ReactNode[]
-    theme: Themes;
-    toggleTheme: () => void;
 }
 
-const Layout: FC<Props> = ({children, theme, toggleTheme}) => {
+const Layout: FC<Props> = ({children}) => {
+    const [theme, setTheme] = useState(Themes.LIGHT);
+
+    const toggleTheme = () => {
+        const newTheme = theme === Themes.LIGHT ? Themes.DARK : Themes.LIGHT;
+        setTheme(newTheme);
+        localStorage.setItem('themeElearning', JSON.stringify(newTheme));
+    };
+
+    useEffect(() => {
+        const storedTheme = localStorage.getItem('themeElearning');
+        if (storedTheme) {
+            setTheme(JSON.parse(storedTheme));
+        }
+    }, []);
+
+    useEffect(() => {
+        document.body.classList.toggle(Themes.DARK, theme === Themes.DARK);
+    }, [theme]);
 
     return (
         <>
@@ -19,7 +35,9 @@ const Layout: FC<Props> = ({children, theme, toggleTheme}) => {
                 className={`${roboto.className}`}
                 theme={theme} toggleTheme={toggleTheme}/>
             <main
-                className={`${roboto.className} max-w-[1920px] mx-auto min-h-screen w-full bg-light-background  dark:bg-dark-background  text-light-text dark:text-dark-text`}>
+                className={`${roboto.className} h-[calc(100vh_-_58px)] max-w-[1920px] mx-auto w-full bg-light-background  dark:bg-dark-background  text-light-text dark:text-dark-text`}>
+
+
                 {children}
             </main>
         </>

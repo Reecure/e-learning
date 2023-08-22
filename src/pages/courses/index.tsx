@@ -1,9 +1,7 @@
-import {FC} from 'react';
+import {FC, ReactElement} from 'react';
+import Layout from "@/pages/layout";
 
-interface Props {
-}
-
-const CoursesPage: FC<Props> = () => {
+const CoursesPage = () => {
 
     return (
         <>
@@ -11,4 +9,12 @@ const CoursesPage: FC<Props> = () => {
         </>
     );
 };
+
+CoursesPage.getLayout = function getLayout(page: ReactElement) {
+    return (
+        <Layout>
+            {page}
+        </Layout>
+    )
+}
 export default CoursesPage;

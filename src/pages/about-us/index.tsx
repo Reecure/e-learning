@@ -1,13 +1,20 @@
-import {FC} from 'react';
+import {FC, ReactElement} from 'react';
+import Layout from "@/pages/layout";
 
-interface Props {
-}
-
-const AboutUsPage: FC<Props> = () => {
+const AboutUsPage = () => {
     return (
         <>
             <div>AboutUsPage</div>
         </>
     );
 };
+
+AboutUsPage.getLayout = function getLayout(page: ReactElement) {
+    return (
+        <Layout>
+            {page}
+        </Layout>
+    )
+}
+
 export default AboutUsPage;

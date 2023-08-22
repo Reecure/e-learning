@@ -1,4 +1,5 @@
 import {ButtonHTMLAttributes, FC, ReactNode} from 'react';
+import {className} from "postcss-selector-parser";
 
 export enum ButtonThemes {
     FILLED = 'bg-light-primary-main/80 hover:bg-light-primary-main text-light-gray dark:bg-dark-primary-main dark:hover:dark:bg-dark-primary-main/80 dark:text-dark-primary-container',
@@ -12,13 +13,14 @@ export enum ButtonThemes {
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
     children: ReactNode
     theme: ButtonThemes
+    className?: string
 }
 
-const Button: FC<Props> = ({children, theme = ButtonThemes.FILLED, ...otherProps}) => {
+const Button: FC<Props> = ({children, className, theme = ButtonThemes.FILLED, ...otherProps}) => {
 
     return (
         <button
-            className={`${theme} px-6 py-[10px] rounded-full duration-200`}
+            className={`${theme} px-6 py-[10px] rounded-full duration-200 ${className}`}
             {...otherProps}
         >
             {children}

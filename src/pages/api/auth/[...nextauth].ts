@@ -1,51 +1,38 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
-import {trpc} from "@/shared/utils/trpc";
 import {PrismaClient} from "@prisma/client";
 
 const prisma = new PrismaClient()
-
-interface Credentials {
-  email: string
-    password: string
-}
 
 
 export default NextAuth({
     providers: [
         CredentialsProvider({
-            name: "credentials",
+            // The name to display on the sign in form (e.g. "Sign in with...")
+            name: "Credentials",
+            // `credentials` is used to generate a form on the sign in page.
+            // You can specify which fields should be submitted, by adding keys to the `credentials` object.
+            // e.g. domain, username, password, 2FA token, etc.
+            // You can pass any HTML attribute to the <input> tag through the object.
             credentials: {
-                email: { label: "Email", type: "email" },
-                password: { label: "Password", type: "password" },
+                username: {label: "Username", type: "text", placeholder: "jsmith"},
+                password: {label: "Password", type: "password"}
             },
-            authorize: async (credentials) => {
+            async authorize(credentials, req) {
+                // Add logic here to look up the user from the credentials supplied
+                const user = {id: "1", role: 'admin', name: credentials?.username, email: credentials?.password}
 
-                const email = 'myname'
-                    const password = '1234'
-                try {
-                    const user = await prisma.users.findFirst({
-                        where: { email: email },
-                    });
+                if (user) {
+                    // Any object returned will be saved in `user` property of the JWT
+                    return user
+                } else {
+                    // If you return null then an error will be displayed advising the user to check their details.
+                    return null
 
-                    if (!user) {
-                        return null; // Return null if user is not found
-                    }
-
-                    // Perform password validation here (you might want to use a secure method like bcrypt)
-                    const validPassword = user.password === password;
-
-                    if (!validPassword) {
-                        return null; // Return null if password is invalid
-                    }
-
-                    return { id: user.id, email: user.email }; // Return user object if authentication is successful
-                } catch (error) {
-                    console.error("Error during authentication:", error);
-                    return null;
+                    // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
                 }
-            },
-        }),
+            }
+        })
     ],
     pages: {
         signIn: "/auth/signin",
@@ -53,5 +40,16 @@ export default NextAuth({
     session: {
         strategy: 'jwt'
     },
+    callbacks: {
+        async jwt({token, user}) {
+            if (user) token.role = user.role
+            return token
+        },
+        async session({session, token}) {
+            if (session?.user) session.user.role = token.role
+            return session
+        }
+    },
+
     secret: 'SECRET'
 })

@@ -6,6 +6,7 @@ import {Routes} from "@/shared/config/routes";
 import Menu from "@/shared/ui/Menu/Menu";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {AiOutlineUser} from "react-icons/ai";
+import {signOut, useSession} from "next-auth/react";
 
 interface Props {
     className?: string
@@ -15,55 +16,71 @@ interface Props {
 
 const Navbar: FC<Props> = ({className, theme, toggleTheme}) => {
     const [menuOpen, setMenuOpen] = useState(false);
+
+    const {status} = useSession()
+
     return (
         <nav
-            className={`${className} bg-light-background dark:bg-dark-background text-primary-light border-b-[2px] border-black text-light-text dark:text-dark-text`}>
-            <div className="mx-auto px-4 py-3 flex justify-between items-center">
-                <div className="flex items-center">
-
-                    <div className={'flex items-center text-lg'}>
-                        <ul className="flex space-x-4">
-                            <li><Link href={Routes.COURSES}
-                                      className="hover:text-dark-accent duration-150 uppercase font-bold">Courses</Link>
-                            </li>
-                            <li><Link href={Routes.BLOG}
-                                      className="hover:text-dark-accent duration-150 uppercase font-bold">Blog</Link>
-                            </li>
-                        </ul>
-                    </div>
+            className={`${className} bg-light-background dark:bg-dark-background text-primary-light border-b-[2px] border-black text-light-text dark:text-dark-text flex justify-between items-center
+            px-20 py-2
+            `}>
+            <div className="flex items-center">
+                <div className={'flex items-center text-lg'}>
+                    <ul className="flex space-x-4">
+                        <li><Link href={Routes.MAIN}
+                                  className="hover:text-dark-accent duration-150 uppercase font-bold">Main</Link>
+                        </li>
+                        <li><Link href={Routes.COURSES}
+                                  className="hover:text-dark-accent duration-150 uppercase font-bold">Courses</Link>
+                        </li>
+                        <li><Link href={Routes.BLOG}
+                                  className="hover:text-dark-accent duration-150 uppercase font-bold">Blog</Link>
+                        </li>
+                        <li><Link href={Routes.USER_PROFILE}
+                                  className="hover:text-dark-accent duration-150 uppercase font-bold">PROFILE</Link>
+                        </li>
+                    </ul>
                 </div>
+            </div>
 
-                <div>
-                    <input type="text" placeholder="Search..."
-                           className="bg-transparent border border-light-border dark:border-dark-border
-                               rounded-full px-3 py-1 focus:outline-0"/>
-                </div>
+            <div className={'flex items-center'}>
+                {
+                    status === 'unauthenticated' ? <Link href={'/auth/signin'}>Log in</Link> : null
+                }
 
-                <div className={'flex items-center space-x-4'}>
-
-
-                    <div className={'flex items-center space-x-2'}>
-                        <Link href={'/auth/signin'}
-                              className={`px-2 py-1 bg-light-button rounded-md text-shadow-lg hover:bg-light-button/90 `}>Sign
-                            In</Link>
-                        <Link href={'/auth/signup'}
-                              className={`px-2 py-1 bg-light-button rounded-md hover:bg-light-button/90 `}>Sign
-                            Up</Link>
-                    </div>
-                    <Menu menuOpen={menuOpen} setMenuOpen={setMenuOpen}
-                          buttonChildren={<Button theme={ButtonThemes.CLEAR}
-                                                  onClick={() => setMenuOpen(!menuOpen)}
-                                                  className={'text-2xl flex justify-center p-1 rounded-md items-center hover:bg-light-primary-main/10 dark:hover:bg-dark-primary-main/10'}><AiOutlineUser/></Button>}
-                          className={'top-[40px]'}>
-                        <div className={'flex justify-between items-center'}>
+                <Menu menuOpen={menuOpen} setMenuOpen={setMenuOpen}
+                      buttonChildren={<Button theme={ButtonThemes.CLEAR}
+                                              onClick={() => setMenuOpen(!menuOpen)}
+                                              className={'text-2xl flex justify-center !p-2 rounded-md items-center hover:bg-light-primary-main/10 dark:hover:bg-dark-primary-main/10'}><AiOutlineUser/></Button>}
+                      className={'!right-0 !py-3 '}>
+                    <div className={'flex flex-col gap-y-1 items-start'}>
+                        {
+                            status === 'authenticated' &&
+                            <>
+                                <div>
+                                    <Link href={'/user/profile'}>Profile</Link>
+                                </div>
+                                <div>
+                                    <Link href={'/user/my-courses'}>My courses</Link>
+                                </div>
+                            </>
+                        }
+                        <div className={'flex justify-between items-center w-full'}>
                             <p>Theme</p>
                             <ThemeToggle theme={theme} toggleTheme={toggleTheme}/>
                         </div>
-                        <Link href={'/courses'}>Log in</Link>
-                    </Menu>
+                        <div className={'w-full h-[1px] rounded-full bg-white mt-1 mb-[6px]'}>
 
-                </div>
+                        </div>
+                        {
+                            status === 'unauthenticated' ? <Link href={'/auth/signin'}>Log in</Link> :
+                                <Button theme={ButtonThemes.CLEAR} onClick={() => {
+                                    signOut({callbackUrl: '/'})
+                                }} className={'!p-0'}>Log out</Button>
+                        }
+                    </div>
 
+                </Menu>
 
             </div>
         </nav>

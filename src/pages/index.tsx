@@ -1,29 +1,33 @@
-import Modal from "@/shared/ui/Modal/Modal";
-import {useCallback, useEffect, useState} from "react";
-import {Button} from "@/shared/ui";
-import {ButtonThemes} from "@/shared/ui/Button/Button";
-import Hero from "@/shared/ui/Hero/Hero";
+import {ReactElement, useEffect} from "react";
+import Layout from "@/pages/layout";
+import {useSession} from "next-auth/react";
+import {Hero} from "@/shared/ui";
 
-export default function Home() {
-    const [modalOpen, setModalOpen] = useState(false)
-    const [menuOpen, setMenuOpen] = useState(false)
+const Home = () => {
+    const session = useSession()
 
-    const modalOpenHandler = useCallback(() => {
-        setModalOpen((prev) => !prev)
-    }, [modalOpen])
-
-    const menuOpenHandler = useCallback(() => {
-        setMenuOpen((prev) => !prev)
-    }, [menuOpen])
+    useEffect(() => {
+        console.log(session)
+    }, [session])
 
     return (
         <>
             <div className={''}>
                 <Hero/>
-                <button onClick={modalOpenHandler}>Label</button>
+                <div className={''}>
+                    <p>Hello</p>
+                </div>
             </div>
-
-            <Modal isOpen={modalOpen} setIsOpen={modalOpenHandler}>123</Modal>
         </>
     )
 }
+
+Home.getLayout = function getLayout(page: ReactElement) {
+    return (
+        <Layout>
+            {page}
+        </Layout>
+    )
+}
+
+export default Home

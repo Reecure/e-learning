@@ -49,13 +49,13 @@ const Menu: FC<Props> = ({children, setMenuOpen, menuOpen, buttonChildren, class
     });
 
     return (
-        <div ref={menuRef} className={'relative'}>
+        <div ref={menuRef} className={'relative z-40'}>
             {buttonChildren}
             {anim((style, open) =>
                 open ? (
                     <animated.div
                         style={style}
-                        className={`${className} absolute top-0 right-0 py-1 min-w-[150px] px-3 bg-light-primary-container dark:bg-dark-primary-container rounded-md`}
+                        className={`${className} absolute top-12 right-5 py-1 min-w-[150px] px-3 bg-light-primary-container dark:bg-dark-primary-container rounded-md`}
                     >
                         {children}
                     </animated.div>

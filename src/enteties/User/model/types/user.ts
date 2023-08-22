@@ -1,3 +1,5 @@
+type UserRoles = 'admin' | 'user' | 'teacher'
+
 export interface User {
     user_id: string
     first_name: string
@@ -6,7 +8,7 @@ export interface User {
     password_hash: string
     registration_date: string
     isNewUser: boolean
-    role: string
+    role: UserRoles
 }
 
 

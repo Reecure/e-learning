@@ -1,9 +1,7 @@
-import {FC} from 'react';
+import {FC, ReactElement} from 'react';
+import Layout from "@/pages/layout";
 
-interface Props {
-}
-
-const BlogPage: FC<Props> = () => {
+const BlogPage = () => {
 
     return (
         <div className={'bg-amber-500'}>
@@ -11,4 +9,12 @@ const BlogPage: FC<Props> = () => {
         </div>
     );
 };
+
+BlogPage.getLayout = function getLayout(page: ReactElement) {
+    return (
+        <Layout>
+            {page}
+        </Layout>
+    )
+}
 export default BlogPage;
