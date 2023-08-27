@@ -48,7 +48,7 @@ const UserAdmin = () => {
                 <tbody>
                 {
                     users.data?.map((user, i) => {
-                        return <tr className={'border-b-2 border-light-primary-main'}>
+                        return <tr className={'border-b-2 border-light-primary-main'} key={i}>
                             <td className={'p-1  text-center border-light-primary-main  border-r-2'}>{i + 1}</td>
                             <td className={'p-1  text-center border-light-primary-main  border-r-2'}>{user.firstname}</td>
                             <td className={'p-1  text-center border-light-primary-main  border-r-2'}>{user.lastname}</td>

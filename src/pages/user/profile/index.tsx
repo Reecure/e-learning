@@ -11,13 +11,10 @@ const UserProfile = () => {
 
     const {data, fetchStatus} = trpc.getUser.useQuery({email: session.data?.user?.email!})
 
-    useEffect(() => {
-        console.log(fetchStatus)
-
-    }, [fetchStatus])
     if (fetchStatus === 'fetching') {
         return <>Loadding...</>
     }
+
     if (data === null || undefined) {
         return <>Error!!!</>
     }

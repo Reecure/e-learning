@@ -21,7 +21,7 @@ const CourseModules: FC<Props> = ({course_id}) => {
         <div>
             {
                 modulesQuery.data?.map(modules => {
-                    return <div>
+                    return <div key={modules.id}>
                         <Link
                             href={`/user/my-courses/course/course-module-lessons/${modules.id}`}>{modules.title}</Link>
                     </div>

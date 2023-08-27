@@ -6,7 +6,7 @@ import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import Image from "next/image";
 import {trpc} from "@/shared/utils/trpc";
-import CourseModules from "@/pages/user/my-courses/course/ui/CourseModules/CourseModules";
+import CourseModules from "@/shared/ui/course/ui/CourseModules/CourseModules";
 
 enum Tabs {
     ABOUT = 'About',
@@ -19,12 +19,7 @@ const CoursePage = () => {
     const router = useRouter()
 
     const courseQuery = trpc.getCourseById.useQuery({course_id: router.query.id as string})
-
-
-    useEffect(() => {
-        console.log(courseQuery.data)
-    }, [courseQuery])
-
+    
     if (courseQuery.error) {
         return <div>Error loading course data</div>;
     }

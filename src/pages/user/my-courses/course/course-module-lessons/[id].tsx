@@ -3,7 +3,7 @@ import Layout from "@/pages/layout";
 import UserLayout from "@/pages/user/layout";
 import {trpc} from "@/shared/utils/trpc";
 import {useRouter} from "next/router";
-import LessonContent from "@/pages/user/my-courses/course/course-module-lessons/ui/LessonContent/LessonContent";
+import LessonContent from "@/shared/ui/course/ui/LessonContent/LessonContent";
 
 const CourseModuleLessonsPage = () => {
 
@@ -28,9 +28,9 @@ const CourseModuleLessonsPage = () => {
                 <div className={'flex flex-col gap-3'}>
                     {
                         lessons.data?.map((lesson, i) => {
-                            return <p
-                                onClick={() => setCurrentLesson(lesson.id)}
-                                className={'w-full py-1 px-3 border-[1px] border-light-primary-main rounded-md hover:opacity-70 cursor-pointer'}>{lesson.title}</p>
+                            return <p key={lesson.id}
+                                      onClick={() => setCurrentLesson(lesson.id)}
+                                      className={'w-full py-1 px-3 border-[1px] border-light-primary-main rounded-md hover:opacity-70 cursor-pointer'}>{lesson.title}</p>
                         })
                     }
 
