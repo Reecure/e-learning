@@ -1,7 +1,7 @@
 import '@/app/styles/globals.css'
 import type {AppProps} from 'next/app'
 import {trpc} from "@/shared/utils/trpc";
-import {SessionProvider} from "next-auth/react";
+import {SessionProvider, useSession} from "next-auth/react";
 import {FC, ReactElement, ReactNode, useEffect, useState} from "react";
 import {NextPage} from "next";
 

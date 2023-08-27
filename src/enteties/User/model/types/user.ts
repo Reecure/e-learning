@@ -1,14 +1,17 @@
-type UserRoles = 'admin' | 'user' | 'teacher'
-
-export interface User {
-    user_id: string
-    first_name: string
-    last_name: string
-    email: string
-    password_hash: string
-    registration_date: string
-    isNewUser: boolean
-    role: UserRoles
+export enum UserRoles {
+    ADMIN = 'admin',
+    USER = 'user',
+    TEACHER = "teacher"
 }
 
-
+export interface User {
+    id: string
+    courses: string[]
+    email: string
+    firstname: string
+    is_new_user: boolean
+    lastname: string
+    password: string
+    registration_date: Date
+    role: UserRoles
+}

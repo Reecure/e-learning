@@ -36,9 +36,6 @@ const Navbar: FC<Props> = ({className, theme, toggleTheme}) => {
                         <li><Link href={Routes.BLOG}
                                   className="hover:text-dark-accent duration-150 uppercase font-bold">Blog</Link>
                         </li>
-                        <li><Link href={Routes.USER_PROFILE}
-                                  className="hover:text-dark-accent duration-150 uppercase font-bold">PROFILE</Link>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -47,7 +44,6 @@ const Navbar: FC<Props> = ({className, theme, toggleTheme}) => {
                 {
                     status === 'unauthenticated' ? <Link href={'/auth/signin'}>Log in</Link> : null
                 }
-
                 <Menu menuOpen={menuOpen} setMenuOpen={setMenuOpen}
                       buttonChildren={<Button theme={ButtonThemes.CLEAR}
                                               onClick={() => setMenuOpen(!menuOpen)}
@@ -79,9 +75,7 @@ const Navbar: FC<Props> = ({className, theme, toggleTheme}) => {
                                 }} className={'!p-0'}>Log out</Button>
                         }
                     </div>
-
                 </Menu>
-
             </div>
         </nav>
     );

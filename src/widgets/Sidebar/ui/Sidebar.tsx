@@ -1,4 +1,4 @@
-import {FC} from 'react';
+import {FC, useEffect} from 'react';
 import Link from "next/link";
 import {Routes} from "@/shared/config/routes";
 import {AiOutlineUser} from "react-icons/ai";
@@ -13,6 +13,11 @@ import {ButtonThemes} from "@/shared/ui/Button/Button";
 const Sidebar = () => {
 
     const session = useSession()
+
+    useEffect(() => {
+        console.log(session)
+    }, [session])
+
 
     return (
         <aside

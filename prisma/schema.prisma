@@ -1,0 +1,72 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialActions"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model course_categories {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  @@map("course-categories")
+}
+
+model courses {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  author_id        String   @db.ObjectId
+  category_id      String
+  cover_image      String
+  difficulty_level String
+  duration         String
+  rating           String
+  students_id      String[]
+  title            String
+}
+
+model events_and_activities {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  @@map("events-and-activities")
+}
+
+model grades_and_progress {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  @@map("grades-and-progress")
+}
+
+model lessons {
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  lesson_content String
+  lesson_type    String
+  module_id      String @db.ObjectId
+  order          Int
+  title          String
+}
+
+model modules {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  courseId String @db.ObjectId
+  order    Int
+  title    String
+}
+
+model reviews {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model users {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  courses           Json?
+  email             String   @unique
+  firstname         String
+  is_new_user       Boolean
+  lastname          String
+  password          String
+  registration_date DateTime @db.Date
+  role              String
+}

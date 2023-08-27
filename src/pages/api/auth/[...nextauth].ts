@@ -1,55 +1,52 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
 import {PrismaClient} from "@prisma/client";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient()
-
 
 export default NextAuth({
     providers: [
         CredentialsProvider({
-            // The name to display on the sign in form (e.g. "Sign in with...")
             name: "Credentials",
-            // `credentials` is used to generate a form on the sign in page.
-            // You can specify which fields should be submitted, by adding keys to the `credentials` object.
-            // e.g. domain, username, password, 2FA token, etc.
-            // You can pass any HTML attribute to the <input> tag through the object.
             credentials: {
-                username: {label: "Username", type: "text", placeholder: "jsmith"},
+                // Define the expected fields here
+                email: {label: "Email", type: "email"},
                 password: {label: "Password", type: "password"}
             },
             async authorize(credentials, req) {
-                // Add logic here to look up the user from the credentials supplied
-                const user = {id: "1", role: 'admin', name: credentials?.username, email: credentials?.password}
-
-                if (user) {
-                    // Any object returned will be saved in `user` property of the JWT
-                    return user
+                const user = await prisma.users.findUnique(
+                    {
+                        where:
+                            {email: credentials?.email}
+                    })
+                if (user && (await bcrypt.compare(credentials !== undefined ? credentials.password : "", user.password))) {
+                    const {id, role, email} = user
+                    return {id, role, email}
                 } else {
-                    // If you return null then an error will be displayed advising the user to check their details.
-                    return null
-
-                    // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
+                    throw new Error("Invalid Email or Password");
                 }
             }
         })
     ],
+
     pages: {
         signIn: "/auth/signin",
+        signOut: '/',
+        error: '/auth/error'
     },
     session: {
         strategy: 'jwt'
     },
     callbacks: {
         async jwt({token, user}) {
-            if (user) token.role = user.role
-            return token
+            return {...token, ...user}
         },
         async session({session, token}) {
-            if (session?.user) session.user.role = token.role
+            session.user = token
             return session
         }
     },
 
-    secret: 'SECRET'
+    secret: 'SECRETqwekasdkop1238iqwjasdjyg16ywge1'
 })

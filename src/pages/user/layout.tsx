@@ -7,9 +7,10 @@ import {Sidebar} from "@/widgets/Sidebar";
 
 interface Props {
     children: ReactNode | ReactNode[]
+    contentClassName?: string
 }
 
-const UserLayout: FC<Props> = ({children}) => {
+const UserLayout: FC<Props> = ({children, contentClassName}) => {
 
     const router = useRouter()
 
@@ -27,7 +28,7 @@ const UserLayout: FC<Props> = ({children}) => {
     return (
         <div className={'h-[calc(100vh_-_62px)] flex justify-between'}>
             <Sidebar/>
-            <div className={'w-full overflow-y-auto p-5'}>
+            <div className={`w-full overflow-y-auto p-5 ${contentClassName} `}>
                 {children}
             </div>
         </div>

@@ -1,18 +1,15 @@
-import {initTRPC, TRPCError} from "@trpc/server";
-import * as trpcNext from '@trpc/server/adapters/next'
-import {z} from 'zod'
-import {PrismaClient} from "@prisma/client";
-import {User, UserRoles} from "@/enteties/User";
-import bcrypt from 'bcrypt';
+import {PrismaClient} from '@prisma/client';
 
+import {z} from 'zod';
+import bcrypt from "bcrypt";
+import {UserRoles} from "@/enteties/User";
+import {initTRPC, TRPCError} from "@trpc/server";
 
 const prisma = new PrismaClient()
 
 const t = initTRPC.create()
 
-const appRouter = t.router({
-
-    // ----------------User action--------------
+export const userProcedures = {
     getUsers: t.procedure
         .query(({input}) => {
             return prisma.users.findMany()
@@ -59,6 +56,8 @@ const appRouter = t.router({
                 }
             })
         }
+
+
     }),
     updateUser: t.procedure.input(z.object({
         email: z.string(),
@@ -78,74 +77,13 @@ const appRouter = t.router({
     }), deleteUser: t.procedure.input(z.object({
         id: z.string(),
     })).mutation(async ({input}) => {
+
         return prisma.users.delete({
             where: {
                 id: input.id
             }
         })
-    }),
-    getUserCourses: t.procedure.input(z.object({
-        author_id: z.string()
-    })).query(async ({input}) => {
-        return prisma.courses.findMany({
-            where: {
-                author_id: input.author_id
-            }
-        })
-    }),
-    getCourseById: t.procedure.input(z.object({
-        course_id: z.string()
-    })).query(async ({input}) => {
-        return prisma.courses.findUnique({
-            where: {
-                id: input.course_id
-            }
-        })
-    }),
-    getModulesByCourseId: t.procedure.input(z.object({
-        course_id: z.string()
-    })).query(async ({input}) => {
-        return prisma.modules.findMany({
-            where: {
-                courseId: input.course_id
-            }
-        });
-    }),
-    getLessonsByModuleId: t.procedure.input(z.object({
-        module_id: z.string()
-    })).query(async ({input}) => {
-        return prisma.lessons.findMany({
-            where: {
-                module_id: input.module_id
-            }
-        });
-    }),
-    getLessonById: t.procedure.input(z.object({
-        lesson_id: z.string()
-    })).query(async ({input}) => {
-        return prisma.lessons.findUnique({
-            where: {
-                id: input.lesson_id
-            }
-        })
-    }),
+    })
+};
 
-})
-
-
-export type  AppRouter = typeof appRouter
-
-export default trpcNext.createNextApiHandler({
-    router: appRouter,
-    createContext: () => ({
-        prisma
-    }),
-    onError(opts) {
-        const {error, type, path, input, ctx, req} = opts;
-        console.error('Error:', error);
-        if (error.code === 'INTERNAL_SERVER_ERROR') {
-            // send to bug reporting
-        }
-    },
-})
-
+export type UserProcedures = typeof userProcedures;
