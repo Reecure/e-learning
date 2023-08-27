@@ -7,6 +7,10 @@ import {signIn} from "next-auth/react";
 import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {useForm} from "react-hook-form";
+import {Input} from "@/shared/ui/Input";
+import {Label} from "@/shared/ui/Label";
+import {Text} from "@/shared/ui/Text";
+import {Loader} from "@/shared/ui/Loader";
 
 
 interface SignupForm {
@@ -33,15 +37,13 @@ const SignUpPage = () => {
     const router = useRouter()
 
     useEffect(() => {
-        // if (status === 'success') {
-        //     router.push(Routes.LOGIN)
-        // }
+        if (status === 'success') {
+            router.push(Routes.LOGIN)
+        }
     }, [mutation])
 
     if (status === 'loading') {
-        return <>
-            Loading ...
-        </>
+        return <Loader/>
     }
 
     return (
@@ -57,41 +59,35 @@ const SignUpPage = () => {
                 console.log(mutation)
             })}
                   className={'max-w-[500px] flex flex-col gap-5 w-full p-5 rounded-xl border-2 border-light-primary-main dark:border-dark-primary-main'}>
-                <label htmlFor="" className={'relative'}>
-                    <p className={'absolute text-[12px] -top-[11px] left-4 bg-light-background dark:bg-dark-background px-1'}>Firstname</p>
-                    <input type="text"
-                           className={'w-full px-2 py-1 bg-transparent border-[1px] border-light-primary-main dark:border-dark-primary-main rounded-lg focus:outline-0'}
-                           {...register('firstname', {required: true})}
-                    />
-                    {errors.firstname && <p className={'text-light-error-main'}>email is required</p>}
-                </ label>
 
-                <label htmlFor="" className={'relative'}>
-                    <p className={'absolute text-[12px] -top-[11px] left-4 bg-light-background dark:bg-dark-background px-1'}>Lastname</p>
-                    <input type="text"
-                           className={'w-full px-2 py-1 bg-transparent border-[1px] border-light-primary-main dark:border-dark-primary-main rounded-lg focus:outline-0'}
+                <p className={'text-center text-2xl'}>Signup Form</p>
+
+                <Label htmlFor={'firstname'} labelText={'Firstname'}>
+                    <input className={'inputField'} {...register('firstname', {required: true})}
+                    />
+                    {errors.firstname && <Text error text={`Firstname is required`}/>}
+                </Label>
+
+                <Label htmlFor={"lastname"} labelText={'Lastname'}>
+                    <input className={'inputField'} type="text"
                            {...register('lastname', {required: true})}
                     />
-                    {errors.lastname && <p className={'text-light-error-main'}>password is required</p>}
-                </ label>
+                    {errors.lastname && <Text error text={'Lastname is required'}/>}
+                </Label>
 
-                <label htmlFor="" className={'relative'}>
-                    <p className={'absolute text-[12px] -top-[11px] left-4 bg-light-background dark:bg-dark-background px-1'}>Email</p>
-                    <input type="text"
-                           className={'w-full px-2 py-1 bg-transparent border-[1px] border-light-primary-main dark:border-dark-primary-main rounded-lg focus:outline-0'}
+                <Label htmlFor={'email'} labelText={'Email'}>
+                    <input className={'inputField'} type="text"
                            {...register('email', {required: true})}
                     />
-                    {errors.email && <p className={'text-light-error-main'}>email is required</p>}
-                </ label>
+                    {errors.email && <Text error text={'Email is required'}/>}
+                </ Label>
 
-                <label htmlFor="" className={'relative'}>
-                    <p className={'absolute text-[12px] -top-[11px] left-4 bg-light-background dark:bg-dark-background px-1'}>Password</p>
-                    <input type="text"
-                           className={'w-full px-2 py-1 bg-transparent border-[1px] border-light-primary-main dark:border-dark-primary-main rounded-lg focus:outline-0'}
+                <Label htmlFor={'password'} labelText={'Password'}>
+                    <input className={'inputField'} type="password"
                            {...register('password', {required: true})}
                     />
-                    {errors.password && <p className={'text-light-error-main'}>password is required</p>}
-                </ label>
+                    {errors.password && <Text error text={'Password is required'}/>}
+                </ Label>
                 <Button theme={ButtonThemes.FILLED}>SUBMIT</Button>
             </form>
         </AuthForm>
