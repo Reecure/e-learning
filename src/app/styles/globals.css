@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 
-{
-
-
+.inputField {
+    @apply w-full px-2 py-1 bg-transparent border-[1px] border-light-primary-main dark:border-dark-primary-main rounded-lg focus:outline-0;
 }

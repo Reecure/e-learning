@@ -7,7 +7,7 @@ import {Themes} from "@/widgets/ThemeTogler";
 
 interface Props {
     children: ReactNode
-   
+
 }
 
 const AuthForm: FC<Props> = ({children}) => {
