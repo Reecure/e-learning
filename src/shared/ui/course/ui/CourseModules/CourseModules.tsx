@@ -8,22 +8,19 @@ interface Props {
 
 const CourseModules: FC<Props> = ({course_id}) => {
     const modulesQuery = trpc.getModulesByCourseId.useQuery({course_id: course_id})
-
-    useEffect(() => {
-        console.log(course_id)
-        console.log(modulesQuery.data)
-    }, [modulesQuery])
-
+    
     if (modulesQuery.isLoading) {
         return <>Loading...</>
     }
     return (
-        <div>
+        <div className={'flex flex-col gap-3 mt-5'}>
             {
                 modulesQuery.data?.map(modules => {
-                    return <div key={modules.id}>
+                    return <div key={modules.id}
+                                className={'w-full py-3 px-4 border-[1px] border-light-primary-main cursor-pointer hover:scale-[1.01] duration-200'}>
                         <Link
-                            href={`/user/my-courses/course/course-module-lessons/${modules.id}`}>{modules.title}</Link>
+                            href={`/user/my-courses/course/course-module-lessons/${modules.id}`}
+                        >{modules.title}</Link>
                     </div>
                 })
             }

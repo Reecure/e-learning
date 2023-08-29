@@ -8,9 +8,6 @@ const Home = () => {
         <>
             <div className={''}>
                 <Hero/>
-                <div className={''}>
-                    <p>Hello</p>
-                </div>
             </div>
         </>
     )

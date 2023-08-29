@@ -1,10 +1,10 @@
-import {FC, ReactElement, useEffect} from 'react';
+import {ReactElement} from 'react';
 import Layout from "@/pages/layout";
 import {SmallCard} from "@/shared/ui";
 import {useSession} from "next-auth/react";
 import {trpc} from "@/shared/utils/trpc";
-import Link from "next/link";
 import UserLayout from "@/pages/user/layout";
+
 
 const CoursesPage = () => {
     const session = useSession()
@@ -17,8 +17,8 @@ const CoursesPage = () => {
 
     return (
         <>
-            {courses.status === 'success' && courses.data.map(item => {
-                return <Link href={`/user/my-courses/course/${item.id}`} key={item.id}>{item.title}</Link>
+            {courses.status === 'success' && courses.data.map((item) => {
+                return <SmallCard course={item}/>
             })}
         </>
     );

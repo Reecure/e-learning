@@ -1,9 +1,9 @@
-import {FC, FormEvent, useEffect, useState} from 'react';
+import {FC, FormEvent, ReactElement, useEffect, useState} from 'react';
 import AuthForm from "@/pages/auth/ui/AuthForm";
 import {trpc} from "@/shared/utils/trpc";
 import {useRouter} from "next/router";
 import {Routes} from "@/shared/config/routes";
-import {signIn} from "next-auth/react";
+import {signIn, useSession} from "next-auth/react";
 import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {useForm} from "react-hook-form";
@@ -11,6 +11,9 @@ import {Input} from "@/shared/ui/Input";
 import {Label} from "@/shared/ui/Label";
 import {Text} from "@/shared/ui/Text";
 import {Loader} from "@/shared/ui/Loader";
+import Layout from "@/pages/layout";
+import UserLayout from "@/pages/user/layout";
+import SignInPage from "@/pages/auth/signin";
 
 
 interface SignupForm {
@@ -35,12 +38,21 @@ const SignUpPage = () => {
 
     const mutation = trpc.createUser.useMutation()
     const router = useRouter()
+    const session = useSession();
 
     useEffect(() => {
         if (status === 'success') {
             router.push(Routes.LOGIN)
         }
     }, [mutation])
+
+    if (session.status === 'authenticated') {
+        return <div className={'w-full h-full flex justify-center items-center'}>
+            <p className={'text-2xl'}>
+                You are an authenticated
+            </p>
+        </div>
+    }
 
     if (status === 'loading') {
         return <Loader/>
@@ -93,4 +105,12 @@ const SignUpPage = () => {
         </AuthForm>
     )
 };
+SignUpPage.getLayout = function getLayout(page: ReactElement) {
+    return (
+        <Layout>
+            {page}
+        </Layout>
+    )
+}
+
 export default SignUpPage;

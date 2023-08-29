@@ -1,5 +1,5 @@
 export interface Course {
-    course_id: string
+    id: string
     title: string
     description: string
     cover_image: string
@@ -9,7 +9,7 @@ export interface Course {
     author_id: string
     students_id: string[]
     difficulty_level: string
-    rating: string
+    rating: number
 }
 
 

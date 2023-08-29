@@ -23,14 +23,19 @@ const Sidebar = () => {
         <aside
             className={' py-5 flex justify-between flex-col items-center border-r-2 text-2xl border-black w-20'}>
             <div className={'flex flex-col items-center gap-y-5 w-20 '}>
-                <Link href={Routes.USER_PROFILE}><AiOutlineUser/></Link>
-                <Link href={Routes.USER_COURSES}><PiStudentDuotone/></Link>
-                <Link href={Routes.USER_GRADES}><PiCertificateBold/></Link>
+                <Link href={Routes.USER_PROFILE}
+                      className={'hover:opacity-70 hover:scale-[1.2]'}><AiOutlineUser/></Link>
+                <Link href={Routes.USER_COURSES}
+                      className={'hover:opacity-70 hover:scale-[1.2]'}><PiStudentDuotone/></Link>
+                <Link href={Routes.USER_GRADES}
+                      className={'hover:opacity-70 hover:scale-[1.2]'}><PiCertificateBold/></Link>
                 {
                     session.data?.user.role === 'admin' && (
                         <>
-                            <Link href={Routes.CREATE_COURSE}><IoCreateOutline/></Link>
-                            <Link href={Routes.ADMIN_PANEL}><RiAdminLine/></Link>
+                            <Link href={Routes.CREATE_COURSE}
+                                  className={'hover:opacity-70 hover:scale-[1.2]'}><IoCreateOutline/></Link>
+                            <Link href={Routes.ADMIN_PANEL}
+                                  className={'hover:opacity-70 hover:scale-[1.2]'}><RiAdminLine/></Link>
                         </>
 
                     )

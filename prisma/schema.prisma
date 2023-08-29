@@ -19,9 +19,11 @@ model courses {
   author_id        String   @db.ObjectId
   category_id      String
   cover_image      String
+  creation_date    DateTime @db.Date
+  description      String
   difficulty_level String
   duration         String
-  rating           String
+  rating           Int
   students_id      String[]
   title            String
 }
@@ -40,7 +42,8 @@ model grades_and_progress {
 
 model lessons {
   id             String @id @default(auto()) @map("_id") @db.ObjectId
-  lesson_content String
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  lesson_content Json?
   lesson_type    String
   module_id      String @db.ObjectId
   order          Int
@@ -48,10 +51,10 @@ model lessons {
 }
 
 model modules {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  courseId String @db.ObjectId
-  order    Int
-  title    String
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  course_id String? @map(" course_id") @db.ObjectId
+  order     Int
+  title     String
 }
 
 model reviews {

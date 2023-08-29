@@ -7,6 +7,7 @@ import {ButtonThemes} from "@/shared/ui/Button/Button";
 import Image from "next/image";
 import {trpc} from "@/shared/utils/trpc";
 import CourseModules from "@/shared/ui/course/ui/CourseModules/CourseModules";
+import {Loader} from "@/shared/ui/Loader";
 
 enum Tabs {
     ABOUT = 'About',
@@ -18,49 +19,55 @@ const CoursePage = () => {
     const [currentTab, setCurrentTab] = useState<Tabs>(Tabs.ABOUT)
     const router = useRouter()
 
-    const courseQuery = trpc.getCourseById.useQuery({course_id: router.query.id as string})
-    
-    if (courseQuery.error) {
+    const {data, isLoading, error} = trpc.getCourseById.useQuery({course_id: router.query.id as string})
+
+    if (error) {
         return <div>Error loading course data</div>;
     }
 
-    if (courseQuery.isLoading) {
-        return <div>Loading...</div>;
+    if (isLoading) {
+        return <Loader/>;
     }
 
     return (
         <div>
             {/* Header */}
             <div className={'flex justify-between mb-14'}>
-                <div>
-                    <div className={'mb-5'}>
-                        <p>
-                            some tag
-                        </p>
-                    </div>
-                    <div className={'max-w-[400px] mb-5'}>
-                        <h3 className={'text-3xl font-extrabold'}>Zero to hero in React Js with Thomas Wayne</h3>
-                    </div>
-                    <div className={'max-w-[600px] mb-5'}>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            Adipisci consequuntur culpa doloribus eum facere,
-                            facilis ipsa laboriosam.
-                        </p>
-                    </div>
-                    <div className={'flex gap-10 mb-5'}>
-                        <p><span>735</span> students</p>
-                        <p>6 hr</p>
-                        <p>Created at 27.03.23</p>
-                    </div>
+                <div className={'flex flex-col justify-between'}>
                     <div>
-                        <Button theme={ButtonThemes.FILLED}>Start now</Button>
+                        <div className={'mb-5 bg-green-400 py-1 px-2 w-min rounded-full'}>
+                            <p>
+                                {data?.difficulty_level}
+                            </p>
+                        </div>
+                        <div className={'max-w-[400px] mb-5'}>
+                            <h3 className={'text-3xl font-extrabold'}>{data?.title}</h3>
+                        </div>
+                        <div className={'max-w-[600px] mb-5'}>
+                            <p>
+                                {data?.description}
+                            </p>
+                        </div>
+
                     </div>
+                    <div className={'flex justify-center flex-col gap-3'}>
+                        <div className={'flex justify-between gap-10'}>
+                            <p>
+                                <span>{data?.students_id.length}</span> {data?.students_id.length! !== 1 ? 'students' : 'student'}
+                            </p>
+                            <p>{data?.duration}</p>
+                            <p>Created at 27.03.23</p>
+                            <p>Last update at 27.03.23</p>
+                        </div>
+                        <Button theme={ButtonThemes.FILLED}>Add to courses</Button>
+                    </div>
+
                 </div>
                 <div>
-                    <Image src={courseQuery.data?.cover_image!} alt={'image'}
+                    <Image src={data?.cover_image!} alt={'image'}
+                           className={'max-w-[550px]  object-cover'}
                            width={700}
-                           height={450}/>
+                           height={350}/>
                 </div>
             </div>
 
@@ -96,11 +103,10 @@ const CoursePage = () => {
                 </div>
 
                 {/* Course content */}
-
                 <div>
                     {
                         currentTab === Tabs.COURSE_CONTENT && <>
-                            <CourseModules course_id={courseQuery.data?.id!}/>
+                            <CourseModules course_id={data?.id!}/>
                         </>
                     }
                 </div>

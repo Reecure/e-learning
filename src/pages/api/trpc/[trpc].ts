@@ -107,7 +107,7 @@ const appRouter = t.router({
     })).query(async ({input}) => {
         return prisma.modules.findMany({
             where: {
-                courseId: input.course_id
+                course_id: input.course_id
             }
         });
     }),

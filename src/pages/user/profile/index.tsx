@@ -5,25 +5,25 @@ import Layout from "@/pages/layout";
 import UserLayout from "@/pages/user/layout";
 import {useSession} from "next-auth/react";
 import {trpc} from "@/shared/utils/trpc";
+import {Loader} from "@/shared/ui/Loader";
+import {UserProfileComponent} from "@/shared/ui/profile";
 
 const UserProfile = () => {
     const session = useSession()
 
-    const {data, fetchStatus} = trpc.getUser.useQuery({email: session.data?.user?.email!})
+    const {data, isLoading} = trpc.getUser.useQuery({email: session.data?.user?.email!})
 
-    if (fetchStatus === 'fetching') {
-        return <>Loadding...</>
+    if (isLoading) {
+        return <Loader/>
     }
 
-    if (data === null || undefined) {
-        return <>Error!!!</>
+    if (data === null || data === undefined) {
+        return <>Error!!!</>;
     }
 
     return (
         <div>
-            <div className={'border-1 border-light-primary-main px-2 py-1'}>{data?.firstname}</div>
-            <div className={'border-1 border-light-primary-main px-2 py-1'}>{data?.lastname}</div>
-            <div className={'border-1 border-light-primary-main px-2 py-1'}>{data?.email}</div>
+            <UserProfileComponent user={data}/>
         </div>
     );
 };

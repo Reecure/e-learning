@@ -1,15 +1,14 @@
 import {FC} from 'react';
 
 interface Props {
-    size?: string
+
 }
 
-const Loader: FC<Props> = ({size}) => {
+const Loader: FC<Props> = () => {
 
     return (
         <div className={'w-full h-full flex justify-center items-center'}>
-            <svg width={size} height={size}
-                 className={'w-10 h-10 animate-spin fill-light-primary-main dark:fill-dark-primary-main'}
+            <svg className={'w-10 h-10 animate-spin fill-light-primary-main dark:fill-dark-primary-main'}
                  xmlns="http://www.w3.org/2000/svg"
                  viewBox="0 0 24 24">
                 <path
