@@ -2,12 +2,16 @@ import {ReactElement, useEffect, useState} from 'react';
 import {useRouter} from "next/router";
 import Layout from "@/pages/layout";
 import UserLayout from "@/pages/user/layout";
-import {Button} from "@/shared/ui";
+import {Button, Modal} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import Image from "next/image";
 import {trpc} from "@/shared/utils/trpc";
 import CourseModules from "@/shared/ui/course/ui/CourseModules/CourseModules";
 import {Loader} from "@/shared/ui/Loader";
+import {useSession} from "next-auth/react";
+import CourseForm from "@/shared/ui/course/ui/CourseForm/CourseForm";
+import {difficultLevelBadgeHelper} from "@/shared/helpers";
+import CreateModule from "@/shared/ui/course/ui/CreateModule/CreateModule";
 
 enum Tabs {
     ABOUT = 'About',
@@ -17,12 +21,41 @@ enum Tabs {
 
 const CoursePage = () => {
     const [currentTab, setCurrentTab] = useState<Tabs>(Tabs.ABOUT)
+    const [courseModulesEdit, setCourseModuleEdit] = useState(false)
+    const [isUserCourse, setIsUserCourse] = useState(false)
+    const [editModalOpen, setEditModalOpen] = useState(false)
+    const [moduleCreated, setModuleCreated] = useState(false)
+
     const router = useRouter()
+    const session = useSession()
 
     const {data, isLoading, error} = trpc.getCourseById.useQuery({course_id: router.query.id as string})
+    const updateCourse = trpc.updateCourse.useMutation()
 
-    if (error) {
-        return <div>Error loading course data</div>;
+    useEffect(() => {
+        if (session.data?.user.id === data?.author_id) {
+            setIsUserCourse(true)
+            console.log('user role')
+        }
+
+    }, [session.data?.user.id, data?.author_id])
+
+    const openEditHandler = () => {
+        setEditModalOpen((prev) => !prev);
+    };
+
+    const updateCourseHandler = async (data: any) => {
+        await updateCourse.mutate({
+            ...data,
+        })
+    };
+
+    const courseModuleEditHandler = () => {
+        setCourseModuleEdit(prev => !prev)
+    }
+
+    const moduleCreatedHandler = () => {
+        setModuleCreated(prev => !prev)
     }
 
     if (isLoading) {
@@ -35,17 +68,13 @@ const CoursePage = () => {
             <div className={'flex justify-between mb-14'}>
                 <div className={'flex flex-col justify-between'}>
                     <div>
-                        <div className={'mb-5 bg-green-400 py-1 px-2 w-min rounded-full'}>
-                            <p>
-                                {data?.difficulty_level}
-                            </p>
-                        </div>
+                        {difficultLevelBadgeHelper(data?.difficulty_level || '')}
                         <div className={'max-w-[400px] mb-5'}>
                             <h3 className={'text-3xl font-extrabold'}>{data?.title}</h3>
                         </div>
                         <div className={'max-w-[600px] mb-5'}>
                             <p>
-                                {data?.description}
+                                {data?.cover_description}
                             </p>
                         </div>
 
@@ -60,6 +89,15 @@ const CoursePage = () => {
                             <p>Last update at 27.03.23</p>
                         </div>
                         <Button theme={ButtonThemes.FILLED}>Add to courses</Button>
+                        {
+                            isUserCourse && <>
+                                <Button theme={ButtonThemes.FILLED} onClick={openEditHandler}>Edit course</Button>
+                            </>
+                        }
+                        <Modal isOpen={editModalOpen} setIsOpen={openEditHandler}>
+                            <CourseForm courseData={data} onSubmit={updateCourseHandler} isCreating={false}/>
+                        </Modal>
+
                     </div>
 
                 </div>
@@ -73,22 +111,35 @@ const CoursePage = () => {
 
             {/*    Main Content*/}
             <div>
-                <div>
-                    <Button theme={ButtonThemes.TEXT} onClick={() => {
-                        setCurrentTab(Tabs.ABOUT)
-                    }}>
-                        {Tabs.ABOUT}
-                    </Button>
-                    <Button theme={ButtonThemes.TEXT} onClick={() => {
-                        setCurrentTab(Tabs.COURSE_CONTENT)
-                    }}>
-                        {Tabs.COURSE_CONTENT}
-                    </Button>
-                    <Button theme={ButtonThemes.TEXT} onClick={() => {
-                        setCurrentTab(Tabs.REVIEWS)
-                    }}>
-                        {Tabs.REVIEWS}
-                    </Button>
+                <div className={'flex justify-between'}>
+                    <div>
+                        <Button theme={ButtonThemes.TEXT} onClick={() => {
+                            setCurrentTab(Tabs.ABOUT)
+                        }}>
+                            {Tabs.ABOUT}
+                        </Button>
+                        <Button theme={ButtonThemes.TEXT} onClick={() => {
+                            setCurrentTab(Tabs.COURSE_CONTENT)
+                        }}>
+                            {Tabs.COURSE_CONTENT}
+                        </Button>
+                        <Button theme={ButtonThemes.TEXT} onClick={() => {
+                            setCurrentTab(Tabs.REVIEWS)
+                        }}>
+                            {Tabs.REVIEWS}
+                        </Button>
+                    </div>
+                    {
+                        currentTab === Tabs.COURSE_CONTENT &&
+                        isUserCourse && (
+                            !courseModulesEdit ?
+                                <Button theme={ButtonThemes.FILLED} onClick={courseModuleEditHandler}>Edit</Button>
+                                :
+                                <div className={'flex gap-x-2'}>
+                                    <Button theme={ButtonThemes.FILLED} onClick={courseModuleEditHandler}>Save</Button>
+                                    <Button theme={ButtonThemes.FILLED} onClick={courseModuleEditHandler}>Cancel</Button>
+                                </div>)
+                    }
                 </div>
 
                 {/* About */}
@@ -106,7 +157,8 @@ const CoursePage = () => {
                 <div>
                     {
                         currentTab === Tabs.COURSE_CONTENT && <>
-                            <CourseModules course_id={data?.id!}/>
+                            {isUserCourse && courseModulesEdit && <CreateModule courseId={data?.id!}/>}
+                            <CourseModules courseModulesEdit={courseModulesEdit} course_id={data?.id!}/>
                         </>
                     }
                 </div>

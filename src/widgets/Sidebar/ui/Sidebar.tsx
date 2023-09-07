@@ -1,4 +1,4 @@
-import {FC, useEffect} from 'react';
+import {useEffect} from 'react';
 import Link from "next/link";
 import {Routes} from "@/shared/config/routes";
 import {AiOutlineUser} from "react-icons/ai";
@@ -32,8 +32,6 @@ const Sidebar = () => {
                 {
                     session.data?.user.role === 'admin' && (
                         <>
-                            <Link href={Routes.CREATE_COURSE}
-                                  className={'hover:opacity-70 hover:scale-[1.2]'}><IoCreateOutline/></Link>
                             <Link href={Routes.ADMIN_PANEL}
                                   className={'hover:opacity-70 hover:scale-[1.2]'}><RiAdminLine/></Link>
                         </>

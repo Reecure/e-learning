@@ -1,20 +1,16 @@
-import {FC, FormEvent, ReactElement, useEffect, useState} from 'react';
+import {ReactElement, useEffect, useState} from 'react';
 import AuthForm from "@/pages/auth/ui/AuthForm";
 import {trpc} from "@/shared/utils/trpc";
 import {useRouter} from "next/router";
 import {Routes} from "@/shared/config/routes";
-import {signIn, useSession} from "next-auth/react";
+import {useSession} from "next-auth/react";
 import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {useForm} from "react-hook-form";
-import {Input} from "@/shared/ui/Input";
 import {Label} from "@/shared/ui/Label";
 import {Text} from "@/shared/ui/Text";
 import {Loader} from "@/shared/ui/Loader";
 import Layout from "@/pages/layout";
-import UserLayout from "@/pages/user/layout";
-import SignInPage from "@/pages/auth/signin";
-
 
 interface SignupForm {
     firstname: string,
@@ -25,6 +21,8 @@ interface SignupForm {
 
 const SignUpPage = () => {
 
+    const [error, setError] = useState('')
+
     const {register, handleSubmit, formState: {errors}} = useForm<SignupForm>({
         defaultValues: {
             email: '',
@@ -34,15 +32,15 @@ const SignUpPage = () => {
         }
     })
 
-    const [status, setStatus] = useState<null | string>(null)
-
     const mutation = trpc.createUser.useMutation()
     const router = useRouter()
     const session = useSession();
 
     useEffect(() => {
-        if (status === 'success') {
+        if (mutation.status === 'success') {
             router.push(Routes.LOGIN)
+        } else if (mutation.isError) {
+            setError(mutation.error.message)
         }
     }, [mutation])
 
@@ -54,7 +52,7 @@ const SignUpPage = () => {
         </div>
     }
 
-    if (status === 'loading') {
+    if (mutation.isLoading) {
         return <Loader/>
     }
 
@@ -67,12 +65,12 @@ const SignUpPage = () => {
                     lastname: data.lastname,
                     password: data.password,
                 })
-                console.log(res)
-                console.log(mutation)
             })}
                   className={'max-w-[500px] flex flex-col gap-5 w-full p-5 rounded-xl border-2 border-light-primary-main dark:border-dark-primary-main'}>
 
                 <p className={'text-center text-2xl'}>Signup Form</p>
+
+                {error !== '' && <Text error text={error}/>}
 
                 <Label htmlFor={'firstname'} labelText={'Firstname'}>
                     <input className={'inputField'} {...register('firstname', {required: true})}

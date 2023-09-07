@@ -1,4 +1,4 @@
-import {FormEventHandler, ReactElement, useState} from "react";
+import {ReactElement, useState} from "react";
 import {signIn, useSession} from "next-auth/react";
 import {Routes} from "@/shared/config/routes";
 import {useRouter} from "next/router";
@@ -6,13 +6,9 @@ import AuthForm from "@/pages/auth/ui/AuthForm";
 import {useForm} from "react-hook-form";
 import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
-import {Input} from "@/shared/ui/Input";
 import {Label} from "@/shared/ui/Label";
 import {Text} from "@/shared/ui/Text";
 import Layout from "@/pages/layout";
-import UserLayout from "@/pages/user/layout";
-import UserProfile from "@/pages/user/profile";
-
 
 interface LoginForm {
     email: string
@@ -50,7 +46,7 @@ function SignInPage() {
                 })
 
                 if (res?.status !== 200) {
-                    setAuthError((prev) => ({isError: true, message: res?.error || 'Some error try again later'}))
+                    setAuthError(() => ({isError: true, message: res?.error || 'Some error try again later'}))
                 } else {
                     setAuthError((prev) => ({...prev, isError: false}))
                     await router.push(Routes.USER_PROFILE)

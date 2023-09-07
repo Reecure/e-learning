@@ -97,6 +97,40 @@ const config: Config = {
                     },
                 },
             },
+            keyframes: {
+                'slide-from-top': {
+                    '0%': {
+                        transform: 'translate3d(-50%, -100%, 0)',
+                    },
+                    '90%': {
+                        transform: 'translate3d(-50%, 5px, 0)',
+                    },
+                    '100%': {
+                        transform: 'translate3d(-50%, 0%, 0)',
+                    }
+                },
+                'slide-to-top': {
+                    '0%': {transform: 'translate3d(-50%,0%, 0)'},
+                    '100%': {transform: 'translate3d(-50%, -100%, 0)'},
+                },
+                'open-modal': {
+                    '0%': {
+                        transform: 'scale(0)',
+                        opacity: '0'
+                    },
+                    '100%': {
+                        transform: 'scale(1)',
+                        opacity: '1'
+                    }
+                }
+
+            },
+            animation: {
+                "slide-from-top": 'slide-from-top .4s ease-in-out forwards',
+                "slide-to-top": 'slide-from-top reverse .4s ease-in-out forwards',
+                'open-modal': 'open-modal .4s ease-in-out forwards',
+                'close-modal': 'open-modal .4s reverse ease-in-out forwards'
+            }
 
         },
     },

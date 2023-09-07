@@ -7,6 +7,8 @@ import {useSession} from "next-auth/react";
 import {trpc} from "@/shared/utils/trpc";
 import {Loader} from "@/shared/ui/Loader";
 import {UserProfileComponent} from "@/shared/ui/profile";
+import {ErrorWidget} from "@/widgets/ErrorWidget";
+
 
 const UserProfile = () => {
     const session = useSession()
@@ -18,7 +20,7 @@ const UserProfile = () => {
     }
 
     if (data === null || data === undefined) {
-        return <>Error!!!</>;
+        return <ErrorWidget/>;
     }
 
     return (

@@ -16,11 +16,11 @@ const CoursesPage = () => {
     }
 
     return (
-        <>
+        <div className={'grid grid-cols-3 gap-5'}>
             {courses.status === 'success' && courses.data.map((item) => {
-                return <SmallCard course={item}/>
+                return <SmallCard key={item.id} course={item}/>
             })}
-        </>
+        </div>
     );
 };
 

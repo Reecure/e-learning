@@ -1,16 +1,15 @@
-import {ReactElement, useEffect} from "react";
+import {ReactElement, useState} from "react";
 import Layout from "@/pages/layout";
 import {Hero} from "@/shared/ui";
 
-
 const Home = () => {
+
+
     return (
         <>
-            <div className={''}>
-                <Hero/>
-            </div>
+            <Hero/>
         </>
-    )
+    );
 }
 
 Home.getLayout = function getLayout(page: ReactElement) {

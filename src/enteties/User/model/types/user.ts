@@ -7,6 +7,7 @@ export enum UserRoles {
 export interface User {
     id: string
     courses: any
+    avatar: string
     email: string
     firstname: string
     is_new_user: boolean
