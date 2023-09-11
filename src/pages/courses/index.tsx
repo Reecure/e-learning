@@ -4,6 +4,7 @@ import {Loader} from "@/shared/ui/Loader";
 import {SmallCard} from "@/shared/ui";
 import Layout from "@/pages/layout";
 import BlogPage from "@/pages/blog";
+import {Course} from "@/enteties/Course";
 
 interface Props {
 }
@@ -21,7 +22,7 @@ const CoursesPage = () => {
             <div className={'grid grid-cols-3 gap-5'}>
                 {
                     visibleCourses.data?.map(course => {
-                        return <SmallCard course={course}/>
+                        return <SmallCard key={course.id} course={course as Course}/>
                     })
                 }
             </div>

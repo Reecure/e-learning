@@ -41,12 +41,14 @@ const CreateLessonContent: FC<Props> = ({initialData, lessonId}) => {
 
     const methods = useForm<FormData>(
         {
+            // @ts-ignore
             defaultValues: {blocks: initialData || []}
         }
     );
     const {handleSubmit, reset} = methods;
 
     useEffect(() => {
+        // @ts-ignore
         reset({blocks: initialData || []});
     }, [initialData, reset]);
 

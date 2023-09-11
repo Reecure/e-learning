@@ -6,6 +6,7 @@ import {trpc} from "@/shared/utils/trpc";
 import UserLayout from "@/pages/user/layout";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {ErrorWidget} from "@/widgets/ErrorWidget";
+import {Course} from "@/enteties/Course";
 
 
 enum CourseType {
@@ -45,11 +46,11 @@ const CoursesPage = () => {
             <div>
                 {courseRendered === CourseType.MyCourses ? <div className={'grid grid-cols-4 gap-5'}>
                     {subscribedCourses.status === 'success' && myselfCourses.data?.map((item) => {
-                        return <SmallCard key={item.id} course={item}/>
+                        return <SmallCard key={item.id} course={item as Course}/>
                     })}
                 </div> : <div className={'grid grid-cols-4 gap-5'}>
                     {myselfCourses.status === 'success' && subscribedCourses.data?.map((item) => {
-                        return <SmallCard key={item.id} course={item}/>
+                        return <SmallCard key={item.id} course={item as Course}/>
                     })}
                 </div>}
             </div>

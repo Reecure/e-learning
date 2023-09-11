@@ -92,8 +92,10 @@ const LessonContent: FC<Props> = ({lesson_id}) => {
             </div>
             {
                 lessonContentEditable ?
+                    // @ts-ignore
                     <CreateLessonContent lessonId={lesson_id} initialData={lessonQuery.data?.lesson_content?.blocks}/> :
                     (
+                        // @ts-ignore
                         lessonQuery.data?.lesson_content?.blocks?.map(lesson => {
                             return contentRender(lesson.type, lesson)
                         }))

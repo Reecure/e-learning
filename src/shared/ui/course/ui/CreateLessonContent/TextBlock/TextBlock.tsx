@@ -2,12 +2,12 @@ import {FC} from 'react';
 import {useForm} from "react-hook-form";
 
 interface Props {
-    title:
+    title: string;
 }
 
 const TextBlock: FC<Props> = () => {
 
-    const {register, handleSubmit, } = useForm()
+    const {register, handleSubmit,} = useForm()
 
     return (
         <div>
