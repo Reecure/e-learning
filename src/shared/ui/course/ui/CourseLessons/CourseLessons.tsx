@@ -1,4 +1,4 @@
-import {FC} from 'react';
+import {FC, useState} from 'react';
 import {trpc} from "@/shared/utils/trpc";
 import DragAndDrop from "@/shared/ui/DragAndDrop/DragAndDrop";
 
@@ -16,7 +16,7 @@ const CourseLessons: FC<Props> = ({moduleId, lessonCanEdit = true}) => {
 
     return (
         <div className={'mt-5'}>
-            <DragAndDrop items={lessonsQuery.data!} canEdit={lessonCanEdit} isModule={false}/>
+            <DragAndDrop items={lessonsQuery.data as any} canEdit={lessonCanEdit} isModule={false}/>
         </div>
     );
 };

@@ -12,8 +12,13 @@ import {useSession} from "next-auth/react";
 import CourseForm from "@/shared/ui/course/ui/CourseForm/CourseForm";
 import {difficultLevelBadgeHelper} from "@/shared/helpers";
 import CreateModule from "@/shared/ui/course/ui/CreateModule/CreateModule";
+import CourseTabs from "@/shared/ui/course/ui/CourseTabs/CourseTabs";
+import CourseHeader from "@/shared/ui/course/ui/CourseHeader/CourseHeader";
+import CourseAboutTab from "@/shared/ui/course/ui/CourseTabs/CourseAboutTab";
+import CourseReviewsTab from "@/shared/ui/course/ui/CourseTabs/CourseReviewsTab";
+import CourseContentTab from "@/shared/ui/course/ui/CourseTabs/CourseContentTab";
 
-enum Tabs {
+export enum Tabs {
     ABOUT = 'About',
     COURSE_CONTENT = 'Course content',
     REVIEWS = 'Reviews'
@@ -22,33 +27,21 @@ enum Tabs {
 const CoursePage = () => {
     const [currentTab, setCurrentTab] = useState<Tabs>(Tabs.ABOUT)
     const [courseModulesEdit, setCourseModuleEdit] = useState(false)
-    const [isUserCourse, setIsUserCourse] = useState(false)
-    const [editModalOpen, setEditModalOpen] = useState(false)
     const [moduleCreated, setModuleCreated] = useState(false)
+    const [isUserCourse, setIsUserCourse] = useState(false)
 
     const router = useRouter()
     const session = useSession()
 
     const {data, isLoading, error} = trpc.getCourseById.useQuery({course_id: router.query.id as string})
-    const updateCourse = trpc.updateCourse.useMutation()
+
+    const modulesQuery = trpc.getModulesByCourseId.useQuery({course_id: router.query.id as string});
 
     useEffect(() => {
         if (session.data?.user.id === data?.author_id) {
             setIsUserCourse(true)
-            console.log('user role')
         }
-
     }, [session.data?.user.id, data?.author_id])
-
-    const openEditHandler = () => {
-        setEditModalOpen((prev) => !prev);
-    };
-
-    const updateCourseHandler = async (data: any) => {
-        await updateCourse.mutate({
-            ...data,
-        })
-    };
 
     const courseModuleEditHandler = () => {
         setCourseModuleEdit(prev => !prev)
@@ -58,77 +51,21 @@ const CoursePage = () => {
         setModuleCreated(prev => !prev)
     }
 
+    const setCurrentTabHandler = (current: Tabs) => {
+        setCurrentTab(current)
+    }
+
     if (isLoading) {
         return <Loader/>;
     }
 
     return (
         <div>
-            {/* Header */}
-            <div className={'flex justify-between mb-14'}>
-                <div className={'flex flex-col justify-between'}>
-                    <div>
-                        {difficultLevelBadgeHelper(data?.difficulty_level || '')}
-                        <div className={'max-w-[400px] mb-5'}>
-                            <h3 className={'text-3xl font-extrabold'}>{data?.title}</h3>
-                        </div>
-                        <div className={'max-w-[600px] mb-5'}>
-                            <p>
-                                {data?.cover_description}
-                            </p>
-                        </div>
+            <CourseHeader data={data} isUserCourse={isUserCourse}/>
 
-                    </div>
-                    <div className={'flex justify-center flex-col gap-3'}>
-                        <div className={'flex justify-between gap-10'}>
-                            <p>
-                                <span>{data?.students_id.length}</span> {data?.students_id.length! !== 1 ? 'students' : 'student'}
-                            </p>
-                            <p>{data?.duration}</p>
-                            <p>Created at 27.03.23</p>
-                            <p>Last update at 27.03.23</p>
-                        </div>
-                        <Button theme={ButtonThemes.FILLED}>Add to courses</Button>
-                        {
-                            isUserCourse && <>
-                                <Button theme={ButtonThemes.FILLED} onClick={openEditHandler}>Edit course</Button>
-                            </>
-                        }
-                        <Modal isOpen={editModalOpen} setIsOpen={openEditHandler}>
-                            <CourseForm courseData={data} onSubmit={updateCourseHandler} isCreating={false}/>
-                        </Modal>
-
-                    </div>
-
-                </div>
-                <div>
-                    <Image src={data?.cover_image!} alt={'image'}
-                           className={'max-w-[550px]  object-cover'}
-                           width={700}
-                           height={350}/>
-                </div>
-            </div>
-
-            {/*    Main Content*/}
             <div>
-                <div className={'flex justify-between'}>
-                    <div>
-                        <Button theme={ButtonThemes.TEXT} onClick={() => {
-                            setCurrentTab(Tabs.ABOUT)
-                        }}>
-                            {Tabs.ABOUT}
-                        </Button>
-                        <Button theme={ButtonThemes.TEXT} onClick={() => {
-                            setCurrentTab(Tabs.COURSE_CONTENT)
-                        }}>
-                            {Tabs.COURSE_CONTENT}
-                        </Button>
-                        <Button theme={ButtonThemes.TEXT} onClick={() => {
-                            setCurrentTab(Tabs.REVIEWS)
-                        }}>
-                            {Tabs.REVIEWS}
-                        </Button>
-                    </div>
+                <div className={'flex justify-between items-center'}>
+                    <CourseTabs currentTab={currentTab} setCurrentTab={setCurrentTabHandler}/>
                     {
                         currentTab === Tabs.COURSE_CONTENT &&
                         isUserCourse && (
@@ -142,38 +79,28 @@ const CoursePage = () => {
                     }
                 </div>
 
-                {/* About */}
-                <div>
+                <div className={'mt-5'}>
                     {
-                        currentTab === Tabs.ABOUT && <>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab adipisci autem cumque distinctio
-                            exercitationem expedita impedit inventore ipsam minima, odio qui quibusdam quo quos sapiente
-                            voluptatem? Accusamus eum provident temporibus?
-                        </>
+                        currentTab === Tabs.ABOUT && <CourseAboutTab/>
                     }
                 </div>
 
-                {/* Course content */}
                 <div>
                     {
                         currentTab === Tabs.COURSE_CONTENT && <>
-                            {isUserCourse && courseModulesEdit && <CreateModule courseId={data?.id!}/>}
-                            <CourseModules courseModulesEdit={courseModulesEdit} course_id={data?.id!}/>
+                            {isUserCourse && courseModulesEdit &&
+                                <CourseContentTab courseId={data?.id!} courseModulesEdit={courseModulesEdit}
+                                                  modules={modulesQuery.data!}/>}
                         </>
                     }
                 </div>
 
-                {/* Reviews */}
-
-                <div>
+                <div className={'mt-5'}>
                     {
-                        currentTab === Tabs.REVIEWS && <>
-                            Reviews
-                        </>
+                        currentTab === Tabs.REVIEWS && <CourseReviewsTab/>
                     }
                 </div>
             </div>
-
         </div>
     );
 };

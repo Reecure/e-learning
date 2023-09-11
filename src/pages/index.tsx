@@ -1,13 +1,18 @@
-import {ReactElement, useState} from "react";
+import {ReactElement} from "react";
 import Layout from "@/pages/layout";
 import {Hero} from "@/shared/ui";
+import {useAppSelector} from "@/app/ReduxProvider/config/hooks";
+import {counterSelector} from "@/pages/user/profile/model";
 
 const Home = () => {
 
 
+    const query = useAppSelector(counterSelector)
+
     return (
         <>
             <Hero/>
+            {query}
         </>
     );
 }

@@ -4,6 +4,7 @@ import {trpc} from "@/shared/utils/trpc";
 import {SessionProvider, useSession} from "next-auth/react";
 import {FC, ReactElement, ReactNode, useEffect, useState} from "react";
 import {NextPage} from "next";
+import {ReduxProvider} from "@/app/ReduxProvider";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
     getLayout?: (page: ReactElement) => ReactNode
@@ -17,10 +18,12 @@ const App: FC<AppPropsWithLayout> = ({Component, pageProps}) => {
     const getLayout = Component.getLayout ?? ((page) => page)
 
     return (
-        <SessionProvider session={pageProps.session}>
-            {getLayout(<Component {...pageProps} />)}
-        </SessionProvider>)
-
+        <ReduxProvider>
+            <SessionProvider session={pageProps.session}>
+                {getLayout(<Component {...pageProps} />)}
+            </SessionProvider>
+        </ReduxProvider>
+    )
 };
 
 export default trpc.withTRPC(App);

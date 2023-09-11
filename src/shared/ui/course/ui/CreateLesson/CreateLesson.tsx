@@ -8,6 +8,7 @@ import {Module} from "@/enteties/Module";
 import {Label} from "@/shared/ui/Label";
 import Notification from "@/shared/ui/Notification/Notification";
 import {LessonType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
+import {useSession} from "next-auth/react";
 
 interface Props {
     moduleId: string
@@ -20,6 +21,7 @@ const CreateLesson: FC<Props> = ({moduleId}) => {
     const [buttonDisabled, setButtonDisabled] = useState(false)
 
     const createLesson = trpc.createLesson.useMutation()
+    const session = useSession()
 
     const {register, handleSubmit} = useForm<Lesson>({
         defaultValues: {
@@ -68,6 +70,7 @@ const CreateLesson: FC<Props> = ({moduleId}) => {
                     try {
                         const res = await createLesson.mutate({
                             ...data,
+                            author_id: session.data?.user.id!
 
                         });
                         setSubmitError({isError: false, error: ''})
@@ -83,8 +86,9 @@ const CreateLesson: FC<Props> = ({moduleId}) => {
                     <Label htmlFor={'title'} labelText={'Title'}>
                         <input type="text" {...register('title')} className={'inputField'}/>
                     </Label>
-                    <Button disabled={buttonDisabled} theme={ButtonThemes.FILLED} className={'mt-5 w-full'}>Create
-                        module</Button>
+                    <Button type={'submit'} disabled={buttonDisabled} theme={ButtonThemes.FILLED}
+                            className={'mt-5 w-full'}>Create
+                        lesson</Button>
                 </form>
             </Modal>
 

@@ -54,10 +54,12 @@ const Navbar: FC<Props> = ({className, theme, toggleTheme}) => {
                             status === 'authenticated' &&
                             <>
                                 <div>
-                                    <Link href={Routes.USER_PROFILE}>Profile</Link>
+                                    <Link href={Routes.USER_PROFILE}
+                                          onClick={() => setMenuOpen(prev => !prev)}>Profile</Link>
                                 </div>
                                 <div>
-                                    <Link href={Routes.USER_COURSES}>My courses</Link>
+                                    <Link href={Routes.USER_COURSES} onClick={() => setMenuOpen(prev => !prev)}>My
+                                        courses</Link>
                                 </div>
                             </>
                         }

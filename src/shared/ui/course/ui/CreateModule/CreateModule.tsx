@@ -6,9 +6,11 @@ import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {trpc} from "@/shared/utils/trpc";
 import {Label} from "@/shared/ui/Label";
 import Notification from "@/shared/ui/Notification/Notification";
+import {useSession} from "next-auth/react";
 
 interface Props {
     courseId: string
+
 }
 
 let confirmDelay = 3000;
@@ -18,6 +20,7 @@ const CreateModule: FC<Props> = ({courseId}) => {
     const [submitError, setSubmitError] = useState({isError: false, error: ''})
     const [notificationOpen, setNotificationOpen] = useState(false)
     const [buttonDisabled, setButtonDisabled] = useState(false)
+    const session = useSession()
 
     const createModules = trpc.createModule.useMutation()
 
@@ -63,7 +66,8 @@ const CreateModule: FC<Props> = ({courseId}) => {
                     try {
                         const res = await createModules.mutate({
                             ...data,
-                            course_id: courseId
+                            course_id: courseId,
+                            author_id: session.data?.user.id!
                         });
                         setSubmitError({isError: false, error: ''})
                         setNotificationOpenHandler()
@@ -78,7 +82,8 @@ const CreateModule: FC<Props> = ({courseId}) => {
                     <Label htmlFor={'title'} labelText={'Title'}>
                         <input type="text" {...register('title')} className={'inputField'}/>
                     </Label>
-                    <Button disabled={buttonDisabled} theme={ButtonThemes.FILLED} className={'mt-5 w-full'}>Create
+                    <Button type={'submit'} disabled={buttonDisabled} theme={ButtonThemes.FILLED}
+                            className={'mt-5 w-full'}>Create
                         module</Button>
                 </form>
             </Modal>

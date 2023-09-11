@@ -1,4 +1,4 @@
-import {FC, useState} from 'react';
+import {FC, useEffect, useState} from 'react';
 import {User, UserRoles} from "@/enteties/User";
 import {Button} from "@/shared/ui";
 import {trpc} from "@/shared/utils/trpc";
@@ -12,6 +12,7 @@ import {OurFileRouter} from "@/server/uploadThings/uploadthing";
 
 interface Props {
     user: User,
+
 }
 
 const EditUserProfileModal: FC<Props> = ({user}) => {
@@ -32,7 +33,7 @@ const EditUserProfileModal: FC<Props> = ({user}) => {
 
     const onSubmitFormHandler: SubmitHandler<User> = async (data) => {
         await userMutation.mutate(data)
-        setUserDefault(data)
+        await setUserDefault(data)
     }
     const cancelFormHandler = () => {
         reset(userDefault)

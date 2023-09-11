@@ -6,6 +6,8 @@ import Link from "next/link";
 import {Routes} from "@/shared/config/routes";
 import {Lesson} from "@/enteties/Lesson";
 import {LessonOrModuleArray} from "@/shared/ui/DragAndDrop/DragAndDrop";
+import {useAppDispatch} from "@/app/ReduxProvider/config/hooks";
+import {setCurrentLessonId} from "@/pages/user/my-courses/course/course-module-lessons/model/slices/currentLessonSlice";
 
 type LessonOrModule = Lesson | Module
 
@@ -13,10 +15,11 @@ interface Props {
     items: LessonOrModule,
     disabled: boolean
     isModule: boolean
+    setCurrentLesson?: (id: string) => void
 }
 
 
-export const SortableModule: FC<Props> = ({items, disabled, isModule}) => {
+export const SortableModule: FC<Props> = ({items, setCurrentLesson, disabled, isModule}) => {
     const {
         attributes,
         listeners,
@@ -30,6 +33,8 @@ export const SortableModule: FC<Props> = ({items, disabled, isModule}) => {
         transition,
     };
 
+    const dispatch = useAppDispatch()
+
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}
              className={`px-2 py-3 w-full border-2 border-dark-primary-main mb-2  cursor-default ${!disabled && 'cursor-grab'} `}>
@@ -38,7 +43,8 @@ export const SortableModule: FC<Props> = ({items, disabled, isModule}) => {
                                  className={'cursor-pointer '}
                 >
                     {items.title}
-                </Link> : <p>{items.title}</p>
+                </Link> : <p className={'cursor-pointer'}
+                             onClick={() => dispatch(setCurrentLessonId(items.id))}>{items.title}</p>
             }
         </div>
     );

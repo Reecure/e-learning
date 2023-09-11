@@ -1,26 +1,59 @@
-import {ReactElement} from 'react';
+import {ReactElement, useState} from 'react';
 import Layout from "@/pages/layout";
-import {SmallCard} from "@/shared/ui";
+import {Button, SmallCard} from "@/shared/ui";
 import {useSession} from "next-auth/react";
 import {trpc} from "@/shared/utils/trpc";
 import UserLayout from "@/pages/user/layout";
+import {ButtonThemes} from "@/shared/ui/Button/Button";
+import {ErrorWidget} from "@/widgets/ErrorWidget";
 
+
+enum CourseType {
+    MyCourses = 'My Courses',
+    SubscribedCourses = 'Subscribed'
+}
 
 const CoursesPage = () => {
     const session = useSession()
 
-    const courses = trpc.getUserCourses.useQuery({author_id: session.data?.user.id!})
+    const [courseRendered, setCoursesRendered] = useState(CourseType.SubscribedCourses)
 
-    if (courses.error) {
-        return <p>Error</p>
+    const subscribedCourses = trpc.getUserSubscribedCourses.useQuery({user_id: session.data?.user.id!})
+    const myselfCourses = trpc.getUserCustomCourses.useQuery({user_id: session.data?.user.id!})
+
+    if (subscribedCourses.error || myselfCourses.error) {
+        return <ErrorWidget/>
     }
 
     return (
-        <div className={'grid grid-cols-3 gap-5'}>
-            {courses.status === 'success' && courses.data.map((item) => {
-                return <SmallCard key={item.id} course={item}/>
-            })}
-        </div>
+        <>
+            <div className={'mb-10 flex gap-3'}>
+                <div
+                    className={`${courseRendered === CourseType.SubscribedCourses && 'pb-3 border-b-2 border-dark-primary-main'}`}>
+                    <Button theme={ButtonThemes.TEXT}
+                            onClick={() => (setCoursesRendered(CourseType.SubscribedCourses))}
+                    >{CourseType.SubscribedCourses}</Button>
+                </div>
+                <div
+                    className={`${courseRendered === CourseType.MyCourses && 'pb-3 border-b-2 border-dark-primary-main'}`}>
+                    <Button theme={ButtonThemes.TEXT}
+                            onClick={() => (setCoursesRendered(CourseType.MyCourses))}
+                    >{CourseType.MyCourses}</Button>
+                </div>
+
+            </div>
+            <div>
+                {courseRendered === CourseType.MyCourses ? <div className={'grid grid-cols-4 gap-5'}>
+                    {subscribedCourses.status === 'success' && myselfCourses.data?.map((item) => {
+                        return <SmallCard key={item.id} course={item}/>
+                    })}
+                </div> : <div className={'grid grid-cols-4 gap-5'}>
+                    {myselfCourses.status === 'success' && subscribedCourses.data?.map((item) => {
+                        return <SmallCard key={item.id} course={item}/>
+                    })}
+                </div>}
+            </div>
+        </>
     );
 };
 

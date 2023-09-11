@@ -8,17 +8,33 @@ import CreateLesson from "@/shared/ui/course/ui/CreateLesson/CreateLesson";
 import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import CourseLessons from "@/shared/ui/course/ui/CourseLessons/CourseLessons";
+import {useSession} from "next-auth/react";
+import {useAppDispatch, useAppSelector} from "@/app/ReduxProvider/config/hooks";
+import {currentLessonSelector} from "@/pages/user/my-courses/course/course-module-lessons/model";
+import {setCurrentLessonId} from "@/pages/user/my-courses/course/course-module-lessons/model/slices/currentLessonSlice";
 
 const CourseModuleLessonsPage = () => {
-    const [currentLesson, setCurrentLesson] = useState('')
     const [canLessonEdit, setCanLessonEdit] = useState(false)
-    const router = useRouter()
-    const lessons = trpc.getLessonsByModuleId.useQuery({module_id: router.query.id! as string})
+    const [isUserCourse, setIsUserCourse] = useState(false)
 
+    const router = useRouter()
+    const session = useSession()
+    const dispatch = useAppDispatch()
+
+    const lessons = trpc.getLessonsByModuleId.useQuery({module_id: router.query.id! as string})
+    const moduleQuery = trpc.getModuleById.useQuery({module_id: router.query.id! as string})
+
+    const currentLesson = useAppSelector(currentLessonSelector)
+
+    useEffect(() => {
+        if (session.data?.user.id === moduleQuery.data?.author_id) {
+            setIsUserCourse(true)
+        }
+    }, [moduleQuery])
 
     useEffect(() => {
         if (!lessons.isLoading && !lessons.error)
-            setCurrentLesson(lessons.data[0]?.id)
+            dispatch(setCurrentLessonId(lessons.data[0]?.id))
     }, [lessons.isLoading])
 
     const CanLessonEditHandler = () => {
@@ -26,7 +42,7 @@ const CourseModuleLessonsPage = () => {
     }
 
 
-    if (lessons.isLoading) {
+    if (lessons.isLoading && moduleQuery.isLoading) {
         return <>Loading...</>
     }
 
@@ -36,23 +52,13 @@ const CourseModuleLessonsPage = () => {
                 className={'bg-light-primary-main dark:bg-dark-neutral-100 p-5 max-w-[250px] w-full h-[calc(100vh_-_62px)]'}>
                 <div className={'flex justify-between items-center mb-5'}>
                     <p className={'text-xl mb-5'}>Lessons</p>
-                    <Button theme={ButtonThemes.FILLED} onClick={CanLessonEditHandler}
-                            className={'p-1!'}>Edit</Button>
+                    {isUserCourse &&
+                        <Button theme={ButtonThemes.FILLED} onClick={CanLessonEditHandler}
+                                className={'p-1!'}>Edit</Button>}
                 </div>
-                {canLessonEdit && <CreateLesson moduleId={router.query.id as string}/>}
+                {isUserCourse && (canLessonEdit && <CreateLesson moduleId={router.query.id as string}/>)}
 
                 <CourseLessons moduleId={router.query.id as string} lessonCanEdit={canLessonEdit}/>
-
-                {/*<div className={'flex flex-col gap-3'}>*/}
-                {/*    {*/}
-                {/*        lessons.data?.map((lesson, i) => {*/}
-                {/*            return <p key={lesson.id}*/}
-                {/*                      onClick={() => setCurrentLesson(lesson.id)}*/}
-                {/*                      className={'w-full py-1 px-3 border-[1px] border-light-primary-main rounded-md hover:opacity-70 cursor-pointer'}>{lesson.title}</p>*/}
-                {/*        })*/}
-                {/*    }*/}
-
-                {/*</div>*/}
             </div>
             <div className={'ml-5 w-full overflow-y-auto'}>
                 <LessonContent lesson_id={currentLesson}/>

@@ -108,14 +108,77 @@ const appRouter = t.router({
             }
         })
     }),
-    getUserCourses: t.procedure.input(z.object({
-        author_id: z.string()
+    getUserSubscribedCourses: t.procedure.input(z.object({
+        user_id: z.string()
+    })).query(async ({input}) => {
+        const user = await prisma.users.findUnique({
+            where: {
+                id: input.user_id
+            }
+        });
+
+        const userCourses = user?.courses;
+        return prisma.courses.findMany({
+            where: {
+                id: {
+                    in: userCourses
+                },
+            }
+        })
+    }),
+    getUserCustomCourses: t.procedure.input(z.object({
+        user_id: z.string()
     })).query(async ({input}) => {
         return prisma.courses.findMany({
             where: {
-                author_id: input.author_id
+                author_id: input.user_id
             }
         })
+    }),
+    updateUserCourses: t.procedure.input(z.object({
+        id: z.string(),
+        course_id: z.string()
+    })).mutation(async ({input}) => {
+        return prisma.users.update({
+            where: {
+                id: input.id
+            },
+            data: {
+                courses: {
+                    push: input.course_id
+                }
+            }
+        })
+    }),
+    deleteUserCourses: t.procedure.input(z.object({
+        id: z.string(),
+        course_id: z.string()
+    })).mutation(async ({input}) => {
+        const userId = input.id;
+        const courseId = input.course_id;
+
+        const user = await prisma.users.findUnique({
+            where: {
+                id: userId
+            }
+        });
+
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        const updatedCourses = user.courses.filter(course => course !== courseId);
+
+        await prisma.users.update({
+            where: {
+                id: userId
+            },
+            data: {
+                courses: updatedCourses
+            }
+        });
+
+        return "Course removed successfully";
     }),
     getCourseById: t.procedure.input(z.object({
         course_id: z.string()
@@ -144,6 +207,15 @@ const appRouter = t.router({
                 module_id: input.module_id
             }
         });
+    }),
+    getModuleById: t.procedure.input(z.object({
+        module_id: z.string()
+    })).query(async ({input}) => {
+        return prisma.modules.findUnique({
+            where: {
+                id: input.module_id
+            }
+        })
     }),
     getLessonById: t.procedure.input(z.object({
         lesson_id: z.string()
@@ -189,11 +261,13 @@ const appRouter = t.router({
     createModule: t.procedure.input(z.object({
         title: z.string(),
         course_id: z.string(),
+        author_id: z.string(),
         order: z.number()
     })).mutation(async ({input}) => {
             const createdModule = await prisma.modules.create({
                 data: {
                     title: input.title,
+                    author_id: input.author_id,
                     course_id: input.course_id,
                     order: input.order
                 }
@@ -212,6 +286,7 @@ const appRouter = t.router({
         title: z.string(),
         order: z.number(),
         module_id: z.string(),
+        author_id: z.string(),
         lesson_type: z.string(),
         lesson_content: z.any(),
     })).mutation(async ({input}) => {
@@ -219,8 +294,23 @@ const appRouter = t.router({
                 data: {
                     title: input.title,
                     order: input.order,
+                    author_id: input.author_id,
                     module_id: input.module_id,
                     lesson_type: input.lesson_type,
+                    lesson_content: input.lesson_content,
+                }
+            })
+        }
+    ),
+    updateLessonContent: t.procedure.input(z.object({
+        id: z.string(),
+        lesson_content: z.any()
+    })).mutation(async ({input}) => {
+            return prisma.lessons.update({
+                where: {
+                    id: input.id
+                },
+                data: {
                     lesson_content: input.lesson_content,
                 }
             })

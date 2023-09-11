@@ -70,7 +70,7 @@ function SignInPage() {
                     {errors.password && <Text error text={'Password is required'}/>}
                 </ Label>
 
-                <Button theme={ButtonThemes.FILLED}>SUBMIT</Button>
+                <Button type={'submit'} theme={ButtonThemes.FILLED}>SUBMIT</Button>
             </form>
         </AuthForm>
 

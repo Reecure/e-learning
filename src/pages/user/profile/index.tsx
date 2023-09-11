@@ -8,12 +8,24 @@ import {trpc} from "@/shared/utils/trpc";
 import {Loader} from "@/shared/ui/Loader";
 import {UserProfileComponent} from "@/shared/ui/profile";
 import {ErrorWidget} from "@/widgets/ErrorWidget";
+import {useAppDispatch, useAppSelector} from "@/app/ReduxProvider/config/hooks";
+import {counterSelector, decreaseCount, increaseCount} from "@/pages/user/profile/model";
+import {Button} from "@/shared/ui";
+import {ButtonThemes} from "@/shared/ui/Button/Button";
 
 
 const UserProfile = () => {
     const session = useSession()
 
-    const {data, isLoading} = trpc.getUser.useQuery({email: session.data?.user?.email!})
+    const dispatch = useAppDispatch()
+
+    const counter = useAppSelector(counterSelector)
+    const {data, isLoading, refetch} = trpc.getUser.useQuery({email: session.data?.user?.email!})
+
+    useEffect(() => {
+        refetch()
+        console.log('refetch profile')
+    }, [counter])
 
     if (isLoading) {
         return <Loader/>
@@ -25,7 +37,10 @@ const UserProfile = () => {
 
     return (
         <div>
-            <UserProfileComponent user={data}/>
+            <UserProfileComponent user={data} refetch={refetch}/>
+            {counter}
+            <Button theme={ButtonThemes.FILLED} onClick={() => dispatch(increaseCount())}>Inc</Button>
+            <Button theme={ButtonThemes.FILLED} onClick={() => dispatch(decreaseCount())}>Dec</Button>
         </div>
     );
 };
