@@ -54,11 +54,12 @@ const Navbar: FC<Props> = ({className, theme, toggleTheme}) => {
                             status === 'authenticated' &&
                             <>
                                 <div>
-                                    <Link href={Routes.USER_PROFILE}
+                                    <Link href={Routes.USER_PROFILE} className={'hover:opacity-70'}
                                           onClick={() => setMenuOpen(prev => !prev)}>Profile</Link>
                                 </div>
                                 <div>
-                                    <Link href={Routes.USER_COURSES} onClick={() => setMenuOpen(prev => !prev)}>My
+                                    <Link href={Routes.USER_COURSES} className={'hover:opacity-70'}
+                                          onClick={() => setMenuOpen(prev => !prev)}>My
                                         courses</Link>
                                 </div>
                             </>

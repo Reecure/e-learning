@@ -61,12 +61,12 @@ model grades_and_progress {
 }
 
 model lessons {
-  id             String                @id @default(auto()) @map("_id") @db.ObjectId
-  author_id      String                @db.ObjectId
-  lesson_content LessonsLessonContent?
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  author_id      String @db.ObjectId
+  lesson_content Json
   lesson_type    String
-  module_id      String                @db.ObjectId
-  order          BigInt
+  module_id      String @db.ObjectId
+  order          Int
   title          String
 }
 

@@ -57,7 +57,7 @@ const DragAndDrop: FC<Props> = ({canEdit, items, isModule}) => {
                     strategy={verticalListSortingStrategy}
                     disabled={!canEdit}
                 >
-                    {propsItems.map((propsItem) => (
+                    {propsItems?.map((propsItem) => (
                         <SortableModule disabled={!canEdit} key={propsItem.id} items={propsItem} isModule={isModule}/>
                     ))}
                 </SortableContext>

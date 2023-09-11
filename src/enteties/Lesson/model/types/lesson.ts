@@ -4,6 +4,7 @@ export interface Lesson {
     id: string
     title: string
     order: number
+    author_id: string
     module_id: string
     lesson_type: LessonType
     lesson_content: []

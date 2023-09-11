@@ -1,19 +1,18 @@
-import {FC} from 'react';
+import {FC, useEffect} from 'react';
 import DragAndDrop from "@/shared/ui/DragAndDrop/DragAndDrop";
+import {Module} from "@/enteties/Module";
 
 interface Props {
-    modules: any,
+    modules: Module[],
     courseModulesEdit: boolean
 }
 
 const CourseModules: FC<Props> = ({modules, courseModulesEdit}) => {
 
-    if (modules.isLoading) {
-        return <>Loading...</>;
-    }
+
     return (
         <div className={'mt-5'}>
-            <DragAndDrop items={modules.data} canEdit={courseModulesEdit} isModule/>
+            <DragAndDrop items={modules} canEdit={courseModulesEdit} isModule/>
         </div>
     );
 };

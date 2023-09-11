@@ -341,7 +341,33 @@ const appRouter = t.router({
                 }
             })
         }
-    )
+    ),
+    deleteModule: t.procedure.input(z.object({
+        id: z.string(),
+    })).mutation(async ({input}) => {
+            await prisma.modules.delete({
+                where: {
+                    id: input.id
+                }
+            })
+
+            await prisma.lessons.deleteMany({
+                where: {
+                    module_id: input.id
+                }
+            })
+        }
+    ),
+    deleteLesson: t.procedure.input(z.object({
+        id: z.string(),
+    })).mutation(async ({input}) => {
+            await prisma.lessons.delete({
+                where: {
+                    id: input.id
+                }
+            })
+        }
+    ),
 })
 
 

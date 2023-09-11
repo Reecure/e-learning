@@ -34,8 +34,11 @@ const CoursePage = () => {
     const session = useSession()
 
     const {data, isLoading, error} = trpc.getCourseById.useQuery({course_id: router.query.id as string})
-
     const modulesQuery = trpc.getModulesByCourseId.useQuery({course_id: router.query.id as string});
+
+    useEffect(() => {
+        console.log(modulesQuery.data)
+    }, [modulesQuery])
 
     useEffect(() => {
         if (session.data?.user.id === data?.author_id) {
@@ -88,9 +91,8 @@ const CoursePage = () => {
                 <div>
                     {
                         currentTab === Tabs.COURSE_CONTENT && <>
-                            {isUserCourse && courseModulesEdit &&
-                                <CourseContentTab courseId={data?.id!} courseModulesEdit={courseModulesEdit}
-                                                  modules={modulesQuery.data!}/>}
+                            {isUserCourse && courseModulesEdit && <CreateModule courseId={router.query.id as string}/>}
+                            <CourseContentTab courseModulesEdit={courseModulesEdit} modules={modulesQuery.data || []}/>
                         </>
                     }
                 </div>

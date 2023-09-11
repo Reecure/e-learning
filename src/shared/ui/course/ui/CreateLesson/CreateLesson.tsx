@@ -4,7 +4,6 @@ import {Lesson} from "@/enteties/Lesson";
 import {trpc} from "@/shared/utils/trpc";
 import {Button, Modal} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
-import {Module} from "@/enteties/Module";
 import {Label} from "@/shared/ui/Label";
 import Notification from "@/shared/ui/Notification/Notification";
 import {LessonType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
@@ -71,7 +70,6 @@ const CreateLesson: FC<Props> = ({moduleId}) => {
                         const res = await createLesson.mutate({
                             ...data,
                             author_id: session.data?.user.id!
-
                         });
                         setSubmitError({isError: false, error: ''})
                         setNotificationOpenHandler()

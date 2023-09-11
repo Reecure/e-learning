@@ -1,4 +1,4 @@
-import {FC, useState} from 'react';
+import {FC, useEffect, useState} from 'react';
 import {trpc} from "@/shared/utils/trpc";
 import TextBlock from "@/shared/ui/course/ui/CourseBlocks/TextBlock";
 import CodeBlock from "@/shared/ui/course/ui/CourseBlocks/CodeBlock";
@@ -10,6 +10,7 @@ import {ButtonThemes} from "@/shared/ui/Button/Button";
 import CreateLesson from "@/shared/ui/course/ui/CreateLesson/CreateLesson";
 import {Label} from "@/shared/ui/Label";
 import {useForm} from "react-hook-form";
+import {useSession} from "next-auth/react";
 
 export enum LessonContentType {
     TEXT = 'TEXT',
@@ -31,6 +32,8 @@ const LessonContent: FC<Props> = ({lesson_id}) => {
     const [lessonContentEditable, setLessonContentEditable] = useState(false)
     const [editableLesson, setLessonEditable] = useState(false)
     const lessonQuery = trpc.getLessonById.useQuery({lesson_id: lesson_id})
+
+    const session = useSession()
 
     const {register, handleSubmit} = useForm(
         {
@@ -76,12 +79,16 @@ const LessonContent: FC<Props> = ({lesson_id}) => {
                     </h4>
                     <Badge color={BadgeColors.GREEN} text={lessonQuery.data?.lesson_type!}/>
                 </div>
-                <div className={'flex gap-2 items-center'}>
-                    <Button theme={ButtonThemes.FILLED} onClick={editableLessonHandle}>Edit
-                        Lesson</Button>
-                    <Button theme={ButtonThemes.FILLED} onClick={() => setLessonContentEditable(prev => !prev)}>Edit
-                        Content</Button>
-                </div>
+                {
+                    lessonQuery.data?.author_id === session.data?.user.id &&
+                    <div className={'flex gap-2 items-center'}>
+                        <Button theme={ButtonThemes.FILLED} onClick={editableLessonHandle}>Edit
+                            Lesson</Button>
+                        <Button theme={ButtonThemes.FILLED} onClick={() => setLessonContentEditable(prev => !prev)}>Edit
+                            Content</Button>
+                    </div>
+                }
+
             </div>
             {
                 lessonContentEditable ?
