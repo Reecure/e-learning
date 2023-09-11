@@ -6,7 +6,7 @@ import Link from "next/link";
 import {Routes} from "@/shared/config/routes";
 import {Lesson} from "@/enteties/Lesson";
 import {useAppDispatch} from "@/app/ReduxProvider/config/hooks";
-import {setCurrentLessonId} from "@/pages/user/my-courses/course/course-module-lessons/model/slices/currentLessonSlice";
+import {setCurrentLessonId} from "@/shared/ui/course/model/slices/currentLessonSlice";
 import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {trpc} from "@/shared/utils/trpc";

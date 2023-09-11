@@ -9,7 +9,7 @@ import {Loader} from "@/shared/ui/Loader";
 import {UserProfileComponent} from "@/shared/ui/profile";
 import {ErrorWidget} from "@/widgets/ErrorWidget";
 import {useAppDispatch, useAppSelector} from "@/app/ReduxProvider/config/hooks";
-import {counterSelector, decreaseCount, increaseCount} from "@/pages/user/profile/model";
+import {counterSelector, decreaseCount, increaseCount} from "../../../shared/ui/profile/model";
 import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 

@@ -1,6 +1,6 @@
 import {configureStore} from '@reduxjs/toolkit'
-import {CounterReducer} from '@/pages/user/profile/model'
-import {CurrentLessonReducer} from '@/pages/user/my-courses/course/course-module-lessons/model'
+import {CounterReducer} from '../../../shared/ui/profile/model'
+import {CurrentLessonReducer} from '../../../shared/ui/course/model'
 
 export const store = configureStore({
     reducer: {

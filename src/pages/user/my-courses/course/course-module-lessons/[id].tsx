@@ -10,8 +10,8 @@ import {ButtonThemes} from "@/shared/ui/Button/Button";
 import CourseLessons from "@/shared/ui/course/ui/CourseLessons/CourseLessons";
 import {useSession} from "next-auth/react";
 import {useAppDispatch, useAppSelector} from "@/app/ReduxProvider/config/hooks";
-import {currentLessonSelector} from "@/pages/user/my-courses/course/course-module-lessons/model";
-import {setCurrentLessonId} from "@/pages/user/my-courses/course/course-module-lessons/model/slices/currentLessonSlice";
+import {currentLessonSelector} from "../../../../../shared/ui/course/model";
+import {setCurrentLessonId} from "@/shared/ui/course/model/slices/currentLessonSlice";
 
 const CourseModuleLessonsPage = () => {
     const [canLessonEdit, setCanLessonEdit] = useState(false)
