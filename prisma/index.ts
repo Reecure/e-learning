@@ -1,7 +1,3 @@
-import {UserRoles} from "../src/enteties/User";
-import {now} from "next-auth/client/_utils";
-
-
 import {PrismaClient} from '@prisma/client'
 
 const prisma = new PrismaClient()
@@ -9,12 +5,17 @@ const prisma = new PrismaClient()
 async function main() {
 
 
-    let res = await prisma.users.findUnique({
+    await prisma.modules.delete({
         where: {
-            email: 'asddsahgsjhjdsfj'
+            id: '64f9a151ca76ef7a5860ad97'
         }
     })
-    console.log(res)
+
+    await prisma.lessons.deleteMany({
+        where: {
+            module_id: '64f9a151ca76ef7a5860ad97'
+        }
+    })
 }
 
 main()

@@ -1,8 +1,7 @@
 export interface Module {
-    module_id: string
+    id: string
     title: string
-    order: string
+    author_id: string
+    order: number
     course_id: string
 }
-
-

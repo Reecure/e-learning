@@ -8,6 +8,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+type LessonsLessonContent {
+  blocks LessonsLessonContentBlocks[]
+}
+
+type LessonsLessonContentBlocks {
+  id         String
+  paragraphs LessonsLessonContentBlocksParagraphs[]
+  src        String?
+  title      String
+  type       String
+}
+
+type LessonsLessonContentBlocksParagraphs {
+  id   String
+  text String
+}
+
 model course_categories {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
@@ -15,15 +32,20 @@ model course_categories {
 }
 
 model courses {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  author_id        String   @db.ObjectId
-  category_id      String
-  cover_image      String
-  difficulty_level String
-  duration         String
-  rating           String
-  students_id      String[]
-  title            String
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  author_id         String   @db.ObjectId
+  category_id       String
+  cover_description String
+  cover_image       String
+  creation_date     DateTime @db.Date
+  description       String
+  difficulty_level  String
+  duration          String
+  isVisible         Boolean
+  /// Multiple data types found: Int: 33.3%, BigInt: 66.7% out of 3 sampled entries
+  rating            Json
+  students_id       String[]
+  title             String
 }
 
 model events_and_activities {
@@ -40,7 +62,8 @@ model grades_and_progress {
 
 model lessons {
   id             String @id @default(auto()) @map("_id") @db.ObjectId
-  lesson_content String
+  author_id      String @db.ObjectId
+  lesson_content Json
   lesson_type    String
   module_id      String @db.ObjectId
   order          Int
@@ -48,10 +71,11 @@ model lessons {
 }
 
 model modules {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  courseId String @db.ObjectId
-  order    Int
-  title    String
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  course_id String @map(" course_id") @db.ObjectId
+  author_id String @db.ObjectId
+  order     Int
+  title     String
 }
 
 model reviews {
@@ -60,8 +84,8 @@ model reviews {
 
 model users {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  /// Could not determine type: the field only had null or empty values in the sample set.
-  courses           Json?
+  avatar            String
+  courses           String[]
   email             String   @unique
   firstname         String
   is_new_user       Boolean

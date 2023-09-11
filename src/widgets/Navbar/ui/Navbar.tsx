@@ -27,13 +27,13 @@ const Navbar: FC<Props> = ({className, theme, toggleTheme}) => {
             <div className="flex items-center">
                 <div className={'flex items-center text-lg'}>
                     <ul className="flex space-x-4">
-                        <li><Link href={Routes.MAIN}
+                        <li><Link href={`${Routes.MAIN}`}
                                   className="hover:text-dark-accent duration-150 uppercase font-bold">Main</Link>
                         </li>
-                        <li><Link href={Routes.COURSES}
-                                  className="hover:text-dark-accent duration-150 uppercase font-bold">Courses</Link>
+                        <li><Link href={`${Routes.ABOUT_US}`}
+                                  className="hover:text-dark-accent duration-150 uppercase font-bold">About Us</Link>
                         </li>
-                        <li><Link href={Routes.BLOG}
+                        <li><Link href={`${Routes.BLOG}`}
                                   className="hover:text-dark-accent duration-150 uppercase font-bold">Blog</Link>
                         </li>
                     </ul>
@@ -42,7 +42,7 @@ const Navbar: FC<Props> = ({className, theme, toggleTheme}) => {
 
             <div className={'flex items-center'}>
                 {
-                    status === 'unauthenticated' ? <Link href={'/auth/signin'}>Log in</Link> : null
+                    status === 'unauthenticated' ? <Link href={'/auth/signin'} className={'mr-2'}>Log in</Link> : null
                 }
                 <Menu menuOpen={menuOpen} setMenuOpen={setMenuOpen}
                       buttonChildren={<Button theme={ButtonThemes.CLEAR}
@@ -54,10 +54,13 @@ const Navbar: FC<Props> = ({className, theme, toggleTheme}) => {
                             status === 'authenticated' &&
                             <>
                                 <div>
-                                    <Link href={'/user/profile'}>Profile</Link>
+                                    <Link href={Routes.USER_PROFILE} className={'hover:opacity-70'}
+                                          onClick={() => setMenuOpen(prev => !prev)}>Profile</Link>
                                 </div>
                                 <div>
-                                    <Link href={'/user/my-courses'}>My courses</Link>
+                                    <Link href={Routes.USER_COURSES} className={'hover:opacity-70'}
+                                          onClick={() => setMenuOpen(prev => !prev)}>My
+                                        courses</Link>
                                 </div>
                             </>
                         }

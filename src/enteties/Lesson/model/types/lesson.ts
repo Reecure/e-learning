@@ -1,11 +1,13 @@
+import {LessonType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
+
 export interface Lesson {
-    lesson_id: string
+    id: string
     title: string
-    order: string
+    order: number
+    author_id: string
     module_id: string
-    lesson_type: string
-    lesson_content: string
-    additional_resources: string
+    lesson_type: LessonType
+    lesson_content: []
 }
 
 

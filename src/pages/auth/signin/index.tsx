@@ -1,15 +1,14 @@
-import {FormEventHandler, useState} from "react";
-import {signIn} from "next-auth/react";
+import {ReactElement, useState} from "react";
+import {signIn, useSession} from "next-auth/react";
 import {Routes} from "@/shared/config/routes";
 import {useRouter} from "next/router";
 import AuthForm from "@/pages/auth/ui/AuthForm";
 import {useForm} from "react-hook-form";
 import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
-import {Input} from "@/shared/ui/Input";
 import {Label} from "@/shared/ui/Label";
 import {Text} from "@/shared/ui/Text";
-
+import Layout from "@/pages/layout";
 
 interface LoginForm {
     email: string
@@ -21,10 +20,20 @@ interface AuthError {
     message: string
 }
 
-export default function SignInPage() {
+function SignInPage() {
     const {register, handleSubmit, formState: {errors}} = useForm<LoginForm>()
     const [authError, setAuthError] = useState<AuthError>({isError: false, message: ''})
     const router = useRouter()
+
+    const session = useSession();
+
+    if (session.status === 'authenticated') {
+        return <div className={'w-full h-full flex justify-center items-center'}>
+            <p className={'text-2xl'}>
+                You are an authenticated
+            </p>
+        </div>
+    }
 
     return (
         <AuthForm>
@@ -37,7 +46,7 @@ export default function SignInPage() {
                 })
 
                 if (res?.status !== 200) {
-                    setAuthError((prev) => ({isError: true, message: res?.error || 'Some error try again later'}))
+                    setAuthError(() => ({isError: true, message: res?.error || 'Some error try again later'}))
                 } else {
                     setAuthError((prev) => ({...prev, isError: false}))
                     await router.push(Routes.USER_PROFILE)
@@ -61,10 +70,19 @@ export default function SignInPage() {
                     {errors.password && <Text error text={'Password is required'}/>}
                 </ Label>
 
-                <Button theme={ButtonThemes.FILLED}>SUBMIT</Button>
+                <Button type={'submit'} theme={ButtonThemes.FILLED}>SUBMIT</Button>
             </form>
         </AuthForm>
 
     )
 }
 
+SignInPage.getLayout = function getLayout(page: ReactElement) {
+    return (
+        <Layout>
+            {page}
+        </Layout>
+    )
+}
+
+export default SignInPage

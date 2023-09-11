@@ -2,7 +2,7 @@ import {initTRPC, TRPCError} from "@trpc/server";
 import * as trpcNext from '@trpc/server/adapters/next'
 import {z} from 'zod'
 import {PrismaClient} from "@prisma/client";
-import {User, UserRoles} from "@/enteties/User";
+import {UserRoles} from "@/enteties/User";
 import bcrypt from 'bcrypt';
 
 
@@ -11,7 +11,6 @@ const prisma = new PrismaClient()
 const t = initTRPC.create()
 
 const appRouter = t.router({
-
     // ----------------User action--------------
     getUsers: t.procedure
         .query(({input}) => {
@@ -52,6 +51,7 @@ const appRouter = t.router({
                     lastname: input.lastname,
                     email: input.email,
                     password: hashedPassword,
+                    avatar: '',
                     role: UserRoles.USER,
                     courses: [],
                     is_new_user: true,
@@ -64,6 +64,7 @@ const appRouter = t.router({
         email: z.string(),
         firstname: z.string(),
         lastname: z.string(),
+        role: z.string(),
     })).mutation(async ({input}) => {
         return prisma.users.update({
             where: {
@@ -73,9 +74,11 @@ const appRouter = t.router({
                 email: input.email,
                 firstname: input.firstname,
                 lastname: input.lastname,
+                role: input.role,
             }
         })
-    }), deleteUser: t.procedure.input(z.object({
+    }),
+    deleteUser: t.procedure.input(z.object({
         id: z.string(),
     })).mutation(async ({input}) => {
         return prisma.users.delete({
@@ -84,14 +87,98 @@ const appRouter = t.router({
             }
         })
     }),
-    getUserCourses: t.procedure.input(z.object({
-        author_id: z.string()
+    updateUserAvatar: t.procedure.input(z.object({
+        email: z.string(),
+        avatar: z.string(),
+
+    })).mutation(async ({input}) => {
+        return prisma.users.update({
+            where: {
+                email: input.email
+            },
+            data: {
+                avatar: input.avatar
+            }
+        })
+    }),
+    getAllVisibleCourses: t.procedure.query(async ({input}) => {
+        return prisma.courses.findMany({
+            where: {
+                isVisible: true
+            }
+        })
+    }),
+    getUserSubscribedCourses: t.procedure.input(z.object({
+        user_id: z.string()
+    })).query(async ({input}) => {
+        const user = await prisma.users.findUnique({
+            where: {
+                id: input.user_id
+            }
+        });
+
+        const userCourses = user?.courses;
+        return prisma.courses.findMany({
+            where: {
+                id: {
+                    in: userCourses
+                },
+            }
+        })
+    }),
+    getUserCustomCourses: t.procedure.input(z.object({
+        user_id: z.string()
     })).query(async ({input}) => {
         return prisma.courses.findMany({
             where: {
-                author_id: input.author_id
+                author_id: input.user_id
             }
         })
+    }),
+    updateUserCourses: t.procedure.input(z.object({
+        id: z.string(),
+        course_id: z.string()
+    })).mutation(async ({input}) => {
+        return prisma.users.update({
+            where: {
+                id: input.id
+            },
+            data: {
+                courses: {
+                    push: input.course_id
+                }
+            }
+        })
+    }),
+    deleteUserCourses: t.procedure.input(z.object({
+        id: z.string(),
+        course_id: z.string()
+    })).mutation(async ({input}) => {
+        const userId = input.id;
+        const courseId = input.course_id;
+
+        const user = await prisma.users.findUnique({
+            where: {
+                id: userId
+            }
+        });
+
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        const updatedCourses = user.courses.filter(course => course !== courseId);
+
+        await prisma.users.update({
+            where: {
+                id: userId
+            },
+            data: {
+                courses: updatedCourses
+            }
+        });
+
+        return "Course removed successfully";
     }),
     getCourseById: t.procedure.input(z.object({
         course_id: z.string()
@@ -99,6 +186,7 @@ const appRouter = t.router({
         return prisma.courses.findUnique({
             where: {
                 id: input.course_id
+
             }
         })
     }),
@@ -107,7 +195,7 @@ const appRouter = t.router({
     })).query(async ({input}) => {
         return prisma.modules.findMany({
             where: {
-                courseId: input.course_id
+                course_id: input.course_id
             }
         });
     }),
@@ -120,6 +208,15 @@ const appRouter = t.router({
             }
         });
     }),
+    getModuleById: t.procedure.input(z.object({
+        module_id: z.string()
+    })).query(async ({input}) => {
+        return prisma.modules.findUnique({
+            where: {
+                id: input.module_id
+            }
+        })
+    }),
     getLessonById: t.procedure.input(z.object({
         lesson_id: z.string()
     })).query(async ({input}) => {
@@ -129,7 +226,148 @@ const appRouter = t.router({
             }
         })
     }),
+    createCourse: t.procedure.input(z.object({
+        cover_image: z.string(),
+        title: z.string(),
+        description: z.string(),
+        cover_description: z.string(),
+        rating: z.number(),
+        creation_date: z.string(),
+        isVisible: z.boolean(),
+        author_id: z.string(),
+        category_id: z.string(),
+        difficulty_level: z.string(),
+        duration: z.string(),
+        students_id: z.any()
+    })).mutation(async ({input}) => {
+            return prisma.courses.create({
+                data: {
+                    cover_image: input.cover_image,
+                    title: input.title,
+                    description: input.description,
+                    cover_description: input.cover_description,
+                    rating: input.rating,
+                    creation_date: input.creation_date,
+                    isVisible: input.isVisible,
+                    author_id: input.author_id,
+                    category_id: input.category_id,
+                    difficulty_level: input.difficulty_level,
+                    duration: input.duration,
+                    students_id: input.students_id,
+                }
+            })
+        }
+    ),
+    createModule: t.procedure.input(z.object({
+        title: z.string(),
+        course_id: z.string(),
+        author_id: z.string(),
+        order: z.number()
+    })).mutation(async ({input}) => {
+            const createdModule = await prisma.modules.create({
+                data: {
+                    title: input.title,
+                    author_id: input.author_id,
+                    course_id: input.course_id,
+                    order: input.order
+                }
+            });
 
+            // Добавьте дополнительное сообщение или данные, которые вы хотите вернуть
+            const additionalMessage = "Модуль успешно создан";
+
+            return {
+                module: createdModule,
+                message: additionalMessage
+            };
+        }
+    ),
+    createLesson: t.procedure.input(z.object({
+        title: z.string(),
+        order: z.number(),
+        module_id: z.string(),
+        author_id: z.string(),
+        lesson_type: z.string(),
+        lesson_content: z.any(),
+    })).mutation(async ({input}) => {
+            return prisma.lessons.create({
+                data: {
+                    title: input.title,
+                    order: input.order,
+                    author_id: input.author_id,
+                    module_id: input.module_id,
+                    lesson_type: input.lesson_type,
+                    lesson_content: input.lesson_content,
+                }
+            })
+        }
+    ),
+    updateLessonContent: t.procedure.input(z.object({
+        id: z.string(),
+        lesson_content: z.any()
+    })).mutation(async ({input}) => {
+            return prisma.lessons.update({
+                where: {
+                    id: input.id
+                },
+                data: {
+                    lesson_content: input.lesson_content,
+                }
+            })
+        }
+    ),
+    updateCourse: t.procedure.input(z.object({
+        id: z.string(),
+        cover_image: z.string(),
+        title: z.string(),
+        description: z.string(),
+        cover_description: z.string(),
+        isVisible: z.boolean(),
+        difficulty_level: z.string(),
+        duration: z.string(),
+    })).mutation(async ({input}) => {
+            return prisma.courses.update({
+                where: {
+                    id: input.id
+                },
+                data: {
+                    cover_image: input.cover_image,
+                    title: input.title,
+                    description: input.description,
+                    cover_description: input.cover_description,
+                    isVisible: input.isVisible,
+                    difficulty_level: input.difficulty_level,
+                    duration: input.duration,
+                }
+            })
+        }
+    ),
+    deleteModule: t.procedure.input(z.object({
+        id: z.string(),
+    })).mutation(async ({input}) => {
+            await prisma.modules.delete({
+                where: {
+                    id: input.id
+                }
+            })
+
+            await prisma.lessons.deleteMany({
+                where: {
+                    module_id: input.id
+                }
+            })
+        }
+    ),
+    deleteLesson: t.procedure.input(z.object({
+        id: z.string(),
+    })).mutation(async ({input}) => {
+            await prisma.lessons.delete({
+                where: {
+                    id: input.id
+                }
+            })
+        }
+    ),
 })
 
 

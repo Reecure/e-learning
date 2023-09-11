@@ -2,13 +2,23 @@ import {ReactElement, useEffect, useState} from 'react';
 import {useRouter} from "next/router";
 import Layout from "@/pages/layout";
 import UserLayout from "@/pages/user/layout";
-import {Button} from "@/shared/ui";
+import {Button, Modal} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import Image from "next/image";
 import {trpc} from "@/shared/utils/trpc";
 import CourseModules from "@/shared/ui/course/ui/CourseModules/CourseModules";
+import {Loader} from "@/shared/ui/Loader";
+import {useSession} from "next-auth/react";
+import CourseForm from "@/shared/ui/course/ui/CourseForm/CourseForm";
+import {difficultLevelBadgeHelper} from "@/shared/helpers";
+import CreateModule from "@/shared/ui/course/ui/CreateModule/CreateModule";
+import CourseTabs from "@/shared/ui/course/ui/CourseTabs/CourseTabs";
+import CourseHeader from "@/shared/ui/course/ui/CourseHeader/CourseHeader";
+import CourseAboutTab from "@/shared/ui/course/ui/CourseTabs/CourseAboutTab";
+import CourseReviewsTab from "@/shared/ui/course/ui/CourseTabs/CourseReviewsTab";
+import CourseContentTab from "@/shared/ui/course/ui/CourseTabs/CourseContentTab";
 
-enum Tabs {
+export enum Tabs {
     ABOUT = 'About',
     COURSE_CONTENT = 'Course content',
     REVIEWS = 'Reviews'
@@ -16,106 +26,83 @@ enum Tabs {
 
 const CoursePage = () => {
     const [currentTab, setCurrentTab] = useState<Tabs>(Tabs.ABOUT)
-    const router = useRouter()
+    const [courseModulesEdit, setCourseModuleEdit] = useState(false)
+    const [moduleCreated, setModuleCreated] = useState(false)
+    const [isUserCourse, setIsUserCourse] = useState(false)
 
-    const courseQuery = trpc.getCourseById.useQuery({course_id: router.query.id as string})
-    
-    if (courseQuery.error) {
-        return <div>Error loading course data</div>;
+    const router = useRouter()
+    const session = useSession()
+
+    const {data, isLoading, error} = trpc.getCourseById.useQuery({course_id: router.query.id as string})
+    const modulesQuery = trpc.getModulesByCourseId.useQuery({course_id: router.query.id as string});
+
+    useEffect(() => {
+        console.log(modulesQuery.data)
+    }, [modulesQuery])
+
+    useEffect(() => {
+        if (session.data?.user.id === data?.author_id) {
+            setIsUserCourse(true)
+        }
+    }, [session.data?.user.id, data?.author_id])
+
+    const courseModuleEditHandler = () => {
+        setCourseModuleEdit(prev => !prev)
     }
 
-    if (courseQuery.isLoading) {
-        return <div>Loading...</div>;
+    const moduleCreatedHandler = () => {
+        setModuleCreated(prev => !prev)
+    }
+
+    const setCurrentTabHandler = (current: Tabs) => {
+        setCurrentTab(current)
+    }
+
+    if (isLoading) {
+        return <Loader/>;
     }
 
     return (
         <div>
-            {/* Header */}
-            <div className={'flex justify-between mb-14'}>
-                <div>
-                    <div className={'mb-5'}>
-                        <p>
-                            some tag
-                        </p>
-                    </div>
-                    <div className={'max-w-[400px] mb-5'}>
-                        <h3 className={'text-3xl font-extrabold'}>Zero to hero in React Js with Thomas Wayne</h3>
-                    </div>
-                    <div className={'max-w-[600px] mb-5'}>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            Adipisci consequuntur culpa doloribus eum facere,
-                            facilis ipsa laboriosam.
-                        </p>
-                    </div>
-                    <div className={'flex gap-10 mb-5'}>
-                        <p><span>735</span> students</p>
-                        <p>6 hr</p>
-                        <p>Created at 27.03.23</p>
-                    </div>
-                    <div>
-                        <Button theme={ButtonThemes.FILLED}>Start now</Button>
-                    </div>
-                </div>
-                <div>
-                    <Image src={courseQuery.data?.cover_image!} alt={'image'}
-                           width={700}
-                           height={450}/>
-                </div>
-            </div>
+            <CourseHeader data={data} isUserCourse={isUserCourse}/>
 
-            {/*    Main Content*/}
             <div>
-                <div>
-                    <Button theme={ButtonThemes.TEXT} onClick={() => {
-                        setCurrentTab(Tabs.ABOUT)
-                    }}>
-                        {Tabs.ABOUT}
-                    </Button>
-                    <Button theme={ButtonThemes.TEXT} onClick={() => {
-                        setCurrentTab(Tabs.COURSE_CONTENT)
-                    }}>
-                        {Tabs.COURSE_CONTENT}
-                    </Button>
-                    <Button theme={ButtonThemes.TEXT} onClick={() => {
-                        setCurrentTab(Tabs.REVIEWS)
-                    }}>
-                        {Tabs.REVIEWS}
-                    </Button>
-                </div>
-
-                {/* About */}
-                <div>
+                <div className={'flex justify-between items-center'}>
+                    <CourseTabs currentTab={currentTab} setCurrentTab={setCurrentTabHandler}/>
                     {
-                        currentTab === Tabs.ABOUT && <>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab adipisci autem cumque distinctio
-                            exercitationem expedita impedit inventore ipsam minima, odio qui quibusdam quo quos sapiente
-                            voluptatem? Accusamus eum provident temporibus?
-                        </>
+                        currentTab === Tabs.COURSE_CONTENT &&
+                        isUserCourse && (
+                            !courseModulesEdit ?
+                                <Button theme={ButtonThemes.FILLED} onClick={courseModuleEditHandler}>Edit</Button>
+                                :
+                                <div className={'flex gap-x-2'}>
+                                    <Button theme={ButtonThemes.FILLED} onClick={courseModuleEditHandler}>Save</Button>
+                                    <Button theme={ButtonThemes.FILLED} onClick={courseModuleEditHandler}>Cancel</Button>
+                                </div>)
                     }
                 </div>
 
-                {/* Course content */}
+                <div className={'mt-5'}>
+                    {
+                        currentTab === Tabs.ABOUT && <CourseAboutTab/>
+                    }
+                </div>
 
                 <div>
                     {
                         currentTab === Tabs.COURSE_CONTENT && <>
-                            <CourseModules course_id={courseQuery.data?.id!}/>
+                            {isUserCourse && courseModulesEdit && <CreateModule courseId={router.query.id as string}/>}
+                            <CourseContentTab courseModulesEdit={courseModulesEdit} modules={modulesQuery.data || []}/>
                         </>
                     }
                 </div>
 
-                {/* Reviews */}
-
-                <div>
+                <div className={'mt-5'}>
                     {
-                        currentTab === Tabs.REVIEWS && <>
-                            Reviews
-                        </>
+                        currentTab === Tabs.REVIEWS && <CourseReviewsTab/>
                     }
                 </div>
             </div>
-
         </div>
     );
 };

@@ -1,48 +1,42 @@
-import {FC, ReactNode, useEffect} from 'react';
+import {FC, ReactNode, useEffect, useRef} from 'react';
 import {useSpring, animated, useTransition} from "@react-spring/web";
+import Overlay from "@/shared/ui/Overlay/Overlay";
+import {CSSTransition} from "react-transition-group";
 
 interface Props {
     children: ReactNode
     isOpen: boolean
     setIsOpen: () => void
+    classname?: string
 }
 
-const Modal: FC<Props> = ({children, isOpen, setIsOpen}) => {
-
-    const transition = useTransition(isOpen, {
-        from: {
-            scale: 0,
-            opacity: 0,
-        },
-        enter: {
-            scale: 1,
-            opacity: 1,
-        },
-        leave: {
-            scale: 0,
-            opacity: 0,
-        },
-    })
+const Modal: FC<Props> = ({children, isOpen, setIsOpen, classname}) => {
 
 
-    return transition((style, isOpen) => (
-            isOpen ? (<animated.dialog
-                style={style}
-                open={isOpen}
-                onClick={setIsOpen}
-                className={`fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-black/30`}
+    return (
+        <>
+            <CSSTransition
+                in={isOpen}
+                timeout={400}
+                mountOnEnter
+                unmountOnExit
+                classNames={
+                    {
+                        enterActive: 'animate-open-modal',
+                        exitActive: 'animate-close-modal'
+                    }
+                }
             >
-                <animated.div
+                <div
+                    className={'fixed top-0 bottom-0 right-0 left-0 z-[100] flex justify-center items-center'}>
+                    <Overlay onClick={setIsOpen}/>
+                    <div className={'bg-dark-background rounded-md p-10 z-[1000]'}>
+                        {children}
+                    </div>
+                </div>
+            </CSSTransition>
+        </>
 
-                    onClick={(e) => {
-                        e.stopPropagation()
-                    }}
-                    className={'bg-light-primary-container dark:bg-dark-primary-container text-light-text dark:text-dark-text p-6 h-min rounded-xl'}
-                >
-                    {children}
-                </animated.div>
-            </animated.dialog>) : null
-        )
     )
 };
 export default Modal;

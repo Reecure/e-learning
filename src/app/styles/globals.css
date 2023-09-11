@@ -2,7 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #141218;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #6750A4;
+    border-radius: 5px;
+}
 
 .inputField {
-    @apply w-full px-2 py-1 bg-transparent border-[1px] border-light-primary-main dark:border-dark-primary-main rounded-lg focus:outline-0;
+    @apply w-full px-2 py-1 bg-transparent border-[1px] border-light-primary-main dark:border-dark-primary-main rounded-lg focus:outline-0 disabled:opacity-40;
 }

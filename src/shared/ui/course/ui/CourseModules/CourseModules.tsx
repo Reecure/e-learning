@@ -1,33 +1,21 @@
 import {FC, useEffect} from 'react';
-import {trpc} from "@/shared/utils/trpc";
-import Link from "next/link";
+import DragAndDrop from "@/shared/ui/DragAndDrop/DragAndDrop";
+import {Module} from "@/enteties/Module";
 
 interface Props {
-    course_id: string
+    modules: Module[],
+    courseModulesEdit: boolean
 }
 
-const CourseModules: FC<Props> = ({course_id}) => {
-    const modulesQuery = trpc.getModulesByCourseId.useQuery({course_id: course_id})
+const CourseModules: FC<Props> = ({modules, courseModulesEdit}) => {
 
-    useEffect(() => {
-        console.log(course_id)
-        console.log(modulesQuery.data)
-    }, [modulesQuery])
 
-    if (modulesQuery.isLoading) {
-        return <>Loading...</>
-    }
     return (
-        <div>
-            {
-                modulesQuery.data?.map(modules => {
-                    return <div key={modules.id}>
-                        <Link
-                            href={`/user/my-courses/course/course-module-lessons/${modules.id}`}>{modules.title}</Link>
-                    </div>
-                })
-            }
+        <div className={'mt-5'}>
+            <DragAndDrop items={modules} canEdit={courseModulesEdit} isModule/>
         </div>
     );
 };
+
 export default CourseModules;
+
