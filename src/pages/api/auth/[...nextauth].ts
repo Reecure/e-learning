@@ -1,6 +1,5 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google"
 import {PrismaClient} from "@prisma/client";
 import bcrypt from "bcrypt";
 
@@ -8,31 +7,27 @@ const prisma = new PrismaClient()
 
 export default NextAuth({
     providers: [
-        process.env.VERCEL_ENV === "preview" ?
-            CredentialsProvider({
-                name: "Credentials",
-                credentials: {
-                    // Define the expected fields here
-                    email: {label: "Email", type: "email"},
-                    password: {label: "Password", type: "password"}
-                },
-                async authorize(credentials, req) {
-                    const user = await prisma.users.findUnique(
-                        {
-                            where:
-                                {email: credentials?.email}
-                        })
-                    if (user && (await bcrypt.compare(credentials !== undefined ? credentials.password : "", user.password))) {
-                        const {id, role, email} = user
-                        return {id, role, email}
-                    } else {
-                        throw new Error("Invalid Email or Password");
-                    }
+        CredentialsProvider({
+            name: "Credentials",
+            credentials: {
+                // Define the expected fields here
+                email: {label: "Email", type: "email"},
+                password: {label: "Password", type: "password"}
+            },
+            async authorize(credentials, req) {
+                const user = await prisma.users.findUnique(
+                    {
+                        where:
+                            {email: credentials?.email}
+                    })
+                if (user && (await bcrypt.compare(credentials !== undefined ? credentials.password : "", user.password))) {
+                    const {id, role, email} = user
+                    return {id, role, email}
+                } else {
+                    throw new Error("Invalid Email or Password");
                 }
-            }) : GoogleProvider({
-                clientId: process.env.GOOGLE_ID!,
-                clientSecret: process.env.GOOGLE_SECRET!,
-            }),
+            }
+        })
     ],
 
     pages: {
