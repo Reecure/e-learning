@@ -316,6 +316,34 @@ const appRouter = t.router({
             })
         }
     ),
+    updateLessonOrder: t.procedure.input(z.object({
+        id: z.string(),
+        order: z.number()
+    })).mutation(async ({input}) => {
+            return prisma.lessons.update({
+                where: {
+                    id: input.id
+                },
+                data: {
+                    order: input.order
+                }
+            })
+        }
+    ),
+    updateModuleOrder: t.procedure.input(z.object({
+        id: z.string(),
+        order: z.number()
+    })).mutation(async ({input}) => {
+            return prisma.modules.update({
+                where: {
+                    id: input.id
+                },
+                data: {
+                    order: input.order
+                }
+            })
+        }
+    ),
     updateCourse: t.procedure.input(z.object({
         id: z.string(),
         cover_image: z.string(),

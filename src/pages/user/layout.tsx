@@ -1,8 +1,9 @@
-import {FC, ReactNode} from 'react';
+import {FC, ReactNode, Suspense} from 'react';
 import {Routes} from "@/shared/config/routes";
 import {useSession} from "next-auth/react";
 import {useRouter} from "next/router";
 import {Sidebar} from "@/widgets/Sidebar";
+import {Loader} from "@/shared/ui/Loader";
 
 
 interface Props {
@@ -26,12 +27,14 @@ const UserLayout: FC<Props> = ({children, contentClassName}) => {
     }
 
     return (
-        <div className={'h-[calc(100vh_-_62px)] flex justify-between'}>
-            <Sidebar/>
-            <div className={`w-full overflow-y-auto p-5 ${contentClassName} `}>
-                {children}
+        <Suspense fallback={<Loader/>}>
+            <div className={'h-[calc(100vh_-_62px)] flex justify-between'}>
+                <Sidebar/>
+                <div className={`w-full overflow-y-auto p-5 ${contentClassName} `}>
+                    {children}
+                </div>
             </div>
-        </div>
+        </Suspense>
     );
 };
 export default UserLayout;

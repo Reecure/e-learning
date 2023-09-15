@@ -1,18 +1,31 @@
 import {FC, useEffect} from 'react';
 import DragAndDrop from "@/shared/ui/DragAndDrop/DragAndDrop";
 import {Module} from "@/enteties/Module";
+import {trpc} from "@/shared/utils/trpc";
+import {Loader} from "@/shared/ui/Loader";
 
 interface Props {
-    modules: Module[],
+    moduleId: string,
     courseModulesEdit: boolean
+    isUserAuthor: boolean
 }
 
-const CourseModules: FC<Props> = ({modules, courseModulesEdit}) => {
+const CourseModules: FC<Props> = ({moduleId, courseModulesEdit, isUserAuthor}) => {
+    const modulesQuery = trpc.getModulesByCourseId.useQuery({course_id: moduleId});
 
+    useEffect(() => {
+        modulesQuery.refetch()
+    }, [modulesQuery.isLoading])
+
+    if (modulesQuery.isLoading) {
+        return <Loader/>
+    }
 
     return (
         <div className={'mt-5'}>
-            <DragAndDrop items={modules} canEdit={courseModulesEdit} isModule/>
+            <DragAndDrop items={modulesQuery?.data?.sort((a, b) => a.order - b.order)} canEdit={courseModulesEdit}
+                         isModule
+                         isUserAuthor={isUserAuthor}/>
         </div>
     );
 };

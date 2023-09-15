@@ -34,11 +34,6 @@ const CoursePage = () => {
     const session = useSession()
 
     const {data, isLoading, error} = trpc.getCourseById.useQuery({course_id: router.query.id as string})
-    const modulesQuery = trpc.getModulesByCourseId.useQuery({course_id: router.query.id as string});
-
-    useEffect(() => {
-        console.log(modulesQuery.data)
-    }, [modulesQuery])
 
     useEffect(() => {
         if (session.data?.user.id === data?.author_id) {
@@ -66,7 +61,7 @@ const CoursePage = () => {
         <div>
             <CourseHeader data={data} isUserCourse={isUserCourse}/>
 
-            <div>
+            <div className={''}>
                 <div className={'flex justify-between items-center'}>
                     <CourseTabs currentTab={currentTab} setCurrentTab={setCurrentTabHandler}/>
                     {
@@ -76,15 +71,15 @@ const CoursePage = () => {
                                 <Button theme={ButtonThemes.FILLED} onClick={courseModuleEditHandler}>Edit</Button>
                                 :
                                 <div className={'flex gap-x-2'}>
-                                    <Button theme={ButtonThemes.FILLED} onClick={courseModuleEditHandler}>Save</Button>
-                                    <Button theme={ButtonThemes.FILLED} onClick={courseModuleEditHandler}>Cancel</Button>
+                                    <Button theme={ButtonThemes.FILLED} onClick={courseModuleEditHandler}>Close</Button>
                                 </div>)
                     }
                 </div>
 
                 <div className={'mt-5'}>
                     {
-                        currentTab === Tabs.ABOUT && <CourseAboutTab/>
+                        currentTab === Tabs.ABOUT && <CourseAboutTab courseAboutText={data?.description || ''}/>
+
                     }
                 </div>
 
@@ -92,7 +87,8 @@ const CoursePage = () => {
                     {
                         currentTab === Tabs.COURSE_CONTENT && <>
                             {isUserCourse && courseModulesEdit && <CreateModule courseId={router.query.id as string}/>}
-                            <CourseContentTab courseModulesEdit={courseModulesEdit} modules={modulesQuery.data || []}/>
+                            <CourseContentTab courseModulesEdit={courseModulesEdit} moduleId={router.query.id as string}
+                                              isUserAuthor={isUserCourse}/>
                         </>
                     }
                 </div>

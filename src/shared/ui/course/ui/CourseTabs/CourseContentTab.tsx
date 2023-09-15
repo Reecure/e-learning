@@ -5,14 +5,15 @@ import {Module} from "@/enteties/Module";
 
 interface Props {
     courseModulesEdit: boolean
-    modules: Module[]
+    moduleId: string
+    isUserAuthor: boolean
 }
 
 
-const CourseContentTab: FC<Props> = ({courseModulesEdit, modules}) => {
+const CourseContentTab: FC<Props> = ({courseModulesEdit, moduleId, isUserAuthor}) => {
     return (
         <>
-            <CourseModules courseModulesEdit={courseModulesEdit} modules={modules}/>
+            <CourseModules courseModulesEdit={courseModulesEdit} moduleId={moduleId} isUserAuthor={isUserAuthor}/>
         </>
     );
 };

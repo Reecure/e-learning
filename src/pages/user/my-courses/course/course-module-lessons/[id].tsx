@@ -12,6 +12,7 @@ import {useSession} from "next-auth/react";
 import {useAppDispatch, useAppSelector} from "@/app/ReduxProvider/config/hooks";
 import {currentLessonSelector} from "../../../../../shared/ui/course/model";
 import {setCurrentLessonId} from "@/shared/ui/course/model/slices/currentLessonSlice";
+import {useCurrentUser, usePermission} from "@/shared/hooks";
 
 const CourseModuleLessonsPage = () => {
     const [canLessonEdit, setCanLessonEdit] = useState(false)
@@ -20,6 +21,7 @@ const CourseModuleLessonsPage = () => {
     const router = useRouter()
     const session = useSession()
     const dispatch = useAppDispatch()
+    const currentUserId = useCurrentUser()
 
     const lessons = trpc.getLessonsByModuleId.useQuery({module_id: router.query.id! as string})
     const moduleQuery = trpc.getModuleById.useQuery({module_id: router.query.id! as string})
@@ -27,8 +29,9 @@ const CourseModuleLessonsPage = () => {
     const currentLesson = useAppSelector(currentLessonSelector)
 
     useEffect(() => {
-        if (session.data?.user.id === moduleQuery.data?.author_id) {
+        if (currentUserId === moduleQuery.data?.author_id) {
             setIsUserCourse(true)
+            console.log("isUserCourse: ", isUserCourse)
         }
     }, [moduleQuery])
 
@@ -52,15 +55,19 @@ const CourseModuleLessonsPage = () => {
                 className={'bg-light-primary-main dark:bg-dark-neutral-100 p-5 max-w-[250px] w-full h-[calc(100vh_-_62px)]'}>
                 <div className={'flex justify-between items-center mb-5'}>
                     <p className={'text-xl mb-5'}>Lessons</p>
-                    {isUserCourse &&
-                        <Button theme={ButtonThemes.FILLED} onClick={CanLessonEditHandler}
-                                className={'p-1!'}>Edit</Button>}
+                    {isUserCourse && (
+                        !canLessonEdit ? <Button theme={ButtonThemes.FILLED} onClick={CanLessonEditHandler}
+                                                 className={'p-1!'}>Edit</Button> :
+                            <Button theme={ButtonThemes.FILLED} onClick={CanLessonEditHandler}>Close</Button>
+                    )
+                    }
                 </div>
                 {isUserCourse && (canLessonEdit && <CreateLesson moduleId={router.query.id as string}/>)}
 
-                <CourseLessons moduleId={router.query.id as string} lessonCanEdit={canLessonEdit}/>
+                <CourseLessons isUserLessons={isUserCourse} moduleId={router.query.id as string}
+                               lessonCanEdit={canLessonEdit}/>
             </div>
-            <div className={'ml-5 w-full overflow-y-auto'}>
+            <div className={'ml-5 w-full overflow-y-auto mr-20'}>
                 <LessonContent lesson_id={currentLesson}/>
             </div>
         </div>

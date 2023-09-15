@@ -20,6 +20,7 @@ const CreateLesson: FC<Props> = ({moduleId}) => {
     const [buttonDisabled, setButtonDisabled] = useState(false)
 
     const createLesson = trpc.createLesson.useMutation()
+    const getLessons = trpc.getLessonsByModuleId.useQuery({module_id: moduleId})
     const session = useSession()
 
     const {register, handleSubmit} = useForm<Lesson>({
@@ -28,12 +29,13 @@ const CreateLesson: FC<Props> = ({moduleId}) => {
             lesson_type: LessonType.TEXT,
             module_id: moduleId,
             lesson_content: [],
-            order: 1
+            order: getLessons.data?.length
         }
     })
+
     useEffect(() => {
-        console.log(moduleId)
-    }, [])
+        getLessons.refetch()
+    }, [createLesson.isLoading])
 
     useEffect(() => {
         let timeoutId: NodeJS.Timeout;
@@ -69,7 +71,8 @@ const CreateLesson: FC<Props> = ({moduleId}) => {
                     try {
                         const res = await createLesson.mutate({
                             ...data,
-                            author_id: session.data?.user.id!
+                            author_id: session.data?.user.id!,
+                            order: getLessons.data?.length!
                         });
                         setSubmitError({isError: false, error: ''})
                         setNotificationOpenHandler()

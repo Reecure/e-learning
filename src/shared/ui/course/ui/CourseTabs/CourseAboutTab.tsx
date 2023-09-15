@@ -1,13 +1,14 @@
 import {FC} from 'react';
 
 interface Props {
+    courseAboutText: string
 }
 
-const CourseAboutTab: FC<Props> = () => {
+const CourseAboutTab: FC<Props> = ({courseAboutText}) => {
 
     return (
         <div>
-            <div>CourseAboutTab</div>
+            {courseAboutText}
         </div>
     );
 };

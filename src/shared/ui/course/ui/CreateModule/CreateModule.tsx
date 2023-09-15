@@ -23,14 +23,19 @@ const CreateModule: FC<Props> = ({courseId}) => {
     const session = useSession()
 
     const createModules = trpc.createModule.useMutation()
+    const getModules = trpc.getModulesByCourseId.useQuery({course_id: courseId})
 
     const {register, handleSubmit} = useForm<Module>({
         defaultValues: {
             course_id: '',
-            order: 1,
+            order: getModules.data?.length,
             title: ''
         }
     })
+
+    useEffect(() => {
+        getModules.refetch()
+    }, [createModules.isLoading])
 
     useEffect(() => {
         let timeoutId: NodeJS.Timeout;

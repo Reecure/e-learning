@@ -42,8 +42,7 @@ model courses {
   difficulty_level  String
   duration          String
   isVisible         Boolean
-  /// Multiple data types found: Int: 33.3%, BigInt: 66.7% out of 3 sampled entries
-  rating            Json
+  rating            Int
   students_id       String[]
   title             String
 }
