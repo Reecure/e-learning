@@ -2,13 +2,14 @@ import {FC, useEffect, useState} from 'react';
 import {difficultLevelBadgeHelper} from "@/shared/helpers";
 import {Button, Modal} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
-import CourseForm from "@/shared/ui/course/ui/CourseForm/CourseForm";
+import CourseForm from "@/shared/ui/course/ui/CourseForms/CourseForm";
 import Image from "next/image";
 import {trpc} from "@/shared/utils/trpc";
 import {useSession} from "next-auth/react";
+import {Course} from "@/enteties/Course";
 
 interface Props {
-    data: any
+    data: Course
     isUserCourse: boolean
 }
 
@@ -24,6 +25,7 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
     const deleteCourseFromUserCourses = trpc.deleteUserCourses.useMutation()
     const addToCourses = trpc.updateUserCourses.useMutation()
     const updateCourse = trpc.updateCourse.useMutation()
+    const updateUserCourseProgress = trpc.updateUserCourseProgress.useMutation()
 
 
     useEffect(() => {
@@ -31,6 +33,7 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
         const courseHaveStudentId = user.data?.courses !== null && user?.data?.courses.find((id) => id === data?.id)
         setUserHaveCourse(courseHaveStudentId !== undefined)
     }, [deleteCourseFromUserCourses, addToCourses])
+
 
     const openEditHandler = () => {
         setEditModalOpen((prev) => !prev);
@@ -60,7 +63,7 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
                 <div className={'flex justify-center flex-col gap-3'}>
                     <div className={'flex justify-between gap-10'}>
                         <p>
-                            <span>{data?.students_id.length}</span> {data?.students_id.length! !== 1 ? 'students' : 'student'}
+                            <span>{1}</span> {1 !== 1 ? 'students' : 'student'}
                         </p>
                         <p>{data?.duration}</p>
                         <p>Created at 27.03.23</p>
@@ -68,7 +71,8 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
                     </div>
                     <div className={'flex gap-2'}>
                         {
-                            userHaveCourse ? <Button theme={ButtonThemes.FILLED} onClick={async () => {
+                            userHaveCourse ?
+                                <Button theme={ButtonThemes.FILLED} onClick={async () => {
                                     try {
                                         await deleteCourseFromUserCourses.mutate({
                                             id: session.data?.user.id!,
@@ -84,6 +88,15 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
                                         await addToCourses.mutate({
                                             id: session.data?.user.id!,
                                             course_id: data?.id!
+                                        })
+
+                                        await updateUserCourseProgress.mutate({
+                                            id: session.data?.user.id!,
+                                            course_progress: {
+                                                course_id: data?.id,
+                                                is_completed: false,
+                                                modules_progress: []
+                                            }
                                         })
                                     } catch (e) {
                                         console.log(e)

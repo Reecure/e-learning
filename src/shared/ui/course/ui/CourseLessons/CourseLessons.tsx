@@ -20,7 +20,7 @@ const CourseLessons: FC<Props> = ({moduleId, lessonCanEdit, isUserLessons}) => {
 
     return (
         <div className={'mt-5'}>
-            <DragAndDrop items={lessonsQuery?.data?.sort((a, b) => a.order - b.order)} canEdit={lessonCanEdit}
+            <DragAndDrop items={lessonsQuery?.data?.sort((a, b) => a.order - b.order) as any} canEdit={lessonCanEdit}
                          isModule={false} isUserAuthor={isUserLessons}/>
         </div>
     );

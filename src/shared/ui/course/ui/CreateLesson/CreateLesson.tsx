@@ -72,6 +72,7 @@ const CreateLesson: FC<Props> = ({moduleId}) => {
                         const res = await createLesson.mutate({
                             ...data,
                             author_id: session.data?.user.id!,
+                            lesson_type: data.lesson_type,
                             order: getLessons.data?.length!
                         });
                         setSubmitError({isError: false, error: ''})
@@ -86,6 +87,13 @@ const CreateLesson: FC<Props> = ({moduleId}) => {
                     <p className={'mb-5 text-center text-3xl'}>Create Lesson</p>
                     <Label htmlFor={'title'} labelText={'Title'}>
                         <input type="text" {...register('title')} className={'inputField'}/>
+                    </Label>
+                    <Label htmlFor={'lesson_type'} labelText={'Lesson Type'}>
+                        <select
+                            className={'inputField'} {...register('lesson_type')}>
+                            <option className={'bg-dark-background'} value={LessonType.TEXT}>{LessonType.TEXT}</option>
+                            <option className={'bg-dark-background'} value={LessonType.QUIZ}>{LessonType.QUIZ}</option>
+                        </select>
                     </Label>
                     <Button type={'submit'} disabled={buttonDisabled} theme={ButtonThemes.FILLED}
                             className={'mt-5 w-full'}>Create

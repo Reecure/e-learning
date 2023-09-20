@@ -5,12 +5,17 @@ import {ButtonThemes} from '@/shared/ui/Button/Button';
 import {Label} from '@/shared/ui/Label';
 import {v4 as uuidv4} from 'uuid'
 import {trpc} from "@/shared/utils/trpc";
+import CodeForm from "@/shared/ui/course/ui/CourseForms/CodeForm";
+import TextForm from "@/shared/ui/course/ui/CourseForms/TextForm";
+import ImageForm from "@/shared/ui/course/ui/CourseForms/ImageForm";
+import {LessonContentType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
+import VideoForm from "@/shared/ui/course/ui/CourseForms/VideoForm";
 
 
 type TextBlock = {
     id: string;
     title: string
-    type: 'TEXT';
+    type: LessonContentType.TEXT;
     paragraphs: {
         id: string,
         text: string
@@ -19,12 +24,24 @@ type TextBlock = {
 
 type ImageBlock = {
     id: string;
-    type: 'IMAGE';
+    type: LessonContentType.IMAGE;
     title: string;
     src: string;
 };
 
-type Block = TextBlock | ImageBlock;
+type CodeBlock = {
+    id: string;
+    type: LessonContentType.CODE;
+    code: string
+};
+
+type VideoBlock = {
+    id: string,
+    type: LessonContentType.VIDEO,
+    url: string
+}
+
+type Block = TextBlock | ImageBlock | CodeBlock | VideoBlock;
 
 interface FormData {
     blocks: Block[];
@@ -61,7 +78,6 @@ const CreateLessonContent: FC<Props> = ({initialData, lessonId}) => {
         } catch (e) {
             console.log(e)
         }
-        console.log(data);
     };
 
     const {append, fields, remove} = useFieldArray({
@@ -72,7 +88,7 @@ const CreateLessonContent: FC<Props> = ({initialData, lessonId}) => {
     const addTextBlock = () => {
         append({
             id: uuidv4(),
-            type: 'TEXT',
+            type: LessonContentType.TEXT,
             title: '',
             paragraphs: [{
                 id: uuidv4(),
@@ -82,8 +98,16 @@ const CreateLessonContent: FC<Props> = ({initialData, lessonId}) => {
     };
 
     const addImageBlock = () => {
-        append({id: uuidv4(), type: 'IMAGE', title: '', src: ''});
+        append({id: uuidv4(), type: LessonContentType.IMAGE, title: '', src: ''});
     };
+
+    const addCodeBlock = () => {
+        append({id: uuidv4(), type: LessonContentType.CODE, code: ''})
+    }
+
+    const addVideoBlock = () => {
+        append({id: uuidv4(), type: LessonContentType.VIDEO, url: ''})
+    }
 
     return (
         <FormProvider {...methods}>
@@ -91,7 +115,7 @@ const CreateLessonContent: FC<Props> = ({initialData, lessonId}) => {
                 {fields.map((field, index) => {
                     return (
                         <div key={field.id}>
-                            {field.type === 'TEXT' ? (
+                            {field.type === LessonContentType.TEXT ? (
                                 <div className={'flex gap-2 items-start'}>
                                     <TextForm index={index}/>
                                     <Button theme={ButtonThemes.TEXT} type="button" onClick={() => remove(index)}>
@@ -99,7 +123,7 @@ const CreateLessonContent: FC<Props> = ({initialData, lessonId}) => {
                                     </Button>
                                 </div>
 
-                            ) : field.type === 'IMAGE' ? (
+                            ) : field.type === LessonContentType.IMAGE ? (
                                 <div className={'flex gap-2 items-start'}>
                                     <ImageForm index={index}/>
                                     <Button theme={ButtonThemes.TEXT} type="button" onClick={() => remove(index)}>
@@ -107,73 +131,45 @@ const CreateLessonContent: FC<Props> = ({initialData, lessonId}) => {
                                     </Button>
                                 </div>
 
+                            ) : field.type === LessonContentType.CODE ? (
+                                <div className={'flex gap-2 items-start'}>
+                                    <CodeForm index={index}/>
+                                    <Button theme={ButtonThemes.TEXT} type="button" onClick={() => remove(index)}>
+                                        x
+                                    </Button>
+                                </div>
+                            ) : field.type === LessonContentType.VIDEO ? (
+                                <div className={'flex gap-2 items-start'}>
+                                    <VideoForm index={index}/>
+                                    <Button theme={ButtonThemes.TEXT} type="button" onClick={() => remove(index)}>
+                                        x
+                                    </Button>
+                                </div>
                             ) : null}
                         </div>
                     );
                 })}
-                <Button theme={ButtonThemes.FILLED} onClick={addTextBlock}>
-                    Add Text Block
-                </Button>
-                <Button theme={ButtonThemes.FILLED} onClick={addImageBlock}>
-                    Add Image Block
-                </Button>
+                <div className={'flex gap-3'}>
+                    <Button theme={ButtonThemes.FILLED} onClick={addTextBlock}>
+                        Add Text Block
+                    </Button>
+                    <Button theme={ButtonThemes.FILLED} onClick={addImageBlock}>
+                        Add Image Block
+                    </Button>
+                    <Button theme={ButtonThemes.FILLED} onClick={addCodeBlock}>
+                        Add Code Block
+                    </Button>
+                    <Button theme={ButtonThemes.FILLED} onClick={addVideoBlock}>
+                        Add Video Block
+                    </Button>
+                </div>
                 <Button theme={ButtonThemes.FILLED} type="submit">
-                    Submit
+                    Save
                 </Button>
             </form>
         </FormProvider>
     );
 };
 
-const TextForm: FC<{ index: number, initFields?: any }> = ({index}) => {
-    const {register, control} = useFormContext();
-    const {fields, remove, append: appendParagraph} = useFieldArray({
-        control,
-        name: `blocks.${index}.paragraphs`,
-    });
-
-    const appendEmptyParagraph = () => {
-        appendParagraph({id: uuidv4(), text: ''});
-    };
-
-    return (
-        <div className={'flex flex-col gap-5 w-full'}>
-            <Label htmlFor={`blocks.${index}.title`} labelText={'Title'}>
-                <input className={'inputField'} {...register(`blocks.${index}.title`)} />
-            </Label>
-            {fields.map((field, paragraphIndex) => {
-                return (
-                    <div key={field.id} className={'flex gap-2 items-start'}>
-                        <textarea
-                            className={'inputField'}
-                            {...register(`blocks.${index}.paragraphs.${paragraphIndex}.text`)}
-                        />
-                        <Button theme={ButtonThemes.TEXT} type="button" onClick={() => remove(paragraphIndex)}>
-                            x
-                        </Button>
-                    </div>
-                );
-            })}
-            <Button theme={ButtonThemes.FILLED} onClick={appendEmptyParagraph}>
-                Add paragraph
-            </Button>
-        </div>
-    );
-};
-
-const ImageForm: FC<{ index: number }> = ({index}) => {
-    const {register} = useFormContext();
-
-    return (
-        <div className={'flex flex-col gap-5'}>
-            <Label htmlFor={`blocks.${index}.title`} labelText={'Title'}>
-                <input className={'inputField'} {...register(`blocks.${index}.title`)} />
-            </Label>
-            <Label htmlFor={`blocks.${index}.src`} labelText={'Src'}>
-                <input className={'inputField'} {...register(`blocks.${index}.src`)} />
-            </Label>
-        </div>
-    );
-};
 
 export default CreateLessonContent;

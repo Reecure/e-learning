@@ -8,7 +8,7 @@ import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {Label} from "@/shared/ui/Label";
 import {trpc} from "@/shared/utils/trpc";
 import {Text} from "@/shared/ui/Text";
-import CourseForm from "@/shared/ui/course/ui/CourseForm/CourseForm";
+import CourseForm from "@/shared/ui/course/ui/CourseForms/CourseForm";
 
 interface Props {
 

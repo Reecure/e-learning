@@ -17,7 +17,7 @@ const ThemeToggle: FC<Props> = ({theme, toggleTheme}) => {
     return (
         <Button
             theme={ButtonThemes.CLEAR}
-            className={'!w-6 !h-[14px] !p-0 relative bg-light-primary-main dark:bg-dark-primary-main rounded-full'}
+            className={'!w-[24px] !h-[14px] !p-0 relative bg-light-primary-main dark:bg-dark-primary-main rounded-full'}
             onClick={toggleTheme}
         >
       <span

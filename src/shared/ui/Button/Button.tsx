@@ -21,7 +21,7 @@ const Button: FC<Props> = ({children, className, theme = ButtonThemes.FILLED, ..
     return (
         <button
             type={"button"}
-            className={`${theme} px-6 py-[10px] rounded-full duration-200 ${className} disabled:opacity-50`}
+            className={`${theme} px-6 py-[10px] ${className}  rounded-full duration-200  disabled:opacity-50`}
             {...otherProps}
         >
             {children}

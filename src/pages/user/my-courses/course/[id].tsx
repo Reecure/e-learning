@@ -9,7 +9,7 @@ import {trpc} from "@/shared/utils/trpc";
 import CourseModules from "@/shared/ui/course/ui/CourseModules/CourseModules";
 import {Loader} from "@/shared/ui/Loader";
 import {useSession} from "next-auth/react";
-import CourseForm from "@/shared/ui/course/ui/CourseForm/CourseForm";
+import CourseForm from "@/shared/ui/course/ui/CourseForms/CourseForm";
 import {difficultLevelBadgeHelper} from "@/shared/helpers";
 import CreateModule from "@/shared/ui/course/ui/CreateModule/CreateModule";
 import CourseTabs from "@/shared/ui/course/ui/CourseTabs/CourseTabs";

@@ -16,20 +16,19 @@ import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {trpc} from "@/shared/utils/trpc";
 
-export type LessonOrModuleArray = Lesson[] | Module[];
 
-interface Props {
-    items: LessonOrModuleArray
+interface Props<T> {
+    items: T[]
     canEdit: boolean
     isModule: boolean
     isUserAuthor: boolean
 }
 
-const lessonsSortByOrder = (lessons: LessonOrModuleArray) => {
-    return lessons.sort((a, b) => a.order - b.order)
-}
+export const sortByOrder = <T extends { order: number }>(items: T[]): T[] => {
+    return items.sort((a, b) => a.order - b.order);
+};
 
-const DragAndDrop: FC<Props> = ({canEdit, isUserAuthor, items, isModule}) => {
+const DragAndDrop: FC<Props<Lesson | Module>> = ({canEdit, isUserAuthor, items, isModule}) => {
     const [propsItems, setPropsItems] = useState<Array<Lesson | Module>>(items)
     const [orderChange, setOrderChange] = useState(false)
 
@@ -60,7 +59,7 @@ const DragAndDrop: FC<Props> = ({canEdit, isUserAuthor, items, isModule}) => {
     };
 
     useEffect(() => {
-        console.log('items', propsItems == items)
+        setPropsItems((prevState) => sortByOrder(prevState))
     }, [items, propsItems])
 
     const saveLessons = async () => {
@@ -71,7 +70,6 @@ const DragAndDrop: FC<Props> = ({canEdit, isUserAuthor, items, isModule}) => {
                         id: item.id,
                         order: item.order
                     });
-                    console.log('updated');
                     return item;
                 })
             );
@@ -88,7 +86,6 @@ const DragAndDrop: FC<Props> = ({canEdit, isUserAuthor, items, isModule}) => {
                         id: item.id,
                         order: item.order
                     });
-                    console.log('updated');
                     return item;
                 })
             );

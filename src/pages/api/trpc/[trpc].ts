@@ -4,6 +4,7 @@ import {z} from 'zod'
 import {PrismaClient} from "@prisma/client";
 import {UserRoles} from "@/enteties/User";
 import bcrypt from 'bcrypt';
+import {LessonType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
 
 
 const prisma = new PrismaClient()
@@ -56,6 +57,9 @@ const appRouter = t.router({
                     courses: [],
                     is_new_user: true,
                     registration_date: new Date().toISOString(),
+                    courses_progress: [],
+                    modules_progress: [],
+                    lessons_progress: []
                 }
             })
         }
@@ -135,6 +139,139 @@ const appRouter = t.router({
             }
         })
     }),
+    updateUserCourseProgress: t.procedure.input(z.object({
+        id: z.string(),
+        course_progress: z.object({
+            course_id: z.string(),
+            is_completed: z.boolean(),
+        })
+    })).mutation(async ({input}) => {
+
+        let user = await prisma.users.findUnique({
+            where: {
+                id: input.id
+            }
+        },)
+
+        const existingProgressIndex = user?.courses_progress.findIndex(
+            (item) => item?.course_id === input.course_progress.course_id
+        );
+
+        if (existingProgressIndex !== -1) {
+            return 0
+        } else {
+            return prisma.users.update({
+                where: {
+                    id: input.id
+                },
+                data: {
+                    courses_progress: {
+                        push: input.course_progress
+                    }
+                }
+            })
+        }
+    }),
+    updateUserModulesProgress: t.procedure.input(z.object({
+        id: z.string(),
+        module_progress: z.object({
+            module_id: z.string(),
+            is_completed: z.boolean(),
+        })
+    })).mutation(async ({input}) => {
+
+        let user = await prisma.users.findUnique({
+            where: {
+                id: input.id
+            }
+        },)
+
+        const existingProgressIndex = user?.modules_progress.findIndex(
+            (item) => item?.module_id === input.module_progress.module_id
+        );
+
+        if (existingProgressIndex !== -1) {
+            return 0
+        } else {
+            return prisma.users.update({
+                where: {
+                    id: input.id
+                },
+                data: {
+                    modules_progress: {
+                        push: input.module_progress
+                    }
+                }
+            })
+        }
+    }),
+    updateUserLessonsProgress: t.procedure.input(z.object({
+        id: z.string(),
+        lesson_progress: z.object({
+            lesson_id: z.string(),
+            lessonType: z.string(),
+            quizScore: z.number().optional(),
+            is_completed: z.boolean(),
+        })
+    })).mutation(async ({input}) => {
+
+        const {id, lesson_progress} = input;
+
+        let user = await prisma.users.findUnique({
+            where: {
+                id: id
+            }
+        });
+
+        if (!user) {
+            return null;
+        }
+
+        const existingProgressIndex = user.lessons_progress.findIndex(
+            (item) => item?.lesson_id === lesson_progress.lesson_id
+        );
+
+        if (existingProgressIndex !== -1) {
+            user.lessons_progress[existingProgressIndex] = lesson_progress;
+        } else {
+            user.lessons_progress.push(lesson_progress);
+        }
+
+        const updatedUser = await prisma.users.update({
+            where: {
+                id: id
+            },
+            data: {
+                lessons_progress: user.lessons_progress
+            }
+        });
+
+        return updatedUser;
+    }),
+    getUserLessonsProgressById: t.procedure.input(z.object({
+        id: z.string(),
+        lesson_id: z.string()
+    })).query(async ({input}) => {
+
+        const {id, lesson_id} = input;
+
+        let user = await prisma.users.findUnique({
+            where: {
+                id: id
+            }
+        });
+
+        if (!user) {
+            return null;
+        }
+
+        const existingProgressIndex = user.lessons_progress.findIndex(
+            (item) => item?.lesson_id === lesson_id
+        );
+
+        return user.lessons_progress[existingProgressIndex];
+    }),
+
     updateUserCourses: t.procedure.input(z.object({
         id: z.string(),
         course_id: z.string()
@@ -204,6 +341,7 @@ const appRouter = t.router({
     })).query(async ({input}) => {
         return prisma.lessons.findMany({
             where: {
+
                 module_id: input.module_id
             }
         });
@@ -326,6 +464,22 @@ const appRouter = t.router({
                 },
                 data: {
                     order: input.order
+                }
+            })
+        }
+    ),
+    updateLessonInfo: t.procedure.input(z.object({
+        id: z.string(),
+        title: z.string(),
+        lesson_type: z.string()
+    })).mutation(async ({input}) => {
+            return prisma.lessons.update({
+                where: {
+                    id: input.id
+                },
+                data: {
+                    title: input.title,
+                    lesson_type: input.lesson_type
                 }
             })
         }

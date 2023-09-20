@@ -31,7 +31,6 @@ const CourseModuleLessonsPage = () => {
     useEffect(() => {
         if (currentUserId === moduleQuery.data?.author_id) {
             setIsUserCourse(true)
-            console.log("isUserCourse: ", isUserCourse)
         }
     }, [moduleQuery])
 

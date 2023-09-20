@@ -11,22 +11,31 @@ import {Button, Modal} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {trpc} from "@/shared/utils/trpc";
 import {useSession} from "next-auth/react";
+import {BsTrash} from "react-icons/bs";
+import {AiOutlineCheck, AiOutlineClose, AiOutlineFileText} from "react-icons/ai";
+import {LessonType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
+import {MdOutlineQuiz} from "react-icons/md";
 
-type LessonOrModule = Lesson | Module
 
-interface Props {
-    items: LessonOrModule,
-    disabled: boolean
+type LessonOrModule = Lesson | Module;
+
+interface Props<T> {
+    items: T;
+    disabled: boolean;
+    setCurrentLesson?: (id: string) => void;
     isModule: boolean
-    setCurrentLesson?: (id: string) => void
 }
 
+function isLesson(item: LessonOrModule): item is Lesson {
+    return (item as Lesson).lesson_type !== undefined;
+}
 
-export const SortableModule: FC<Props> = ({items, setCurrentLesson, disabled, isModule}) => {
+export const SortableModule: FC<Props<LessonOrModule>> = ({items, setCurrentLesson, disabled, isModule}) => {
 
     const [deleteIsOpen, setDeleteIsOpne] = useState(false)
     const [deleteButtonDisabled, setDeleteButtonDisabled] = useState(false)
     const [deleteValue, setDeleteValue] = useState('')
+    const [isCompelted, setIsCompleted] = useState(false)
 
     const {
         attributes,
@@ -43,6 +52,8 @@ export const SortableModule: FC<Props> = ({items, setCurrentLesson, disabled, is
 
     const deleteModule = trpc.deleteModule.useMutation()
     const deleteLesson = trpc.deleteLesson.useMutation()
+    const updateModuleProgress = trpc.updateUserModulesProgress.useMutation()
+    const updateLessonProgress = trpc.updateUserLessonsProgress.useMutation()
 
     const session = useSession()
 
@@ -60,39 +71,81 @@ export const SortableModule: FC<Props> = ({items, setCurrentLesson, disabled, is
         setDeleteValue(e.currentTarget.value)
     }
 
+    const setIsCompletedHandler = () => {
+        setIsCompleted(prev => !prev)
+    }
+
     useEffect(() => {
+        console.log(typeof items)
     }, [items])
 
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}
-             className={` px-2 py-3 w-full border-2 border-dark-primary-main mb-2  cursor-default ${!disabled && 'cursor-grab'} `}>
+             className={`${isCompelted && 'opacity-30'} px-2 py-3 w-full border-2 border-dark-primary-main mb-2  cursor-default ${!disabled && 'cursor-grab'} `}>
             {
                 isModule ? <div className={'flex justify-between items-center'}>
                         {disabled ? <Link href={`${Routes.USER_COURSE_PAGE_LESSONS}/${items.id}`}
-                                          className={'cursor-pointer '}>{items.title}
+                                          className={'cursor-pointer '} onClick={() => {
+                            updateModuleProgress.mutate({
+                                id: session.data?.user.id!,
+                                module_progress: {
+                                    module_id: items.id,
+                                    is_completed: true,
+                                }
+                            })
+                        }}>{items.title}
                         </Link> : <p>{items.title}</p>}
                         {
                             session.data?.user.id === items.author_id &&
-                            (disabled && <Button type={'submit'} theme={ButtonThemes.FILLED}
+                            (disabled && <Button type={'submit'} theme={ButtonThemes.TEXT}
+                                                 className={'!text-dark-error-main !p-2 !rounded-md'}
                                                  onClick={deleteOpenHandler}
-                            >Delete</Button>)
+                            ><BsTrash/></Button>)
                         }
                     </div>
-                    : <div className={'flex justify-between items-center'}>
-                        <p className={'cursor-pointer'}
-                           onClick={() => dispatch(setCurrentLessonId(items.id))}>{items.title}</p>
-                        {
-                            session.data?.user.id === items.author_id &&
-                            (disabled && <Button type={'submit'} theme={ButtonThemes.FILLED}
-                                                 onClick={deleteOpenHandler}
-                            >Delete</Button>)
-                        }
+                    : <div className={`flex justify-between items-center`}>
+                        <div className={'flex items-center gap-1'}>
+                            {isLesson(items) && items?.lesson_type === LessonType.TEXT ?
+                                <span className={'text-md'}><AiOutlineFileText/></span> : <MdOutlineQuiz/>}
+                            <p className={`${isCompelted && 'opacity-30 duration-300'} cursor-pointer`}
+                               onClick={() => {
+                                   dispatch(setCurrentLessonId(items.id))
+                                   updateLessonProgress.mutate({
+                                       id: session.data?.user.id!,
+                                       lesson_progress: {
+                                           lesson_id: items.id,
+                                           is_completed: false,
+                                           quizScore: 0,
+                                           lessonType: ''
+                                       }
+                                   })
+                               }}>{items.title}</p>
+                        </div>
+                        <div>
+                            {
+                                disabled && (isLesson(items) && items?.lesson_type === LessonType.TEXT && (
+                                    <Button type={'submit'}
+                                            className={`${isCompelted ? '!text-dark-error-main' : '!text-green-600'} !p-2 !rounded-md`}
+                                            theme={ButtonThemes.TEXT}
+                                            onClick={setIsCompletedHandler}
+                                    >{isCompelted ? <AiOutlineClose/> : <AiOutlineCheck/>}</Button>))
+                            }
+                            {
+                                session.data?.user.id === items.author_id &&
+                                (disabled &&
+                                    <Button type={'submit'}
+                                            className={'!text-dark-error-main !p-2 !rounded-md'}
+                                            theme={ButtonThemes.TEXT}
+                                            onClick={deleteOpenHandler}
+                                    ><BsTrash/></Button>)
+                            }
+                        </div>
                     </div>
             }
             <Modal isOpen={deleteIsOpen} setIsOpen={deleteOpenHandler}>
                 <div className={'flex flex-col gap-3'}>
                     <p className={'text-xl'}>Write <span className={'underline text-dark-error-main'}>delete</span> to
-                        delete {isModule ? 'module' : 'lesson'}</p>
+                        delete {items.title}</p>
                     <input type="text" className={'inputField'} onChange={deleteValueHandler}/>
                     {
                         isModule ? <Button disabled={!deleteButtonDisabled} theme={ButtonThemes.FILLED} onClick={() => {

@@ -9,20 +9,36 @@ datasource db {
 }
 
 type LessonsLessonContent {
-  blocks LessonsLessonContentBlocks[]
+  blocks Json
 }
 
 type LessonsLessonContentBlocks {
-  id         String
-  paragraphs LessonsLessonContentBlocksParagraphs[]
-  src        String?
-  title      String
-  type       String
+  code       String?
+  id         String?
+  paragraphs Json
+  title      String?
+  type       String?
 }
 
 type LessonsLessonContentBlocksParagraphs {
   id   String
   text String
+}
+
+type UsersProgress {
+  courseId        String
+  modulesProgress UsersProgressModulesProgress[]
+}
+
+type UsersProgressModulesProgress {
+  lessonsProgress UsersProgressModulesProgressLessonsProgress[]
+  moduleId        String
+}
+
+type UsersProgressModulesProgressLessonsProgress {
+  isRead     Boolean
+  lessonId   String
+  lessonType String
 }
 
 model course_categories {
@@ -43,7 +59,6 @@ model courses {
   duration          String
   isVisible         Boolean
   rating            Int
-  students_id       String[]
   title             String
 }
 
@@ -90,6 +105,9 @@ model users {
   is_new_user       Boolean
   lastname          String
   password          String
+  courses_progress  Json[]
+  modules_progress  Json[]
+  lessons_progress  Json[]
   registration_date DateTime @db.Date
   role              String
 }

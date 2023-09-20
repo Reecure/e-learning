@@ -28,20 +28,25 @@ const CoursesPage = () => {
 
     return (
         <>
-            <div className={'mb-10 flex gap-3'}>
-                <div
-                    className={`${courseRendered === CourseType.SubscribedCourses && 'pb-3 border-b-2 border-dark-primary-main'}`}>
-                    <Button theme={ButtonThemes.TEXT}
-                            onClick={() => (setCoursesRendered(CourseType.SubscribedCourses))}
-                    >{CourseType.SubscribedCourses}</Button>
-                </div>
-                <div
-                    className={`${courseRendered === CourseType.MyCourses && 'pb-3 border-b-2 border-dark-primary-main'}`}>
-                    <Button theme={ButtonThemes.TEXT}
-                            onClick={() => (setCoursesRendered(CourseType.MyCourses))}
-                    >{CourseType.MyCourses}</Button>
-                </div>
+            <div className={'relative mb-10'}>
+                <div className={' flex gap-3'}>
+                    <div
+                        className={`${courseRendered === CourseType.SubscribedCourses && 'pb-3 border-b-4 border-dark-primary-main z-[1]'}`}>
+                        <Button theme={ButtonThemes.TEXT}
+                                onClick={() => (setCoursesRendered(CourseType.SubscribedCourses))}
+                        >{CourseType.SubscribedCourses}</Button>
+                    </div>
+                    <div
+                        className={`${courseRendered === CourseType.MyCourses && 'pb-3 border-b-4 border-dark-primary-main z-[1]'}`}>
+                        <Button theme={ButtonThemes.TEXT}
+                                onClick={() => (setCoursesRendered(CourseType.MyCourses))}
+                        >{CourseType.MyCourses}</Button>
+                    </div>
 
+                </div>
+                <div className={'w-full h-[1px] bg-dark-primary-main absolute bottom-[1px]'}>
+
+                </div>
             </div>
             <div>
                 {courseRendered === CourseType.MyCourses ? <div className={'grid grid-cols-4 gap-5'}>

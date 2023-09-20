@@ -11,15 +11,30 @@ import CreateLesson from "@/shared/ui/course/ui/CreateLesson/CreateLesson";
 import {Label} from "@/shared/ui/Label";
 import {useForm} from "react-hook-form";
 import {useSession} from "next-auth/react";
+import {Loader} from "@/shared/ui/Loader";
+import CourseLessonForm from "@/shared/ui/course/ui/CourseLessonForm/CourseLessonForm";
+import VideoBlock from "@/shared/ui/course/ui/CourseBlocks/VideoBlock";
+import CourseQuizGameQuestionWithAnswer from "@/shared/ui/course/ui/CourseQuizGames/CourseQuizGameQuestionWithAnswer";
+import CreateLessonQuizContent from "@/shared/ui/course/ui/CreateLessonQuizContent/CreateLessonQuizContent";
+import CourseQuizGameAnswerWithFixedLetters
+    from "@/shared/ui/course/ui/CourseQuizGames/CourseQuizGameAnswerWithFixedLetters";
+import QuizComponent from "@/shared/ui/course/ui/QuizComponent/QuizComponent";
 
 export enum LessonContentType {
     TEXT = 'TEXT',
     IMAGE = 'IMAGE',
-    CODE = 'CODE'
+    CODE = 'CODE',
+    VIDEO = 'VIDEO'
+}
+
+export enum QuizContentType {
+    DRAG_BLOCKS = ' DRAG_BLOCKS',
+    QUESTION_ANSWER = 'QUESTION_ANSWER',
+    ANSWER_WITH_FIXED_LETTERS = 'ANSWER_WITH_FIXED_LETTERS',
+    SORT_ANSWER = 'SORT_ANSWER'
 }
 
 export enum LessonType {
-    VIDEO = 'VIDEO',
     TEXT = 'TEXT',
     QUIZ = 'QUIZ'
 }
@@ -30,20 +45,16 @@ interface Props {
 
 const LessonContent: FC<Props> = ({lesson_id}) => {
     const [lessonContentEditable, setLessonContentEditable] = useState(false)
+    const [quizContentEditable, setQuizContentEditable] = useState(false)
     const [editableLesson, setLessonEditable] = useState(false)
+
     const lessonQuery = trpc.getLessonById.useQuery({lesson_id: lesson_id})
 
     const session = useSession()
 
-    const {register, handleSubmit} = useForm(
-        {
-            defaultValues: {
-                lessonTitle: lessonQuery.data?.title,
-                lesson_type: lessonQuery.data?.lesson_type
-            }
-        }
-    )
-
+    useEffect(() => {
+        console.log(lessonQuery.data)
+    }, [lessonQuery])
 
     const contentRender = (contentType: LessonContentType | string, block: any) => {
         switch (contentType) {
@@ -53,6 +64,8 @@ const LessonContent: FC<Props> = ({lesson_id}) => {
                 return <CodeBlock codeBlock={block}/>
             case LessonContentType.IMAGE:
                 return <ImageBlock imageBlock={block}/>
+            case  LessonContentType.VIDEO:
+                return <VideoBlock videoBlock={block}/>
         }
     }
 
@@ -61,7 +74,7 @@ const LessonContent: FC<Props> = ({lesson_id}) => {
     }
 
     if (lessonQuery.isLoading) {
-        return <>Loading</>
+        return <Loader/>
     }
     if (lessonQuery.data === undefined) {
         return <>There is no lessons of this course</>
@@ -84,46 +97,35 @@ const LessonContent: FC<Props> = ({lesson_id}) => {
                     <div className={'flex gap-2 items-center'}>
                         <Button theme={ButtonThemes.FILLED} onClick={editableLessonHandle}>Edit
                             Lesson</Button>
-                        <Button theme={ButtonThemes.FILLED} onClick={() => setLessonContentEditable(prev => !prev)}>Edit
-                            Content</Button>
+                        {
+                            lessonQuery.data?.lesson_type === LessonType.TEXT ? <Button theme={ButtonThemes.FILLED}
+                                                                                        onClick={() => setLessonContentEditable(prev => !prev)}>Edit
+                                Content</Button> : <Button theme={ButtonThemes.FILLED}
+                                                           onClick={() => setQuizContentEditable(prev => !prev)}>Edit
+                                Content</Button>
+                        }
                     </div>
                 }
 
             </div>
             {
-                lessonContentEditable ?
+                lessonQuery.data?.lesson_type === LessonType.TEXT ? (lessonContentEditable ?
                     // @ts-ignore
                     <CreateLessonContent lessonId={lesson_id} initialData={lessonQuery.data?.lesson_content?.blocks}/> :
                     (
                         // @ts-ignore
                         lessonQuery.data?.lesson_content?.blocks?.map(lesson => {
                             return contentRender(lesson.type, lesson)
-                        }))
-            }
-            <Modal isOpen={editableLesson} setIsOpen={editableLessonHandle}>
-                <form onSubmit={handleSubmit(async (data) => {
-                    try {
-                        console.log({...data})
-                    } catch (error) {
+                        }))) : (quizContentEditable ?
+                    // @ts-ignore
+                    <CreateLessonQuizContent lessonId={lesson_id}
+                                             initialData={lessonQuery.data?.lesson_content?.blocks}/> :
+                    <QuizComponent lesson_id={lesson_id} blocks={lessonQuery.data?.lesson_content?.blocks}/>)
 
-                    }
-                })} className={'flex flex-col gap-5 w-[300px]'}>
-                    <p className={'mb-5 text-center text-3xl'}>Update Lesson</p>
-                    <Label htmlFor={'title'} labelText={'Title'}>
-                        <input type="text" {...register('lessonTitle')} className={'inputField'}/>
-                    </Label>
-                    <Label htmlFor={'lesson_type'} labelText={'Lesson Type'}>
-                        <select
-                            className={'inputField'} {...register('lesson_type')}>
-                            <option className={'bg-dark-background'} value={LessonType.TEXT}>{LessonType.TEXT}</option>
-                            <option className={'bg-dark-background'} value={LessonType.QUIZ}>{LessonType.QUIZ}</option>
-                            <option className={'bg-dark-background'}
-                                    value={LessonType.VIDEO}>{LessonType.VIDEO}</option>
-                        </select>
-                    </Label>
-                    <Button type={'submit'} theme={ButtonThemes.FILLED} className={'mt-5 w-full'}>Update module</Button>
-                </form>
-            </Modal>
+            }
+            <CourseLessonForm lessonId={lesson_id} title={lessonQuery.data?.title || ''}
+                              type={lessonQuery.data?.lesson_type || ''}
+                              openModal={editableLesson} setModalOpen={editableLessonHandle}/>
         </div>
     );
 };
