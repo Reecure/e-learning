@@ -8,6 +8,7 @@ import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {trpc} from "@/shared/utils/trpc";
 import {useSession} from "next-auth/react";
+import {Loader} from "@/shared/ui/Loader";
 
 interface Props {
     lesson_id: string
@@ -19,7 +20,7 @@ const QuizComponent: FC<Props> = ({blocks, lesson_id}) => {
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [showScore, setShowScore] = useState(false);
     const [score, setScore] = useState(0);
-
+    const [submitValuesVisible, setSubmitValuesVisible] = useState(false)
 
     const session = useSession()
 
@@ -29,20 +30,27 @@ const QuizComponent: FC<Props> = ({blocks, lesson_id}) => {
         id: session.data?.user.id
     })
 
-    useEffect(() => {
-        console.log('lesson progress', getLessonProgressById.data)
-    }, [getLessonProgressById.isLoading])
-
     const quizContentRender = (contentType: QuizContentType | string, block: any, handleAnswer: (arg1: string, arg2: string) => void) => {
         switch (contentType) {
             case QuizContentType.QUESTION_ANSWER:
-                return <CourseQuizGameQuestionWithAnswer block={block} handleAnswer={handleAnswer}/>
+                return <CourseQuizGameQuestionWithAnswer block={block} handleAnswer={handleAnswer}
+                                                         isLast={submitValuesVisible}
+                                                         submitHandler={submitHandler}
+                />
             case QuizContentType.ANSWER_WITH_FIXED_LETTERS:
-                return <CourseQuizGameAnswerWithFixedLetters block={block} handleAnswer={handleAnswer}/>
+                return <CourseQuizGameAnswerWithFixedLetters block={block} handleAnswer={handleAnswer}
+                                                             isLast={submitValuesVisible}
+                                                             submitHandler={submitHandler}/>
             case QuizContentType.DRAG_BLOCKS:
-                return <CourseQuizGameQuestionWithAnswer block={block} handleAnswer={handleAnswer}/>
+                return <CourseQuizGameQuestionWithAnswer block={block} handleAnswer={handleAnswer}
+                                                         isLast={submitValuesVisible}
+                                                         submitHandler={submitHandler}
+                />
             case QuizContentType.SORT_ANSWER:
-                return <CourseQuizGameQuestionWithAnswer block={block} handleAnswer={handleAnswer}/>
+                return <CourseQuizGameQuestionWithAnswer block={block} handleAnswer={handleAnswer}
+                                                         isLast={submitValuesVisible}
+                                                         submitHandler={submitHandler}
+                />
         }
     }
 
@@ -53,24 +61,34 @@ const QuizComponent: FC<Props> = ({blocks, lesson_id}) => {
 
         const nextQuestion = currentQuestion + 1;
         if (nextQuestion < blocks.length) {
-            setCurrentQuestion(nextQuestion);
-        } else {
-            try {
-                updateLessonProgress.mutate({
-                    id: session.data?.user.id,
-                    lesson_progress: {
-                        lesson_id: lesson_id,
-                        is_completed: true,
-                        quizScore: score,
-                        lessonType: ''
-                    }
-                })
-            } catch (e) {
-                console.log(e)
+            if (nextQuestion === blocks.length - 1) {
+                setSubmitValuesVisible(true)
             }
-            setShowScore(true);
+            setCurrentQuestion(nextQuestion);
         }
     };
+
+    const submitHandler = () => {
+        try {
+            updateLessonProgress.mutate({
+                id: session.data?.user.id,
+                lesson_progress: {
+                    lesson_id: lesson_id,
+                    is_completed: true,
+                    quizScore: score,
+                    lessonType: ''
+                }
+            })
+        } catch (e) {
+            console.log(e)
+        }
+        setShowScore(true);
+        setSubmitValuesVisible(false)
+    }
+
+    if (getLessonProgressById.isLoading) {
+        return <Loader/>
+    }
 
     return (
         <div className={'flex flex-col items-center justify-center '}>

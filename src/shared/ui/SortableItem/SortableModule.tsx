@@ -15,6 +15,7 @@ import {BsTrash} from "react-icons/bs";
 import {AiOutlineCheck, AiOutlineClose, AiOutlineFileText} from "react-icons/ai";
 import {LessonType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
 import {MdOutlineQuiz} from "react-icons/md";
+import {Loader} from "@/shared/ui/Loader";
 
 
 type LessonOrModule = Lesson | Module;
@@ -50,14 +51,22 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({items, setCurrentLess
         transition,
     };
 
+    const session = useSession()
+
     const deleteModule = trpc.deleteModule.useMutation()
     const deleteLesson = trpc.deleteLesson.useMutation()
     const updateModuleProgress = trpc.updateUserModulesProgress.useMutation()
     const updateLessonProgress = trpc.updateUserLessonsProgress.useMutation()
-
-    const session = useSession()
+    const userProgressOnLesson = trpc.getUserLessonsProgressById.useQuery({
+        id: session.data?.user.id,
+        lesson_id: items.id
+    })
 
     const dispatch = useAppDispatch()
+
+    useEffect(() => {
+        userProgressOnLesson.refetch()
+    }, [userProgressOnLesson.isLoading, updateLessonProgress])
 
     useEffect(() => {
         deleteValue === 'delete' ? setDeleteButtonDisabled(true) : setDeleteButtonDisabled(false)
@@ -72,16 +81,24 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({items, setCurrentLess
     }
 
     const setIsCompletedHandler = () => {
-        setIsCompleted(prev => !prev)
+        updateLessonProgress.mutate({
+            id: session.data?.user.id!,
+            lesson_progress: {
+                lesson_id: items.id,
+                is_completed: userProgressOnLesson.data?.is_completed === true ? false : true,
+                quizScore: userProgressOnLesson.data?.quizScore,
+                lessonType: ''
+            }
+        })
     }
 
-    useEffect(() => {
-        console.log(typeof items)
-    }, [items])
+    if (userProgressOnLesson.isLoading) {
+        return <Loader/>
+    }
 
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}
-             className={`${isCompelted && 'opacity-30'} px-2 py-3 w-full border-2 border-dark-primary-main mb-2  cursor-default ${!disabled && 'cursor-grab'} `}>
+             className={`${userProgressOnLesson.data?.is_completed && 'opacity-30'} hover:opacity-70 duration-300 px-2 py-3 w-full border-2 border-dark-primary-main mb-2  cursor-default ${!disabled && 'cursor-grab'} `}>
             {
                 isModule ? <div className={'flex justify-between items-center'}>
                         {disabled ? <Link href={`${Routes.USER_COURSE_PAGE_LESSONS}/${items.id}`}
@@ -107,15 +124,15 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({items, setCurrentLess
                         <div className={'flex items-center gap-1'}>
                             {isLesson(items) && items?.lesson_type === LessonType.TEXT ?
                                 <span className={'text-md'}><AiOutlineFileText/></span> : <MdOutlineQuiz/>}
-                            <p className={`${isCompelted && 'opacity-30 duration-300'} cursor-pointer`}
+                            <p className={'cursor-pointer'}
                                onClick={() => {
                                    dispatch(setCurrentLessonId(items.id))
                                    updateLessonProgress.mutate({
                                        id: session.data?.user.id!,
                                        lesson_progress: {
                                            lesson_id: items.id,
-                                           is_completed: false,
-                                           quizScore: 0,
+                                           is_completed: userProgressOnLesson.data?.is_completed,
+                                           quizScore: userProgressOnLesson.data?.quizScore,
                                            lessonType: ''
                                        }
                                    })
@@ -125,10 +142,11 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({items, setCurrentLess
                             {
                                 disabled && (isLesson(items) && items?.lesson_type === LessonType.TEXT && (
                                     <Button type={'submit'}
-                                            className={`${isCompelted ? '!text-dark-error-main' : '!text-green-600'} !p-2 !rounded-md`}
+                                            className={`${userProgressOnLesson.data?.is_completed ? '!text-dark-error-main' : '!text-green-600'} !p-2 !rounded-md`}
                                             theme={ButtonThemes.TEXT}
                                             onClick={setIsCompletedHandler}
-                                    >{isCompelted ? <AiOutlineClose/> : <AiOutlineCheck/>}</Button>))
+                                    >{userProgressOnLesson.data?.is_completed ? <AiOutlineClose/> :
+                                        <AiOutlineCheck/>}</Button>))
                             }
                             {
                                 session.data?.user.id === items.author_id &&
