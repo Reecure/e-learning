@@ -65,7 +65,9 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({items, setCurrentLess
     const dispatch = useAppDispatch()
 
     useEffect(() => {
-        userProgressOnLesson.refetch()
+        if (isLesson(items)) {
+            userProgressOnLesson.refetch()
+        }
     }, [userProgressOnLesson.isLoading, updateLessonProgress])
 
     useEffect(() => {
