@@ -59,7 +59,10 @@ const CoursePage = () => {
 
     return (
         <div>
-            <CourseHeader data={data} isUserCourse={isUserCourse}/>
+
+            <CourseHeader
+                //@ts-ignore
+                data={data} isUserCourse={isUserCourse}/>
 
             <div className={''}>
                 <div className={'flex justify-between items-center'}>

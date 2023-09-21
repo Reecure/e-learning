@@ -44,6 +44,7 @@ const UserAdmin = () => {
                 <tbody>
                 {
                     users.data?.map((user, i) => {
+                        //@ts-ignore
                         return <UserRaw user={user} index={i} key={user.id}/>
                     })
                 }

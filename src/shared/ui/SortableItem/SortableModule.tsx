@@ -58,7 +58,7 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({items, setCurrentLess
     const updateModuleProgress = trpc.updateUserModulesProgress.useMutation()
     const updateLessonProgress = trpc.updateUserLessonsProgress.useMutation()
     const userProgressOnLesson = trpc.getUserLessonsProgressById.useQuery({
-        id: session.data?.user.id,
+        id: session.data?.user.id!,
         lesson_id: items.id
     })
 
@@ -85,7 +85,9 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({items, setCurrentLess
             id: session.data?.user.id!,
             lesson_progress: {
                 lesson_id: items.id,
+                //@ts-ignore
                 is_completed: userProgressOnLesson.data?.is_completed === true ? false : true,
+                //@ts-ignore
                 quizScore: userProgressOnLesson.data?.quizScore,
                 lessonType: ''
             }
@@ -98,6 +100,7 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({items, setCurrentLess
 
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}
+            //@ts-ignore
              className={`${userProgressOnLesson.data?.is_completed && 'opacity-30'} hover:opacity-70 duration-300 px-2 py-3 w-full border-2 border-dark-primary-main mb-2  cursor-default ${!disabled && 'cursor-grab'} `}>
             {
                 isModule ? <div className={'flex justify-between items-center'}>
@@ -131,7 +134,9 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({items, setCurrentLess
                                        id: session.data?.user.id!,
                                        lesson_progress: {
                                            lesson_id: items.id,
+                                           //@ts-ignore
                                            is_completed: userProgressOnLesson.data?.is_completed,
+                                           //@ts-ignore
                                            quizScore: userProgressOnLesson.data?.quizScore,
                                            lessonType: ''
                                        }
@@ -142,9 +147,11 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({items, setCurrentLess
                             {
                                 disabled && (isLesson(items) && items?.lesson_type === LessonType.TEXT && (
                                     <Button type={'submit'}
+                                        //@ts-ignore
                                             className={`${userProgressOnLesson.data?.is_completed ? '!text-dark-error-main' : '!text-green-600'} !p-2 !rounded-md`}
                                             theme={ButtonThemes.TEXT}
                                             onClick={setIsCompletedHandler}
+                                        //@ts-ignore
                                     >{userProgressOnLesson.data?.is_completed ? <AiOutlineClose/> :
                                         <AiOutlineCheck/>}</Button>))
                             }

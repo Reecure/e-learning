@@ -95,6 +95,7 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
                                             course_progress: {
                                                 course_id: data?.id,
                                                 is_completed: false,
+                                                //@ts-ignore
                                                 modules_progress: []
                                             }
                                         })

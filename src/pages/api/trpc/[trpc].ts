@@ -154,6 +154,7 @@ const appRouter = t.router({
         },)
 
         const existingProgressIndex = user?.courses_progress.findIndex(
+            //@ts-ignore
             (item) => item?.course_id === input.course_progress.course_id
         );
 
@@ -187,6 +188,7 @@ const appRouter = t.router({
         },)
 
         const existingProgressIndex = user?.modules_progress.findIndex(
+            //@ts-ignore
             (item) => item?.module_id === input.module_progress.module_id
         );
 
@@ -228,6 +230,7 @@ const appRouter = t.router({
         }
 
         const existingProgressIndex = user.lessons_progress.findIndex(
+            //@ts-ignore
             (item) => item?.lesson_id === lesson_progress.lesson_id
         );
 
@@ -242,6 +245,7 @@ const appRouter = t.router({
                 id: id
             },
             data: {
+                //@ts-ignore
                 lessons_progress: user.lessons_progress
             }
         });
@@ -266,6 +270,7 @@ const appRouter = t.router({
         }
 
         const existingProgressIndex = user.lessons_progress.findIndex(
+            //@ts-ignore
             (item) => item?.lesson_id === lesson_id
         );
 
@@ -391,6 +396,7 @@ const appRouter = t.router({
                     category_id: input.category_id,
                     difficulty_level: input.difficulty_level,
                     duration: input.duration,
+                    //@ts-ignore
                     students_id: input.students_id,
                 }
             })

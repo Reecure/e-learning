@@ -27,7 +27,7 @@ const QuizComponent: FC<Props> = ({blocks, lesson_id}) => {
     const updateLessonProgress = trpc.updateUserLessonsProgress.useMutation()
     const getLessonProgressById = trpc.getUserLessonsProgressById.useQuery({
         lesson_id: lesson_id,
-        id: session.data?.user.id
+        id: session.data?.user.id!
     })
 
     const quizContentRender = (contentType: QuizContentType | string, block: any, handleAnswer: (arg1: string, arg2: string) => void) => {
@@ -71,7 +71,7 @@ const QuizComponent: FC<Props> = ({blocks, lesson_id}) => {
     const submitHandler = () => {
         try {
             updateLessonProgress.mutate({
-                id: session.data?.user.id,
+                id: session.data?.user.id!,
                 lesson_progress: {
                     lesson_id: lesson_id,
                     is_completed: true,
@@ -108,6 +108,7 @@ const QuizComponent: FC<Props> = ({blocks, lesson_id}) => {
                     </div> : (
                         <>
                             <div>
+                                {/*@ts-ignore*/}
                                 Previous res = {getLessonProgressById.data?.quizScore}
                             </div>
                             <div className={'text-xl font-extrabold'}>

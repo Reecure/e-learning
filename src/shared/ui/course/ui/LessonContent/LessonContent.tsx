@@ -119,7 +119,9 @@ const LessonContent: FC<Props> = ({lesson_id}) => {
                         }))) : (quizContentEditable ?
                     // @ts-ignore
                     <CreateLessonQuizContent lessonId={lesson_id}
+                        //@ts-ignore
                                              initialData={lessonQuery.data?.lesson_content?.blocks}/> :
+                    //@ts-ignore
                     <QuizComponent lesson_id={lesson_id} blocks={lessonQuery.data?.lesson_content?.blocks}/>)
 
             }

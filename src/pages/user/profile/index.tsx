@@ -37,7 +37,9 @@ const UserProfile = () => {
 
     return (
         <div>
-            <UserProfileComponent user={data} refetch={refetch}/>
+            <UserProfileComponent
+                //@ts-ignore
+                user={data} refetch={refetch}/>
             {counter}
             <Button theme={ButtonThemes.FILLED} onClick={() => dispatch(increaseCount())}>Inc</Button>
             <Button theme={ButtonThemes.FILLED} onClick={() => dispatch(decreaseCount())}>Dec</Button>

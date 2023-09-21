@@ -66,9 +66,11 @@ const CourseQuizGameQuestionWithAnswer: FC<Props> = ({block, submitHandler, hand
                 theme={ButtonThemes.FILLED}
                 onClick={() => {
                     if (!isLast) {
+                        //@ts-ignore
                         handleAnswer(block.correctAnswer, isSelected?.value)
                         setSelected(null)
                     } else {
+                        //@ts-ignore
                         handleAnswer(block.correctAnswer, isSelected?.value)
                         submitHandler()
                     }

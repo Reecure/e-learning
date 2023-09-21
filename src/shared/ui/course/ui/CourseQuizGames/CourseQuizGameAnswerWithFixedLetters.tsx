@@ -20,6 +20,7 @@ const CourseQuizGameAnswerWithFixedLetters: FC<Props> = ({block, handleAnswer, s
         setInputValues(newInputValues);
 
         if (index < block.answer.length - 1) {
+            //@ts-ignore
             inputRefs.current[index + 1].focus();
         }
     };
@@ -36,13 +37,14 @@ const CourseQuizGameAnswerWithFixedLetters: FC<Props> = ({block, handleAnswer, s
             }
 
             if (index > 0) {
-                inputRefs.current[index - 1].focus(); // Move focus to the previous input
+                //@ts-ignore
+                inputRefs.current[index - 1].focus();
             }
         } else if (e.key === 'ArrowLeft' && index > 0) {
-            // Перемещаем фокус на предыдущий инпут при нажатии стрелки влево
+            //@ts-ignore
             inputRefs.current[index - 1].focus();
         } else if (e.key === 'ArrowRight' && index < block.answer.length - 1) {
-            // Перемещаем фокус на следующий инпут при нажатии стрелки вправо
+            //@ts-ignore
             inputRefs.current[index + 1].focus();
         }
     };
@@ -61,6 +63,7 @@ const CourseQuizGameAnswerWithFixedLetters: FC<Props> = ({block, handleAnswer, s
                             maxLength={1}
                             onChange={(e) => handleInputChange(e, i)}
                             onKeyDown={(e) => handleKeyDown(e, i)}
+                            //@ts-ignore
                             ref={(el) => (inputRefs.current[i] = el)}
                         />
                     })
