@@ -22,6 +22,7 @@ import {MdOutlineQuiz} from "react-icons/md";
 import {Loader} from "@/shared/ui/Loader";
 import SortableModuleItem from "@/shared/ui/SortableItem/SortableModuleItem";
 import SortableLessonItem from "@/shared/ui/SortableItem/SortableLessonItem";
+import Notification from "@/shared/ui/Notification/Notification";
 
 type LessonOrModule = Lesson | Module;
 
@@ -41,6 +42,8 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({
    const [deleteIsOpen, setDeleteIsOpen] = useState(false);
    const [deleteButtonDisabled, setDeleteButtonDisabled] = useState(false);
    const [deleteValue, setDeleteValue] = useState("");
+   const [submitError, setSubmitError] = useState({isError: false, error: ""});
+   const [notificationOpen, setNotificationOpen] = useState(false);
 
    const {attributes, listeners, setNodeRef, transform, transition} =
       useSortable({id: item?.id});
@@ -54,16 +57,14 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({
    const deleteLesson = trpc.deleteLesson.useMutation();
 
    useEffect(() => {
+      refetch();
+   }, [deleteModule.isLoading, deleteLesson.isLoading]);
+
+   useEffect(() => {
       deleteValue === "delete"
          ? setDeleteButtonDisabled(true)
          : setDeleteButtonDisabled(false);
    }, [deleteValue]);
-
-   useEffect(() => {
-      console.log("deleteLesson.isLoading", deleteLesson.isLoading);
-      console.log("deleteModule.isLoading", deleteModule.isLoading);
-      refetch();
-   }, [deleteModule.isLoading, deleteLesson.isLoading]);
 
    const deleteOpenHandler = () => {
       setDeleteIsOpen((prev) => !prev);
@@ -71,6 +72,10 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({
 
    const deleteValueHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
       setDeleteValue(e.currentTarget.value);
+   };
+
+   const setNotificationOpenHandler = () => {
+      setNotificationOpen(prev => !prev);
    };
 
    return (
@@ -96,13 +101,13 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({
          {/*{Delete modal}*/}
          <Modal isOpen={deleteIsOpen} setIsOpen={deleteOpenHandler}>
             <div className={"flex flex-col gap-3"}>
-               <p className={"text-xl"}>
+               <div className={"text-xl"}>
                   Write{" "}
                   <span className={"underline text-dark-error-main"}>
                      delete
                   </span>{" "}
                   to delete {item?.title}
-               </p>
+               </div>
                <input
                   type="text"
                   className={"inputField"}
@@ -118,9 +123,6 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({
                            deleteOpenHandler();
                         } catch (e) {
                            console.log(e);
-                        } finally {
-                           console.log("refetch called");
-                           refetch();
                         }
                      }}
                   >
@@ -133,12 +135,11 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({
                      onClick={() => {
                         try {
                            deleteLesson.mutate({id: item.id});
+                           refetch();
+                           setNotificationOpenHandler();
                            deleteOpenHandler();
                         } catch (e) {
                            console.log(e);
-                        } finally {
-                           console.log("refetch called");
-                           refetch();
                         }
                      }}
                   >
@@ -147,6 +148,16 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({
                )}
             </div>
          </Modal>
+         <Notification
+            open={notificationOpen}
+            onClose={setNotificationOpenHandler}
+            isSuccess={!submitError.isError}
+            timeoutDelay={3000}
+         >
+            {submitError.isError
+               ? "Some server error try later"
+               : `${isModule ? "Module delete success. Reload page." : "Lesson delete success. Reload page."}`}
+         </Notification>
       </div>
    );
 };

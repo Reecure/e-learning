@@ -1,16 +1,16 @@
-import { FC, ReactNode, Suspense } from "react";
-import { Routes } from "@/shared/config/routes";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import { Sidebar } from "@/widgets/Sidebar";
-import { Loader } from "@/shared/ui/Loader";
+import {FC, ReactNode, Suspense} from "react";
+import {Routes} from "@/shared/config/routes";
+import {useSession} from "next-auth/react";
+import {useRouter} from "next/router";
+import {Sidebar} from "@/widgets/Sidebar";
+import {Loader} from "@/shared/ui/Loader";
 
 interface Props {
-  children: ReactNode | ReactNode[];
-  contentClassName?: string;
+   children: ReactNode | ReactNode[];
+   contentClassName?: string;
 }
 
-const UserLayout: FC<Props> = ({ children, contentClassName }) => {
+const UserLayout: FC<Props> = ({children, contentClassName}) => {
    const router = useRouter();
 
    const session = useSession({
@@ -25,9 +25,9 @@ const UserLayout: FC<Props> = ({ children, contentClassName }) => {
    }
 
    return (
-      <Suspense fallback={<Loader />}>
+      <Suspense fallback={<Loader/>}>
          <div className={"h-[calc(100vh_-_62px)] flex justify-between"}>
-            <Sidebar />
+            <Sidebar/>
             <div className={`w-full overflow-y-auto p-5 ${contentClassName} `}>
                {children}
             </div>

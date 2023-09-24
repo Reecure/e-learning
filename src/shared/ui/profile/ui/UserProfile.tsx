@@ -41,8 +41,8 @@ const UserProfileComponent: FC<Props> = ({user, refetch}) => {
    return (
       <>
          {/*User hero*/}
-         <div className={"flex justify-between bg-neutral-800 p-5 rounded-md"}>
-            <div className={"flex items-center "}>
+         <div className={"sm:flex sm:justify-between bg-neutral-800 p-5 rounded-md"}>
+            <div className={"sm:flex   items-center "}>
                {/*{Avatar}*/}
                <div>
                   {user.avatar.length === 0 ? (
@@ -90,6 +90,7 @@ const UserProfileComponent: FC<Props> = ({user, refetch}) => {
                         }}
                      />
                   </Modal>
+
                   <Notification
                      open={uploadNotificationOpen}
                      onClose={setUploadNotificationOpenHandler}
@@ -121,7 +122,7 @@ const UserProfileComponent: FC<Props> = ({user, refetch}) => {
                </div>
             </div>
 
-            <div className={"flex items-end gap-x-2"}>
+            <div className={"flex items-start mt-5 sm:mt-0 sm:items-end gap-x-2"}>
                <Button theme={ButtonThemes.FILLED} onClick={openHandler}>
                   Edit
                </Button>

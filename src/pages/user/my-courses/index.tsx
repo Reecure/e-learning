@@ -1,4 +1,4 @@
-import React, {ReactElement, useState} from "react";
+import React, {ReactElement, useEffect, useState} from "react";
 import Layout from "@/pages/layout";
 import {Button, SmallCard} from "@/shared/ui";
 import {useSession} from "next-auth/react";
@@ -6,6 +6,8 @@ import {trpc} from "@/shared/utils/trpc";
 import UserLayout from "@/pages/user/layout";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {ErrorWidget} from "@/widgets/ErrorWidget";
+import {useRole} from "@/shared/hooks";
+import {UserRoles} from "@/enteties/User";
 import {Course} from "@/enteties/Course";
 
 enum CourseType {
@@ -19,6 +21,12 @@ const CoursesPage = () => {
    const [courseRendered, setCoursesRendered] = useState(
       CourseType.SubscribedCourses,
    );
+
+   const role = useRole();
+
+   useEffect(() => {
+      console.log(role);
+   }, []);
 
    const subscribedCourses = trpc.getUserSubscribedCourses.useQuery({
       user_id: session.data?.user?.id || "",
@@ -54,12 +62,14 @@ const CoursesPage = () => {
                      "pb-3 border-b-4 border-dark-primary-main z-[1]"
                   }`}
                >
-                  <Button
-                     theme={ButtonThemes.TEXT}
-                     onClick={() => setCoursesRendered(CourseType.MyCourses)}
-                  >
-                     {CourseType.MyCourses}
-                  </Button>
+                  {
+                     role === UserRoles.ADMIN || role === UserRoles.TEACHER ? <Button
+                        theme={ButtonThemes.TEXT}
+                        onClick={() => setCoursesRendered(CourseType.MyCourses)}
+                     >
+                        {CourseType.MyCourses}
+                     </Button> : <></>
+                  }
                </div>
             </div>
             <div
@@ -69,21 +79,27 @@ const CoursesPage = () => {
             ></div>
          </div>
          <div>
-            {courseRendered === CourseType.MyCourses ? (
-               <div className={"grid grid-cols-4 gap-5"}>
-                  {subscribedCourses.status === "success" &&
-                     myselfCourses.data?.map((item) => {
-                        return <SmallCard key={item.id} course={item as Course}/>;
-                     })}
-               </div>
-            ) : (
-               <div className={"grid grid-cols-4 gap-5"}>
-                  {myselfCourses.status === "success" &&
-                     subscribedCourses.data?.map((item) => {
-                        return <SmallCard key={item.id} course={item as Course}/>;
-                     })}
-               </div>
-            )}
+            {
+               (
+                  <>
+                     {courseRendered === CourseType.MyCourses ? (
+                        <div className={"grid grid-cols-4 gap-5"}>
+                           {subscribedCourses.status === "success" &&
+                              myselfCourses.data?.map((item) => {
+                                 return <SmallCard key={item.id} course={item as Course}/>;
+                              })}
+                        </div>
+                     ) : (
+                        <div className={"grid grid-cols-4 gap-5"}>
+                           {myselfCourses.status === "success" &&
+                              subscribedCourses.data?.map((item) => {
+                                 return <SmallCard key={item.id} course={item as Course}/>;
+                              })}
+                        </div>
+                     )}
+                  </>
+               )
+            }
          </div>
       </>
    );

@@ -1,17 +1,34 @@
-import { FC } from "react";
-import { Button } from "@/shared/ui";
-import { ButtonThemes } from "@/shared/ui/Button/Button";
-import { Tabs } from "@/pages/user/my-courses/course/[id]";
+import {FC} from "react";
+import {Button} from "@/shared/ui";
+import {ButtonThemes} from "@/shared/ui/Button/Button";
+import {Tabs} from "@/pages/user/my-courses/course/[id]";
+import {LessonType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
 
 interface Props {
-  currentTab: Tabs;
-  setCurrentTab: (currentTab: Tabs) => void;
+   currentTab: Tabs;
+   setCurrentTab: (currentTab: Tabs) => void;
 }
 
-const CourseTabs: FC<Props> = ({ currentTab, setCurrentTab }) => {
+const CourseTabs: FC<Props> = ({currentTab, setCurrentTab}) => {
    return (
       <div className={"flex flex-col relative w-full"}>
-         <div className={"flex gap-3"}>
+         <div className={"sm:hidden"}>
+            <select className={"inputField max-w-[250px]"} onChange={(e) => {
+               setCurrentTab(e.currentTarget.value as Tabs);
+            }}>
+               <option className={"bg-dark-background"} value={Tabs.ABOUT}>
+                  {Tabs.ABOUT}
+               </option>
+               <option className={"bg-dark-background"} value={Tabs.COURSE_CONTENT}>
+                  {Tabs.COURSE_CONTENT}
+               </option>
+               <option className={"bg-dark-background"} value={Tabs.REVIEWS}>
+                  {Tabs.REVIEWS}
+               </option>
+            </select>
+         </div>
+
+         <div className={"hidden sm:flex gap-3"}>
             <div
                className={`${
                   currentTab === Tabs.ABOUT
@@ -63,7 +80,7 @@ const CourseTabs: FC<Props> = ({ currentTab, setCurrentTab }) => {
          </div>
          <div
             className={
-               "w-full h-[1px] bg-dark-primary-main absolute bottom-[1px] left-0"
+               "hidden sm:block w-full h-[1px] bg-dark-primary-main absolute bottom-[1px] left-0"
             }
          />
       </div>

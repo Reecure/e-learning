@@ -1,11 +1,11 @@
-import { FC, ReactElement } from "react";
+import {FC, ReactElement} from "react";
 import Layout from "@/pages/layout";
 
 const AboutUsPage = () => {
    return (
-      <>
+      <div className={"p-3 sm:p-5 md:p-7 lg:p-10 xl:px-20 "}>
          <div>AboutUsPage</div>
-      </>
+      </div>
    );
 };
 

@@ -19,6 +19,10 @@ const CourseModules: FC<Props> = ({
       course_id: moduleId,
    });
 
+   useEffect(() => {
+      console.log(modulesQuery.data);
+   }, [modulesQuery]);
+
    if (modulesQuery.isLoading) {
       return <Loader/>;
    }

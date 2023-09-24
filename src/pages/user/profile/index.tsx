@@ -32,7 +32,6 @@ const UserProfile = () => {
 
    useEffect(() => {
       refetch();
-      console.log("refetch profile");
    }, [counter]);
 
    if (isLoading) {

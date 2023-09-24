@@ -54,6 +54,10 @@ const DragAndDrop: FC<Props<Lesson | Module>> = ({
    );
 
    useEffect(() => {
+      setPropsItems(items);
+   }, [items, updateModules, updateLessons]);
+
+   useEffect(() => {
       propsItems.forEach((item, i) => (item.order = i));
    }, [propsItems]);
 

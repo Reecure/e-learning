@@ -305,7 +305,12 @@ const appRouter = t.router({
             (item) => item?.lesson_id === lesson_id,
          );
 
-         return user.lessons_progress[existingProgressIndex];
+         if (existingProgressIndex === -1) {
+            return null;
+         } else {
+            return user.lessons_progress[existingProgressIndex];
+         }
+
       }),
 
    updateUserCourses: t.procedure

@@ -57,7 +57,7 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
                </div>
             </div>
             <div className={"flex justify-center flex-col gap-3"}>
-               <div className={"flex justify-between gap-10"}>
+               <div className={"flex flex-col sm:flex-row justify-between gap-2 sm:gap-10"}>
                   <p>
                      {/*eslint no-constant-condition: "off"*/}
                      <span>{1}</span> {1 !== 1 ? "students" : "student"}
@@ -66,7 +66,7 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
                   <p>Created at 27.03.23</p>
                   <p>Last update at 27.03.23</p>
                </div>
-               <div className={"flex gap-2"}>
+               <div className={"flex flex-col sm:flex-row gap-2"}>
                   {userHaveCourse ? (
                      <Button
                         theme={ButtonThemes.FILLED}
@@ -134,7 +134,7 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
             <Image
                src={data?.cover_image!}
                alt={"image"}
-               className={"max-w-[550px]  object-cover"}
+               className={"hidden sm:block max-w-[550px]  object-cover"}
                width={700}
                height={350}
             />

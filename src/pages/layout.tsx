@@ -1,7 +1,7 @@
-import { FC, ReactNode, useEffect, useState } from "react";
-import { Roboto } from "next/font/google";
-import { Themes } from "@/widgets/ThemeTogler";
-import { Navbar } from "@/widgets/Navbar";
+import {FC, ReactNode, useEffect, useState} from "react";
+import {Roboto} from "next/font/google";
+import {Themes} from "@/widgets/ThemeTogler";
+import {Navbar} from "@/widgets/Navbar";
 import "@uploadthing/react/styles.css";
 
 const roboto = Roboto({
@@ -11,10 +11,10 @@ const roboto = Roboto({
 });
 
 interface Props {
-  children: ReactNode | ReactNode[];
+   children: ReactNode | ReactNode[];
 }
 
-const Layout: FC<Props> = ({ children }) => {
+const Layout: FC<Props> = ({children}) => {
    const [theme, setTheme] = useState(Themes.LIGHT);
 
    const toggleTheme = () => {
@@ -42,7 +42,8 @@ const Layout: FC<Props> = ({ children }) => {
             toggleTheme={toggleTheme}
          />
          <main
-            className={`${roboto.className} h-[calc(100vh_-_58px)] overflow-y-auto max-w-[1920px] mx-auto w-full bg-light-background  dark:bg-dark-background  text-light-text dark:text-dark-text`}
+            className={`${roboto.className} h-[calc(100vh_-_58px)] overflow-y-auto max-w-[1920px]
+              w-full bg-light-background  dark:bg-dark-background  text-light-text dark:text-dark-text`}
          >
             {children}
          </main>

@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from "react";
+import React, {FC, useEffect, useState} from "react";
 import {LessonType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
 import {AiOutlineCheck, AiOutlineClose, AiOutlineFileText} from "react-icons/ai";
 import {MdOutlineQuiz} from "react-icons/md";
@@ -10,6 +10,7 @@ import {Lesson} from "@/enteties/Lesson";
 import {useAppDispatch} from "@/app/ReduxProvider/config/hooks";
 import {trpc} from "@/shared/utils/trpc";
 import {useSession} from "next-auth/react";
+import {Loader} from "@/shared/ui/Loader";
 
 
 type Props = {
@@ -19,11 +20,14 @@ type Props = {
 }
 
 const SortableLessonItem: FC<Props> = ({item, deleteOpen, disabled}) => {
+
+   const [progressLoading, setProgressLoading] = useState(false);
+
    const session = useSession();
 
    const updateLessonProgress = trpc.updateUserLessonsProgress.useMutation();
    const userProgressOnLesson = trpc.getUserLessonsProgressById.useQuery({
-      id: session.data?.user.id!,
+      id: session.data?.user.id,
       lesson_id: item.id,
    });
 
@@ -31,25 +35,34 @@ const SortableLessonItem: FC<Props> = ({item, deleteOpen, disabled}) => {
 
    useEffect(() => {
       userProgressOnLesson.refetch();
+      if (updateLessonProgress.status === "loading") {
+         setProgressLoading(true);
+      } else {
+         setProgressLoading(false);
+      }
    }, [updateLessonProgress.isLoading]);
 
-   const setIsCompletedHandler = async () => {
-      updateLessonProgress.mutate({
-         id: session.data?.user.id!,
-         lesson_progress: {
-            lesson_id: item.id,
-            is_completed: userProgressOnLesson.data?.is_completed !== true,
-            quizScore: userProgressOnLesson.data?.quizScore || 0,
-            lessonType: "",
-         },
-      });
-
+   const setIsCompletedHandler = () => {
+      try {
+         updateLessonProgress.mutate({
+            id: session.data?.user.id!,
+            lesson_progress: {
+               lesson_id: item.id,
+               is_completed: userProgressOnLesson.data?.is_completed !== true,
+               quizScore: userProgressOnLesson.data?.quizScore || 0,
+               lessonType: "",
+            },
+         });
+      } catch (e) {
+         console.log(e);
+      }
    };
 
 
    return (
       <div className={"flex justify-between items-center"}>
-         <div className={"flex items-center gap-1"}>
+         <div
+            className={`flex items-center gap-1 ${userProgressOnLesson.data?.is_completed && "duration-300 opacity-30"}`}>
             {item?.lesson_type === LessonType.TEXT ? (
                <span className={"text-md"}>
                         <AiOutlineFileText/>
@@ -86,16 +99,23 @@ const SortableLessonItem: FC<Props> = ({item, deleteOpen, disabled}) => {
                         userProgressOnLesson.data?.is_completed
                            ? "!text-dark-error-main"
                            : "!text-green-600"
-                     } !p-2 !rounded-md`}
+                     } ${progressLoading ? "!p-2 pointer-events-none !hover:none" : "!p-2"} !rounded-md`}
                      theme={ButtonThemes.TEXT}
-                     onClick={setIsCompletedHandler}
+                     onClick={() => {
+                        setIsCompletedHandler();
+                     }}
 
                   >
-                     {userProgressOnLesson.data?.is_completed ? (
-                        <AiOutlineClose/>
-                     ) : (
-                        <AiOutlineCheck/>
-                     )}
+                     {
+                        progressLoading ? <Loader className={"!w-4 !h-4"}/>
+                           : <>
+                              {userProgressOnLesson.data?.is_completed ? (
+                                 <AiOutlineClose/>
+                              ) : (
+                                 <AiOutlineCheck/>
+                              )}
+                           </>
+                     }
                   </Button>
                )}
             {session.data?.user.id === item.author_id && disabled && (
