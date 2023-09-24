@@ -1,3 +1,3 @@
-import {Module} from "./model/types/module";
+import { Module } from "./model/types/module";
 
-export type {Module}
+export type { Module };

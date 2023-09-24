@@ -1,3 +1,3 @@
-import {Lesson} from "./model/types/lesson";
+import { Lesson } from "./model/types/lesson";
 
-export type {Lesson}
+export type { Lesson };

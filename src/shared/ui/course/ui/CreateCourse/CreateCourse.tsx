@@ -1,4 +1,4 @@
-import {FC, useEffect, useState} from 'react';
+import {FC, useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {Course} from "@/enteties/Course";
 import {useSession} from "next-auth/react";
@@ -11,39 +11,50 @@ import {Text} from "@/shared/ui/Text";
 import CourseForm from "@/shared/ui/course/ui/CourseForms/CourseForm";
 
 interface Props {
-
 }
 
 const CreateCourse: FC<Props> = () => {
-    const [createCourseModalOpen, setCreateCourseModalOpen] = useState(false);
+   const [createCourseModalOpen, setCreateCourseModalOpen] = useState(false);
 
-    const session = useSession()
+   const session = useSession();
 
-    const createCourse = trpc.createCourse.useMutation()
+   const createCourse = trpc.createCourse.useMutation();
 
-    const openModalCreateCourseHandler = () => {
-        setCreateCourseModalOpen((prev) => !prev);
-    };
+   const openModalCreateCourseHandler = () => {
+      setCreateCourseModalOpen((prev) => !prev);
+   };
 
-    const createCourseHandler = async (data: any) => {
-        const res = await createCourse.mutate({
-            ...data,
-            rating: 0,
-            creation_date: new Date().toISOString(),
-            category_id: '',
-            author_id: session.data?.user.id || ''
-        })
-    };
+   const createCourseHandler = async (data: any) => {
+      const res = await createCourse.mutate({
+         ...data,
+         rating: 0,
+         creation_date: new Date().toISOString(),
+         category_id: "",
+         author_id: session.data?.user.id || "",
+      });
+   };
 
-    return (
-        <div>
-            <Button theme={ButtonThemes.FILLED_TONAL} onClick={openModalCreateCourseHandler}>Create course</Button>
-            <Modal isOpen={createCourseModalOpen} setIsOpen={openModalCreateCourseHandler}>
-                <div className={'w-full max-w-[500px]'}>
-                    <CourseForm courseData={{}} onSubmit={createCourseHandler} isCreating={true}/>
-                </div>
-            </Modal>
-        </div>
-    );
+   return (
+      <div>
+         <Button
+            theme={ButtonThemes.FILLED_TONAL}
+            onClick={openModalCreateCourseHandler}
+         >
+            Create course
+         </Button>
+         <Modal
+            isOpen={createCourseModalOpen}
+            setIsOpen={openModalCreateCourseHandler}
+         >
+            <div className={"w-full max-w-[500px]"}>
+               <CourseForm
+                  courseData={{}}
+                  onSubmit={createCourseHandler}
+                  isCreating={true}
+               />
+            </div>
+         </Modal>
+      </div>
+   );
 };
 export default CreateCourse;

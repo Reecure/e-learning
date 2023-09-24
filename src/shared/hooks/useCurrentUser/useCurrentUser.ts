@@ -1,7 +1,7 @@
-import {useSession} from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export function useCurrentUser() {
-    const session = useSession()
+   const session = useSession();
 
-    return session.data?.user.id
+   return session.data?.user.id;
 }

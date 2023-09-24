@@ -1,3 +1,3 @@
-import {Review} from "./model/types/review";
+import { Review } from "./model/types/review";
 
-export type {Review}
+export type { Review };

@@ -1,3 +1,3 @@
-import {difficultLevelBadgeHelper} from "@/shared/helpers/badgeHelper/badgeHelper";
+import { difficultLevelBadgeHelper } from "@/shared/helpers/badgeHelper/badgeHelper";
 
-export {difficultLevelBadgeHelper}
+export { difficultLevelBadgeHelper };

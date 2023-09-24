@@ -1,29 +1,30 @@
-import {FC, FormEvent, ReactNode, useEffect} from 'react';
+import { FC, FormEvent, ReactNode, useEffect } from "react";
 import Link from "next/link";
-import {Routes} from "@/shared/config/routes";
-import {Button} from "@/shared/ui";
-import {ButtonThemes} from "@/shared/ui/Button/Button";
-import {Themes} from "@/widgets/ThemeTogler";
+import { Routes } from "@/shared/config/routes";
+import { Button } from "@/shared/ui";
+import { ButtonThemes } from "@/shared/ui/Button/Button";
+import { Themes } from "@/widgets/ThemeTogler";
 
 interface Props {
-    children: ReactNode
-
+  children: ReactNode;
 }
 
-const AuthForm: FC<Props> = ({children}) => {
-    useEffect(() => {
-        const theme = localStorage.getItem('themeElearning')
-        if (theme !== null) {
-            JSON.parse(theme) === Themes.DARK && document.body.classList.add('dark')
-        }
-    }, [])
+const AuthForm: FC<Props> = ({ children }) => {
+   useEffect(() => {
+      const theme = localStorage.getItem("themeElearning");
+      if (theme !== null) {
+         JSON.parse(theme) === Themes.DARK && document.body.classList.add("dark");
+      }
+   }, []);
 
-    return (
-        <main
-            className={'space-x-4 w-full h-screen flex justify-center items-center bg-light-background dark:bg-dark-background text-light-text dark:text-dark-text'}>
-
-            {children}
-        </main>
-    );
+   return (
+      <main
+         className={
+            "space-x-4 w-full h-screen flex justify-center items-center bg-light-background dark:bg-dark-background text-light-text dark:text-dark-text"
+         }
+      >
+         {children}
+      </main>
+   );
 };
 export default AuthForm;

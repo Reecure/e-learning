@@ -1,4 +1,4 @@
-import {FC, useEffect, useState} from 'react';
+import {FC, useEffect, useState} from "react";
 import {trpc} from "@/shared/utils/trpc";
 import TextBlock from "@/shared/ui/course/ui/CourseBlocks/TextBlock";
 import CodeBlock from "@/shared/ui/course/ui/CourseBlocks/CodeBlock";
@@ -17,118 +17,144 @@ import VideoBlock from "@/shared/ui/course/ui/CourseBlocks/VideoBlock";
 import CourseQuizGameQuestionWithAnswer from "@/shared/ui/course/ui/CourseQuizGames/CourseQuizGameQuestionWithAnswer";
 import CreateLessonQuizContent from "@/shared/ui/course/ui/CreateLessonQuizContent/CreateLessonQuizContent";
 import CourseQuizGameAnswerWithFixedLetters
-    from "@/shared/ui/course/ui/CourseQuizGames/CourseQuizGameAnswerWithFixedLetters";
+   from "@/shared/ui/course/ui/CourseQuizGames/CourseQuizGameAnswerWithFixedLetters";
 import QuizComponent from "@/shared/ui/course/ui/QuizComponent/QuizComponent";
+import {useAppDispatch, useAppSelector} from "@/app/ReduxProvider/config/hooks";
+import {isLessonPreviewVisible} from "@/shared/ui/course/model/selectors/currentLessonSelector";
+import {setPreviewVisible} from "@/shared/ui/course/model";
 
 export enum LessonContentType {
-    TEXT = 'TEXT',
-    IMAGE = 'IMAGE',
-    CODE = 'CODE',
-    VIDEO = 'VIDEO'
+   TEXT = "TEXT",
+   IMAGE = "IMAGE",
+   CODE = "CODE",
+   VIDEO = "VIDEO",
 }
 
 export enum QuizContentType {
-    DRAG_BLOCKS = ' DRAG_BLOCKS',
-    QUESTION_ANSWER = 'QUESTION_ANSWER',
-    ANSWER_WITH_FIXED_LETTERS = 'ANSWER_WITH_FIXED_LETTERS',
-    SORT_ANSWER = 'SORT_ANSWER'
+   DRAG_BLOCKS = " DRAG_BLOCKS",
+   QUESTION_ANSWER = "QUESTION_ANSWER",
+   ANSWER_WITH_FIXED_LETTERS = "ANSWER_WITH_FIXED_LETTERS",
+   SORT_ANSWER = "SORT_ANSWER",
 }
 
 export enum LessonType {
-    TEXT = 'TEXT',
-    QUIZ = 'QUIZ'
+   TEXT = "TEXT",
+   QUIZ = "QUIZ",
 }
 
 interface Props {
-    lesson_id: string
+   lesson_id: string;
 }
 
 const LessonContent: FC<Props> = ({lesson_id}) => {
-    const [lessonContentEditable, setLessonContentEditable] = useState(false)
-    const [quizContentEditable, setQuizContentEditable] = useState(false)
-    const [editableLesson, setLessonEditable] = useState(false)
+   const [lessonContentEditable, setLessonContentEditable] = useState(false);
+   const [quizContentEditable, setQuizContentEditable] = useState(false);
+   const [editableLesson, setLessonEditable] = useState(false);
+   const lessonQuery = trpc.getLessonById.useQuery({lesson_id: lesson_id});
 
-    const lessonQuery = trpc.getLessonById.useQuery({lesson_id: lesson_id})
+   const session = useSession();
+   const dispatch = useAppDispatch();
 
-    const session = useSession()
+   const contentRender = (
+      contentType: LessonContentType | string,
+      block: any,
+   ) => {
+      switch (contentType) {
+      case LessonContentType.TEXT:
+         return <TextBlock textBlock={block}/>;
+      case LessonContentType.CODE:
+         return <CodeBlock codeBlock={block}/>;
+      case LessonContentType.IMAGE:
+         return <ImageBlock imageBlock={block}/>;
+      case LessonContentType.VIDEO:
+         return <VideoBlock videoBlock={block}/>;
+      }
+   };
 
-    useEffect(() => {
-        console.log(lessonQuery.data)
-    }, [lessonQuery])
+   // useEffect(() => {
+   //    dispatch(setPreviewVisible(true));
+   // }, []);
 
-    const contentRender = (contentType: LessonContentType | string, block: any) => {
-        switch (contentType) {
-            case LessonContentType.TEXT:
-                return <TextBlock textBlock={block}/>
-            case LessonContentType.CODE:
-                return <CodeBlock codeBlock={block}/>
-            case LessonContentType.IMAGE:
-                return <ImageBlock imageBlock={block}/>
-            case  LessonContentType.VIDEO:
-                return <VideoBlock videoBlock={block}/>
-        }
-    }
+   const editableLessonHandle = () => {
+      setLessonEditable((prev) => !prev);
+   };
 
-    const editableLessonHandle = () => {
-        setLessonEditable(prev => !prev)
-    }
+   if (lessonQuery.isLoading) {
+      return <Loader/>;
+   }
+   if (lessonQuery.error) {
+      return <>Something went wrong</>;
+   }
 
-    if (lessonQuery.isLoading) {
-        return <Loader/>
-    }
-    if (lessonQuery.data === undefined) {
-        return <>There is no lessons of this course</>
-    }
-    if (lessonQuery.error) {
-        return <>Something went wrong</>
-    }
-
-    return (
-        <div>
-            <div className={'flex justify-between items-center gap-2 items-center'}>
-                <div className={'flex gap-2 items-center'}>
-                    <h4 className={'text-5xl font-extrabold my-5'}>
-                        {lessonQuery.data?.title}
-                    </h4>
-                    <Badge color={BadgeColors.GREEN} text={lessonQuery.data?.lesson_type!}/>
-                </div>
-                {
-                    lessonQuery.data?.author_id === session.data?.user.id &&
-                    <div className={'flex gap-2 items-center'}>
-                        <Button theme={ButtonThemes.FILLED} onClick={editableLessonHandle}>Edit
-                            Lesson</Button>
-                        {
-                            lessonQuery.data?.lesson_type === LessonType.TEXT ? <Button theme={ButtonThemes.FILLED}
-                                                                                        onClick={() => setLessonContentEditable(prev => !prev)}>Edit
-                                Content</Button> : <Button theme={ButtonThemes.FILLED}
-                                                           onClick={() => setQuizContentEditable(prev => !prev)}>Edit
-                                Content</Button>
-                        }
-                    </div>
-                }
-
+   return (
+      <div>
+         <div className={"flex justify-between items-center gap-2 items-center"}>
+            <div className={"flex gap-2 items-center"}>
+               <h4 className={"text-5xl font-extrabold my-5"}>
+                  {lessonQuery.data?.title}
+               </h4>
+               <Badge
+                  color={BadgeColors.GREEN}
+                  text={lessonQuery.data?.lesson_type!}
+               />
             </div>
-            {
-                lessonQuery.data?.lesson_type === LessonType.TEXT ? (lessonContentEditable ?
-                    // @ts-ignore
-                    <CreateLessonContent lessonId={lesson_id} initialData={lessonQuery.data?.lesson_content?.blocks}/> :
-                    (
-                        // @ts-ignore
-                        lessonQuery.data?.lesson_content?.blocks?.map(lesson => {
-                            return contentRender(lesson.type, lesson)
-                        }))) : (quizContentEditable ?
-                    // @ts-ignore
-                    <CreateLessonQuizContent lessonId={lesson_id}
-                        //@ts-ignore
-                                             initialData={lessonQuery.data?.lesson_content?.blocks}/> :
-                    //@ts-ignore
-                    <QuizComponent lesson_id={lesson_id} blocks={lessonQuery.data?.lesson_content?.blocks}/>)
+            {lessonQuery.data?.author_id === session.data?.user.id && (
+               <div className={"flex gap-2 items-center"}>
+                  <Button theme={ButtonThemes.FILLED} onClick={editableLessonHandle}>
+                     Edit Lesson
+                  </Button>
+                  {lessonQuery.data?.lesson_type === LessonType.TEXT ? (
+                     <Button
+                        theme={ButtonThemes.FILLED}
+                        onClick={() => setLessonContentEditable((prev) => !prev)}
+                     >
+                        Edit Content
+                     </Button>
+                  ) : (
+                     <Button
+                        theme={ButtonThemes.FILLED}
+                        onClick={() => setQuizContentEditable((prev) => !prev)}
+                     >
+                        Edit Content
+                     </Button>
+                  )}
+               </div>
+            )}
+         </div>
+         {lessonQuery.data?.lesson_type === LessonType.TEXT ? (
+            lessonContentEditable ? (
+               <CreateLessonContent
+                  lessonId={lesson_id}
+                  initialData={lessonQuery.data?.lesson_content?.blocks as any}
+               />
+            ) : (
 
-            }
-            <CourseLessonForm lessonId={lesson_id} title={lessonQuery.data?.title || ''}
-                              type={lessonQuery.data?.lesson_type || ''}
-                              openModal={editableLesson} setModalOpen={editableLessonHandle}/>
-        </div>
-    );
+               lessonQuery.data?.lesson_content?.blocks?.map((lesson) => {
+                  //@ts-ignore
+                  return contentRender(lesson?.type, lesson);
+               })
+            )
+         ) : quizContentEditable ? (
+
+            <CreateLessonQuizContent
+               lessonId={lesson_id}
+               initialData={lessonQuery.data?.lesson_content?.blocks as any}
+            />
+         ) : (
+
+            <QuizComponent
+               lesson_id={lesson_id}
+               blocks={lessonQuery.data?.lesson_content?.blocks as any}
+            />
+         )}
+         <CourseLessonForm
+            lessonId={lesson_id}
+            title={lessonQuery.data?.title || ""}
+            type={lessonQuery.data?.lesson_type || ""}
+            openModal={editableLesson}
+            setModalOpen={editableLessonHandle}
+         />
+      </div>
+   );
 };
 export default LessonContent;

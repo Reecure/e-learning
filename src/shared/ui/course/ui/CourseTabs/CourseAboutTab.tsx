@@ -1,15 +1,10 @@
-import {FC} from 'react';
+import { FC } from "react";
 
 interface Props {
-    courseAboutText: string
+  courseAboutText: string;
 }
 
-const CourseAboutTab: FC<Props> = ({courseAboutText}) => {
-
-    return (
-        <div>
-            {courseAboutText}
-        </div>
-    );
+const CourseAboutTab: FC<Props> = ({ courseAboutText }) => {
+   return <div>{courseAboutText}</div>;
 };
 export default CourseAboutTab;

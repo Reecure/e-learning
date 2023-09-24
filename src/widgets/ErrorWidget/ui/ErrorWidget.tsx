@@ -1,14 +1,12 @@
-import {FC} from 'react';
+import { FC } from "react";
 
-interface Props {
-}
+interface Props {}
 
 const ErrorWidget: FC<Props> = () => {
-
-    return (
-        <div className={'w-full h-full flex justify-center items-center'}>
-            <p className={'text-5xl'}>Server Error</p>
-        </div>
-    );
+   return (
+      <div className={"w-full h-full flex justify-center items-center"}>
+         <p className={"text-5xl"}>Server Error</p>
+      </div>
+   );
 };
 export default ErrorWidget;
