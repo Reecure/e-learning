@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useRef } from "react";
+import { FC, ReactNode } from "react";
 import Overlay from "@/shared/ui/Overlay/Overlay";
 import { CSSTransition } from "react-transition-group";
 
@@ -11,7 +11,7 @@ interface Props {
 
 const Modal: FC<Props> = ({ children, isOpen, setIsOpen, classname }) => {
    return (
-      <>
+      <div>
          <CSSTransition
             in={isOpen}
             timeout={400}
@@ -33,7 +33,7 @@ const Modal: FC<Props> = ({ children, isOpen, setIsOpen, classname }) => {
                </div>
             </div>
          </CSSTransition>
-      </>
+      </div>
    );
 };
 export default Modal;
