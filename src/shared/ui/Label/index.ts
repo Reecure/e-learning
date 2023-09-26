@@ -1,3 +1,3 @@
 import Label from "./ui/Label";
 
-export {Label}
+export {Label};

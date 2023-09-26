@@ -1,14 +1,11 @@
-import {FC} from 'react';
+import {type FC} from "react";
 
-interface Props {
-}
+type Props = Record<string, unknown>;
 
-const CourseReviewsTab: FC<Props> = () => {
+const CourseReviewsTab: FC<Props> = () => (
+	<div>
+		<div>CourseReviewsTab</div>
+	</div>
+);
 
-    return (
-        <div>
-            <div>CourseReviewsTab</div>
-        </div>
-    );
-};
 export default CourseReviewsTab;

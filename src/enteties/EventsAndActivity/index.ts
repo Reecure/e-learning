@@ -1,3 +1,3 @@
-import {EventAndActivity} from "./model/types/eventAndActivity";
+import {type EventAndActivity} from "./model/types/eventAndActivity";
 
-export type {EventAndActivity}
+export type {EventAndActivity};

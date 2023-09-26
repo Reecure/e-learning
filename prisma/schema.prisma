@@ -9,36 +9,28 @@ datasource db {
 }
 
 type LessonsLessonContent {
-  blocks Json
+  blocks Json[]
 }
 
-type LessonsLessonContentBlocks {
-  code       String?
-  id         String?
-  paragraphs Json
-  title      String?
-  type       String?
+type LessonsLessonContentBlocksAnswer {
+  otherAnswer String
 }
 
-type LessonsLessonContentBlocksParagraphs {
-  id   String
-  text String
+type UsersCoursesProgress {
+  course_id    String
+  is_completed Boolean
 }
 
-type UsersProgress {
-  courseId        String
-  modulesProgress UsersProgressModulesProgress[]
+type UsersLessonsProgress {
+  is_completed Boolean
+  lessonType   String
+  lesson_id    String
+  quizScore    Int?
 }
 
-type UsersProgressModulesProgress {
-  lessonsProgress UsersProgressModulesProgressLessonsProgress[]
-  moduleId        String
-}
-
-type UsersProgressModulesProgressLessonsProgress {
-  isRead     Boolean
-  lessonId   String
-  lessonType String
+type UsersModulesProgress {
+  is_completed Boolean
+  module_id    String
 }
 
 model course_categories {
@@ -75,11 +67,11 @@ model grades_and_progress {
 }
 
 model lessons {
-  id             String @id @default(auto()) @map("_id") @db.ObjectId
-  author_id      String @db.ObjectId
-  lesson_content Json
+  id             String                @id @default(auto()) @map("_id") @db.ObjectId
+  author_id      String                @db.ObjectId
+  lesson_content LessonsLessonContent?
   lesson_type    String
-  module_id      String @db.ObjectId
+  module_id      String                @db.ObjectId
   order          Int
   title          String
 }
@@ -97,17 +89,17 @@ model reviews {
 }
 
 model users {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  id                String                 @id @default(auto()) @map("_id") @db.ObjectId
   avatar            String
   courses           String[]
-  email             String   @unique
+  courses_progress  UsersCoursesProgress[]
+  email             String                 @unique
   firstname         String
   is_new_user       Boolean
   lastname          String
+  lessons_progress  UsersLessonsProgress[]
+  modules_progress  UsersModulesProgress[]
   password          String
-  courses_progress  Json[]
-  modules_progress  Json[]
-  lessons_progress  Json[]
-  registration_date DateTime @db.Date
+  registration_date DateTime               @db.Date
   role              String
 }

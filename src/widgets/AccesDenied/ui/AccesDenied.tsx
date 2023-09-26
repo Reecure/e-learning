@@ -1,14 +1,11 @@
-import {FC} from 'react';
+import {type FC} from "react";
 
-interface Props {
-}
+type Props = Record<string, unknown>;
 
-const AccessDenied: FC<Props> = () => {
+const AccessDenied: FC<Props> = () => (
+	<div className={"w-full h-full flex justify-center items-center"}>
+		<p className={"text-5xl"}>Access Denied</p>
+	</div>
+);
 
-    return (
-        <div className={'w-full h-full flex justify-center items-center'}>
-            <p className={'text-5xl'}>Access Denied</p>
-        </div>
-    );
-};
 export default AccessDenied;
