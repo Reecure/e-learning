@@ -1,7 +1,7 @@
-import { useSession } from "next-auth/react";
+import {useSession} from "next-auth/react";
 
 export function useRole() {
-   const session = useSession();
+	const session = useSession();
 
-   return session.data?.user.role;
+	return session.data?.user.role;
 }

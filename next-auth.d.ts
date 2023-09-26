@@ -1,11 +1,11 @@
-import NextAuth, { DefaultSession } from "next-auth";
-import { UserRoles } from "@/enteties/User";
+import NextAuth, {type DefaultSession} from "next-auth";
+import {type UserRoles} from "@/enteties/User";
 
 declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-      role: UserRoles;
-    } & DefaultSession["user"];
-  }
+	type Session = {
+		user: {
+			id: string;
+			role: UserRoles;
+		} & DefaultSession["user"];
+	};
 }

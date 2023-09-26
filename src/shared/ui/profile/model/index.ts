@@ -1,7 +1,7 @@
 import CounterReducer, {
-   decreaseCount,
-   increaseCount,
+	decreaseCount,
+	increaseCount,
 } from "./slice/counterSlice";
-import { counterSelector } from "@/shared/ui/profile/model/selectors/counterSelector";
+import {counterSelector} from "@/shared/ui/profile/model/selectors/counterSelector";
 
-export { CounterReducer, counterSelector, increaseCount, decreaseCount };
+export {CounterReducer, counterSelector, increaseCount, decreaseCount};

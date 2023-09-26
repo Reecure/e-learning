@@ -1,5 +1,5 @@
-export interface CourseCategory {
-  category_id: string;
-  category_name: string;
-  category_description: string;
-}
+export type CourseCategory = {
+	category_id: string;
+	category_name: string;
+	category_description: string;
+};

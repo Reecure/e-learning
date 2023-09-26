@@ -1,3 +1,3 @@
-import ThemeToggle, { Themes } from "./ui/ThemeToggle";
+import ThemeToggle, {Themes} from "./ui/ThemeToggle";
 
-export { ThemeToggle, Themes };
+export {ThemeToggle, Themes};

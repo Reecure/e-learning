@@ -1,30 +1,29 @@
-import { FC, InputHTMLAttributes } from "react";
-import { DeepMap, FieldError, UseFormRegisterReturn } from "react-hook-form";
-import { Text } from "@/shared/ui/Text";
+import {type FC, type InputHTMLAttributes} from "react";
+import {type DeepMap, type FieldError, type UseFormRegisterReturn} from "react-hook-form";
+import {Text} from "@/shared/ui/Text";
 
-interface Props extends InputHTMLAttributes<HTMLInputElement> {
-  className?: string;
-  register?: UseFormRegisterReturn;
-  errors?: DeepMap<any, FieldError>;
-  name: string;
-}
+type Props = {
+	className?: string;
+	register?: UseFormRegisterReturn;
+	errors?: DeepMap<any, FieldError>;
+	name: string;
+} & InputHTMLAttributes<HTMLInputElement>;
 
 const Input: FC<Props> = ({
-   className,
-   register,
-   errors,
-   name,
-   ...otherProps
-}) => {
-   return (
-      <>
-         <input
-            type={"text"}
-            {...otherProps}
-            {...register}
-            className={`${className} `}
-         />
-      </>
-   );
-};
+	className,
+	register,
+	errors,
+	name,
+	...otherProps
+}) => (
+	<>
+		<input
+			type={"text"}
+			{...otherProps}
+			{...register}
+			className={`${className} `}
+		/>
+	</>
+);
+
 export default Input;

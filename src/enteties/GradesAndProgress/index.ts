@@ -1,3 +1,3 @@
-import { GradesAndProgress } from "./model/types/gradesAndProgress";
+import {type GradesAndProgress} from "./model/types/gradesAndProgress";
 
-export type { GradesAndProgress };
+export type {GradesAndProgress};

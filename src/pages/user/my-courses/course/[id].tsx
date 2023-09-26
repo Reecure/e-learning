@@ -1,4 +1,4 @@
-import {ReactElement, useEffect, useState} from "react";
+import {type ReactElement, useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import Layout from "@/pages/layout";
 import UserLayout from "@/pages/user/layout";
@@ -15,122 +15,121 @@ import CourseReviewsTab from "@/shared/ui/course/ui/CourseTabs/CourseReviewsTab"
 import CourseContentTab from "@/shared/ui/course/ui/CourseTabs/CourseContentTab";
 
 export enum Tabs {
-   ABOUT = "About",
-   COURSE_CONTENT = "Course content",
-   REVIEWS = "Reviews",
+    ABOUT = "About",
+    COURSE_CONTENT = "Course content",
+    REVIEWS = "Reviews",
 }
 
 const CoursePage = () => {
-   const [currentTab, setCurrentTab] = useState<Tabs>(Tabs.ABOUT);
-   const [courseModulesEdit, setCourseModuleEdit] = useState(false);
-   const [moduleCreated, setModuleCreated] = useState(false);
-   const [isUserCourse, setIsUserCourse] = useState(false);
+	const [currentTab, setCurrentTab] = useState<Tabs>(Tabs.ABOUT);
+	const [courseModulesEdit, setCourseModuleEdit] = useState(false);
+	const [moduleCreated, setModuleCreated] = useState(false);
+	const [isUserCourse, setIsUserCourse] = useState(false);
 
-   const router = useRouter();
-   const session = useSession();
+	const router = useRouter();
+	const session = useSession();
 
-   const {data, isLoading, error} = trpc.getCourseById.useQuery({
-      course_id: router.query.id as string,
-   });
+	const {data, isLoading, error} = trpc.getCourseById.useQuery({
+		course_id: router.query.id as string,
+	});
 
-   useEffect(() => {
-      if (session.data?.user.id === data?.author_id) {
-         setIsUserCourse(true);
-      }
-   }, [session.data?.user.id, data?.author_id]);
+	useEffect(() => {
+		if (session.data?.user.id === data?.author_id) {
+			setIsUserCourse(true);
+		}
+	}, [session.data?.user.id, data?.author_id]);
 
-   const courseModuleEditHandler = () => {
-      setCourseModuleEdit((prev) => !prev);
-   };
+	const courseModuleEditHandler = () => {
+		setCourseModuleEdit(prev => !prev);
+	};
 
-   const moduleCreatedHandler = () => {
-      setModuleCreated((prev) => !prev);
-   };
+	const moduleCreatedHandler = () => {
+		setModuleCreated(prev => !prev);
+	};
 
-   const setCurrentTabHandler = (current: Tabs) => {
-      setCurrentTab(current);
-   };
+	const setCurrentTabHandler = (current: Tabs) => {
+		setCurrentTab(current);
+	};
 
-   if (isLoading) {
-      return <Loader/>;
-   }
+	if (isLoading) {
+		return <Loader/>;
+	}
 
-   return (
-      <div>
-         {data && (
-            <CourseHeader
-               data={data}
-               isUserCourse={isUserCourse}
-            />
-         )}
+	return (
+		<div>
+			{data && (
+				<CourseHeader
+					data={data}
+					isUserCourse={isUserCourse}
+				/>
+			)}
 
-         <div className={""}>
-            <div className={"flex justify-between items-center"}>
-               <CourseTabs
-                  currentTab={currentTab}
-                  setCurrentTab={setCurrentTabHandler}
-               />
-               {currentTab === Tabs.COURSE_CONTENT &&
-                  isUserCourse &&
-                  (!courseModulesEdit ? (
-                     <Button
-                        theme={ButtonThemes.FILLED}
-                        onClick={courseModuleEditHandler}
-                        className={"ml-5"}
-                     >
-                        Edit
-                     </Button>
-                  ) : (
-                     <div className={"flex gap-x-2"}>
-                        <Button
-                           theme={ButtonThemes.FILLED}
-                           onClick={courseModuleEditHandler}
-                           className={"ml-5"}
-                        >
-                           Close
-                        </Button>
-                     </div>
-                  ))}
-            </div>
+			<div className={""}>
+				<div className={"flex justify-between items-center"}>
+					<CourseTabs
+						currentTab={currentTab}
+						setCurrentTab={setCurrentTabHandler}
+					/>
+					{currentTab === Tabs.COURSE_CONTENT && isUserCourse && (!courseModulesEdit ? (
+						<Button
+							theme={ButtonThemes.FILLED}
+							onClick={courseModuleEditHandler}
+							className={"ml-5"}
+						>
+                            Edit
+						</Button>
+					) : (
+						<div className={"flex gap-x-2"}>
+							<Button
+								theme={ButtonThemes.FILLED}
+								onClick={courseModuleEditHandler}
+								className={"ml-5"}
+							>
+                                Close
+							</Button>
+						</div>
+					))}
+				</div>
 
-            <div className={"mt-5"}>
-               {currentTab === Tabs.ABOUT && (
-                  <CourseAboutTab
-                     courseAboutText={data?.description || ""}
-                  />
-               )}
-            </div>
+				<div className={"mt-5"}>
+					{currentTab === Tabs.ABOUT && (
+						<CourseAboutTab
+							courseAboutText={data?.description || ""}
+						/>
+					)}
+				</div>
 
-            <div>
-               {currentTab === Tabs.COURSE_CONTENT && (
-                  <>
-                     {isUserCourse && courseModulesEdit && (
-                        <CreateModule
-                           courseId={router.query.id as string}
-                        />
-                     )}
-                     <CourseContentTab
-                        courseModulesEdit={courseModulesEdit}
-                        moduleId={router.query.id as string}
-                        isUserAuthor={isUserCourse}
-                     />
-                  </>
-               )}
-            </div>
+				<div>
+					{currentTab === Tabs.COURSE_CONTENT && (
+						<>
+							{isUserCourse && courseModulesEdit && (
+								<CreateModule
+									courseId={router.query.id as string}
+								/>
+							)}
+							<CourseContentTab
+								courseModulesEdit={courseModulesEdit}
+								moduleId={router.query.id as string}
+								isUserAuthor={isUserCourse}
+							/>
+						</>
+					)}
+				</div>
 
-            <div className={"mt-5"}>
-               {currentTab === Tabs.REVIEWS && <CourseReviewsTab/>}
-            </div>
-         </div>
-      </div>
-   );
+				<div className={"mt-5"}>
+					{currentTab === Tabs.REVIEWS && <CourseReviewsTab/>}
+				</div>
+			</div>
+		</div>
+	);
 };
 
 CoursePage.getLayout = function getLayout(page: ReactElement) {
-   return (
-      <Layout>
-         <UserLayout>{page}</UserLayout>
-      </Layout>
-   );
+	return (
+		<Layout>
+			<UserLayout>{page}</UserLayout>
+		</Layout>
+	);
 };
+
 export default CoursePage;

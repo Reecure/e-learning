@@ -1,10 +1,9 @@
-import { FC } from "react";
+import {type FC} from "react";
 
-interface Props {
-  courseAboutText: string;
-}
-
-const CourseAboutTab: FC<Props> = ({ courseAboutText }) => {
-   return <div>{courseAboutText}</div>;
+type Props = {
+	courseAboutText: string;
 };
+
+const CourseAboutTab: FC<Props> = ({courseAboutText}) => <div>{courseAboutText}</div>;
+
 export default CourseAboutTab;

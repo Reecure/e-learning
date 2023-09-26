@@ -1,26 +1,25 @@
-import {FC, useEffect} from "react";
+import {type FC, useEffect} from "react";
 import CourseModules from "@/shared/ui/course/ui/CourseModules/CourseModules";
 import {Module} from "@/enteties/Module";
 
-interface Props {
-   courseModulesEdit: boolean;
-   moduleId: string;
-   isUserAuthor: boolean;
-}
+type Props = {
+	courseModulesEdit: boolean;
+	moduleId: string;
+	isUserAuthor: boolean;
+};
 
 const CourseContentTab: FC<Props> = ({
-   courseModulesEdit,
-   moduleId,
-   isUserAuthor,
-}) => {
-   return (
-      <>
-         <CourseModules
-            courseModulesEdit={courseModulesEdit}
-            moduleId={moduleId}
-            isUserAuthor={isUserAuthor}
-         />
-      </>
-   );
-};
+	courseModulesEdit,
+	moduleId,
+	isUserAuthor,
+}) => (
+	<>
+		<CourseModules
+			courseModulesEdit={courseModulesEdit}
+			moduleId={moduleId}
+			isUserAuthor={isUserAuthor}
+		/>
+	</>
+);
+
 export default CourseContentTab;
