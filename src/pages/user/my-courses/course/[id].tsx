@@ -85,6 +85,7 @@ const CoursePage = () => {
                         <Button
                            theme={ButtonThemes.FILLED}
                            onClick={courseModuleEditHandler}
+                           className={"ml-5"}
                         >
                            Close
                         </Button>

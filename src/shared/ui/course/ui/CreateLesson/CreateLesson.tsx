@@ -70,8 +70,8 @@ const CreateLesson: FC<Props> = ({moduleId}) => {
             onClick={modalOpenHandler}
             className={
                "mb-5 flex items-center justify-center w-full border-dashed border-[1px] py-2 " +
-               "border-dark-primary-main hover:border-opacity-60 " +
-               "hover:text-opacity-60 cursor-pointer text-dark-primary-main"
+               "border-light-primary-main dark:border-dark-primary-main hover:border-opacity-60 " +
+               "hover:text-opacity-60 cursor-pointer text-light-primary-main dark:text-dark-primary-main"
             }
          >
             <p>Add Lesson</p>

@@ -27,7 +27,7 @@ const SortableLessonItem: FC<Props> = ({item, deleteOpen, disabled}) => {
 
    const updateLessonProgress = trpc.updateUserLessonsProgress.useMutation();
    const userProgressOnLesson = trpc.getUserLessonsProgressById.useQuery({
-      id: session.data?.user.id,
+      id: session.data?.user.id!,
       lesson_id: item.id,
    });
 

@@ -76,7 +76,7 @@ const Navbar: FC<Props> = ({className, theme, toggleTheme}) => {
              <div className={"fixed top-0 bottom-0 right-0 left-0 cursor-pointer z-[1000] bg-black/40"}
                   onClick={openHamburgerHandler}>
 
-                 <ul className="absolute flex flex-col bg-dark-background h-screen px-5 py-5 space-y-3 w-[200px] z-[1011]"
+                 <ul className="absolute flex flex-col bg-light-background dark:bg-dark-background h-screen px-5 py-5 space-y-3 w-[200px] z-[1011]"
                      onClick={(e) => {
                         e.stopPropagation();
                      }}>
