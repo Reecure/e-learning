@@ -1,5 +1,4 @@
 import {type FC, useEffect} from "react";
-import {CSSTransition} from "react-transition-group";
 
 type Props = {
     children: React.ReactNode;
@@ -31,24 +30,24 @@ const Notification: FC<Props> = ({
     }, [open]);
 
     return (
-        <CSSTransition
-            in={open}
-            timeout={400}
-            mountOnEnter
-            unmountOnExit
-            classNames={{
-                enterActive: "animate-slide-from-top",
-                exitActive: "animate-slide-to-top",
-            }}
+        // <CSSTransition
+        // 	in={open}
+        // 	timeout={400}
+        // 	mountOnEnter
+        // 	unmountOnExit
+        // 	classNames={{
+        // 		enterActive: "animate-slide-from-top",
+        // 		exitActive: "animate-slide-to-top",
+        // 	}}
+        // >
+        <div
+            className={`${
+                isSuccess ? "text-green-600" : "text-dark-error-main"
+            } fixed top-10 -translate-x-1/2 left-1/2  max-w-[300px] w-full p-4 rounded-md bg-dark-neutral-100 z-[1001]`}
         >
-            <div
-                className={`${
-                    isSuccess ? "text-green-600" : "text-dark-error-main"
-                } fixed top-10 -translate-x-1/2 left-1/2  max-w-[300px] w-full p-4 rounded-md bg-dark-neutral-100 z-[1001]`}
-            >
-                {children}
-            </div>
-        </CSSTransition>
+            {children}
+        </div>
+        // </CSSTransition>
     );
 };
 
