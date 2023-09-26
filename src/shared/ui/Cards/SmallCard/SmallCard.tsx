@@ -16,7 +16,7 @@ const SmallCard: FC<Props> = ({course}) => {
    return (
       <div
          className={
-            "flex sm:flex-col max-w-[450px] sm:max-w-[350px] min-h-[230px] p-4 gap-x-5 border-2 rounded-3xl border-dark-primary-main "
+            "flex sm:flex-col max-w-[450px] sm:max-w-[350px] min-h-[230px] p-4 gap-x-5 border-2 rounded-3xl border-light-primary-main dark:border-dark-primary-main "
          }
       >
          <div className={""}>

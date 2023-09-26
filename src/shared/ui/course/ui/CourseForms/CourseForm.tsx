@@ -88,7 +88,7 @@ const CourseForm: FC<Props> = ({courseData, isCreating, onSubmit}) => {
                name="difficulty_level"
                defaultValue={DifficultLevels.EASY}
             >
-               <option className={"bg-dark-background"} value={DifficultLevels.EASY}>
+               <option className={"bg-light-background dark:bg-dark-background"} value={DifficultLevels.EASY}>
                   Easy
                </option>
                <option
@@ -97,7 +97,7 @@ const CourseForm: FC<Props> = ({courseData, isCreating, onSubmit}) => {
                >
                   Medium
                </option>
-               <option className={"bg-dark-background"} value={DifficultLevels.HARD}>
+               <option className={"bg-light-background dark:bg-dark-background"} value={DifficultLevels.HARD}>
                   Hard
                </option>
             </select>

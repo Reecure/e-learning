@@ -18,7 +18,7 @@ const Hero: FC<Props> = () => {
                "absolute top-[20%] left-[10%] max-w-[300px] md:max-w-[350px] lg:max-w-[450px] xl:max-w-[600px] text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold"
             }
          >
-            <h1 className={"tracking-wider"}>
+            <h1 className={"tracking-wider text-white"}>
                Elevate Education: Unleash Your Heroic Potential with Our Community.
             </h1>
          </div>

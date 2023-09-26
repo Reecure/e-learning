@@ -60,10 +60,10 @@ const CourseLessonForm: FC<Props> = ({
                </Label>
                <Label htmlFor={"lesson_type"} labelText={"Lesson Type"}>
                   <select className={"inputField"} {...register("lesson_type")}>
-                     <option className={"bg-dark-background"} value={LessonType.TEXT}>
+                     <option className={"bg-light-background dark:bg-dark-background"} value={LessonType.TEXT}>
                         {LessonType.TEXT}
                      </option>
-                     <option className={"bg-dark-background"} value={LessonType.QUIZ}>
+                     <option className={"bg-light-background dark:bg-dark-background"} value={LessonType.QUIZ}>
                         {LessonType.QUIZ}
                      </option>
                   </select>

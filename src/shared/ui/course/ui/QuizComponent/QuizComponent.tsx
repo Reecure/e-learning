@@ -78,7 +78,7 @@ const QuizComponent: FC<Props> = ({blocks, lesson_id}) => {
       if (blocks.length === 1) {
          setSubmitValuesVisible(true);
       }
-   }, [blocks]);
+   }, [blocks, showScore]);
 
    useEffect(() => {
       if (showScore) {

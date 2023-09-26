@@ -84,7 +84,7 @@ export const SortableModule: FC<Props<LessonOrModule>> = ({
          style={style}
          {...attributes}
          {...listeners}
-         className={`px-2 py-3 w-full border-2 border-dark-primary-main mb-2  cursor-default ${
+         className={`px-2 py-3 w-full border-2 border-light-primary-main dark:border-dark-primary-main rounded-md mb-2  cursor-default ${
             !disabled && "cursor-grab"
          } `}
       >

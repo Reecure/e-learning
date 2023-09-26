@@ -59,7 +59,7 @@ const CourseModuleLessonsPage = () => {
          {
             lessonSidebarOpen && <div
                  className={
-                    "fixed top-0 left-0 h-screen bg-light-primary-main dark:bg-dark-neutral-100 p-5 max-w-[250px] w-full md:static md:h-[calc(100vh_-_62px)] z-[99]"
+                    "fixed top-0 left-0 h-screen bg-light-neutral-900 dark:bg-dark-neutral-100 p-5 max-w-[250px] w-full md:static md:h-[calc(100vh_-_62px)] z-[99]"
                  }
              >
                  <Button theme={ButtonThemes.CLEAR} onClick={setLessonSidebarOpenHandler}

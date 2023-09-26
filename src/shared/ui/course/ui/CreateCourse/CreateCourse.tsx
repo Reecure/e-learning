@@ -37,7 +37,7 @@ const CreateCourse: FC<Props> = () => {
    return (
       <div>
          <Button
-            theme={ButtonThemes.FILLED_TONAL}
+            theme={ButtonThemes.OUTLINED}
             onClick={openModalCreateCourseHandler}
          >
             Create course

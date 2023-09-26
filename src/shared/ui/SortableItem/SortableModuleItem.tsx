@@ -51,7 +51,7 @@ const SortableModuleItem: FC<Props> = ({item, disabled, deleteOpen}) => {
             <Button
                type={"submit"}
                theme={ButtonThemes.TEXT}
-               className={"!text-dark-error-main !p-2 !rounded-md"}
+               className={"!text-light-error-main dark:!text-dark-error-main !p-2 !rounded-md"}
                onClick={deleteOpen}
             >
                <BsTrash/>

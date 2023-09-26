@@ -89,7 +89,7 @@ const SortableLessonItem: FC<Props> = ({item, deleteOpen, disabled}) => {
                {item.title}
             </p>
          </div>
-         <div>
+         <div className={'flex flex-nowrap'}>
             {disabled &&
                item?.lesson_type === LessonType.TEXT && (
                   <Button
@@ -97,9 +97,9 @@ const SortableLessonItem: FC<Props> = ({item, deleteOpen, disabled}) => {
 
                      className={`${
                         userProgressOnLesson.data?.is_completed
-                           ? "!text-dark-error-main"
+                           ? "!text-light-error-main dark:!text-dark-error-main"
                            : "!text-green-600"
-                     } ${progressLoading ? "!p-2 pointer-events-none !hover:none" : "!p-2"} !rounded-md`}
+                     } ${progressLoading ? "!p-1 sm:!p-2 pointer-events-none !hover:none" : "!p-1 sm:!p-2"} !rounded-md`}
                      theme={ButtonThemes.TEXT}
                      onClick={() => {
                         setIsCompletedHandler();
@@ -121,7 +121,7 @@ const SortableLessonItem: FC<Props> = ({item, deleteOpen, disabled}) => {
             {session.data?.user.id === item.author_id && disabled && (
                <Button
                   type={"submit"}
-                  className={"!text-dark-error-main !p-2 !rounded-md"}
+                  className={"!text-light-error-main dark:!text-dark-error-main !p-1 sm:!p-2 !rounded-md"}
                   theme={ButtonThemes.TEXT}
                   onClick={deleteOpen}
                >

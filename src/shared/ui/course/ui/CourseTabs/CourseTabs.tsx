@@ -11,18 +11,19 @@ interface Props {
 
 const CourseTabs: FC<Props> = ({currentTab, setCurrentTab}) => {
    return (
+
       <div className={"flex flex-col relative w-full"}>
          <div className={"sm:hidden"}>
             <select className={"inputField max-w-[250px]"} onChange={(e) => {
                setCurrentTab(e.currentTarget.value as Tabs);
             }}>
-               <option className={"bg-dark-background"} value={Tabs.ABOUT}>
+               <option className={"bg-light-background dark:bg-dark-background"} value={Tabs.ABOUT}>
                   {Tabs.ABOUT}
                </option>
-               <option className={"bg-dark-background"} value={Tabs.COURSE_CONTENT}>
+               <option className={"bg-light-background dark:bg-dark-background"} value={Tabs.COURSE_CONTENT}>
                   {Tabs.COURSE_CONTENT}
                </option>
-               <option className={"bg-dark-background"} value={Tabs.REVIEWS}>
+               <option className={"bg-light-background dark:bg-dark-background"} value={Tabs.REVIEWS}>
                   {Tabs.REVIEWS}
                </option>
             </select>

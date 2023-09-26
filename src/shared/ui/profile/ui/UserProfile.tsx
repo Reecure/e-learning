@@ -41,7 +41,7 @@ const UserProfileComponent: FC<Props> = ({user, refetch}) => {
    return (
       <>
          {/*User hero*/}
-         <div className={"sm:flex sm:justify-between bg-neutral-800 p-5 rounded-md"}>
+         <div className={"sm:flex sm:justify-between bg-neutral-200 dark:bg-neutral-800 p-5 rounded-md"}>
             <div className={"sm:flex   items-center "}>
                {/*{Avatar}*/}
                <div>
@@ -49,7 +49,7 @@ const UserProfileComponent: FC<Props> = ({user, refetch}) => {
                      <div
                         onClick={setAvatarModalOpenHandler}
                         className={
-                           "w-32 h-32 rounded-full bg-dark-primary-main border-[1px] cursor-pointer hover:opacity-70 object-cover"
+                           "w-32 h-32 rounded-full bg-light-primary-main dark:bg-dark-primary-main border-[1px] cursor-pointer hover:opacity-70 object-cover"
                         }
                      />
                   ) : (
@@ -109,12 +109,12 @@ const UserProfileComponent: FC<Props> = ({user, refetch}) => {
                      <span className={""}>{user.lastname}</span>
                   </div>
                   <div>
-                     <span className={"px-2 py-1 bg-light-primary-main rounded-full"}>
+                     <span className={"px-2 py-1 bg-light-primary-main rounded-full text-white"}>
                         {user.role}
                      </span>
                      <div className={"flex gap-1 mt-2"}>
                         <p>Studying from </p>
-                        <span className={"text-dark-primary-main"}>
+                        <span className={"text-light-primary-main dark:text-dark-primary-main"}>
                            {user.registration_date.slice(0, 10)}
                         </span>
                      </div>

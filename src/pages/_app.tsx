@@ -1,11 +1,10 @@
-import "@/app/styles/globals.css";
-import "tailwindcss/tailwind.css";
 import type {AppProps} from "next/app";
 import {trpc} from "@/shared/utils/trpc";
-import {SessionProvider, useSession} from "next-auth/react";
-import {FC, ReactElement, ReactNode, useEffect, useState} from "react";
+import {SessionProvider} from "next-auth/react";
+import {FC, ReactElement, ReactNode} from "react";
 import {NextPage} from "next";
 import {ReduxProvider} from "@/app/ReduxProvider";
+import '../app/styles/globals.css'
 
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {

@@ -8,7 +8,8 @@ import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {AiOutlineClose, AiOutlineUser} from "react-icons/ai";
 import {signOut, useSession} from "next-auth/react";
 import {GiHamburgerMenu} from "react-icons/gi";
-import Overlay from "@/shared/ui/Overlay/Overlay";
+import logo from '../../../shared/assets/Logo.png'
+import Image from "next/image";
 
 const Links = [{
    name: "Main",
@@ -46,40 +47,45 @@ const Navbar: FC<Props> = ({className, theme, toggleTheme}) => {
             px-5 sm:px-7 md:px-10 lg:px-16 xl:px-20 py-2 z-[12]
             `}
       >
-         <Button theme={ButtonThemes.CLEAR} onClick={() => {
-            openHamburgerHandler();
-         }} className={"sm:hidden"}>
+        <div className={'flex items-center sm:gap-5'}>
+           <Image src={logo} alt={'logo'} className={'w-8 h-8 sm:w-10 sm:h-10'}  />
+           <Button theme={ButtonThemes.CLEAR} onClick={() => {
+              openHamburgerHandler();
+           }} className={"text-2xl sm:hidden"}>
 
-            {hamburgerOpen ? <AiOutlineClose/> : <GiHamburgerMenu/>}
+              {!hamburgerOpen && <GiHamburgerMenu/>}
 
-         </Button>
-         <div className="hidden sm:flex items-center">
-            <div className={"flex items-center text-lg"}>
-               <ul className="flex space-x-4">
-                  {
-                     Links.map(item => {
-                        return <li key={item.link}>
-                           <Link
-                              href={item.link}
-                              className="hover:text-dark-accent duration-150 uppercase font-bold"
-                           >
-                              {item.name}
-                           </Link>
-                        </li>;
-                     })
-                  }
-               </ul>
-            </div>
-         </div>
+           </Button>
+                 <ul className="hidden sm:flex space-x-4 text-lg font-bold">
+                    {
+                       Links.map(item => {
+                          return <li key={item.link} className={''}>
+                             <Link
+                                 href={item.link}
+                             >
+                                {item.name}
+                             </Link>
+                          </li>;
+                       })
+                    }
+                 </ul>
+        </div>
 
          {/*Hamburger*/}
          {hamburgerOpen &&
              <div className={"fixed top-0 bottom-0 right-0 left-0 cursor-pointer z-[1000] bg-black/40"}
                   onClick={openHamburgerHandler}>
-                 <ul className="absolute top-[58px] flex flex-col bg-dark-background h-screen px-10 py-5 space-y-3 w-[200px] z-[1011]"
+
+                 <ul className="absolute flex flex-col bg-dark-background h-screen px-5 py-5 space-y-3 w-[200px] z-[1011]"
                      onClick={(e) => {
                         e.stopPropagation();
                      }}>
+                    <div className={'flex justify-between items-center text-2xl mb-6'}>
+                       <Image src={logo} alt={'logo'} className={'w-8 h-8'} />
+                       <Button theme={ButtonThemes.CLEAR} className={'!p-0'} onClick={openHamburgerHandler}><AiOutlineClose  /></Button>
+
+                    </div>
+
                     {
                        Links.map(item => {
                           return <li key={item.link}>

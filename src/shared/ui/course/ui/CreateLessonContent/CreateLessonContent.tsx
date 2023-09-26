@@ -122,10 +122,11 @@ const CreateLessonContent: FC<Props> = ({initialData, lessonId}) => {
                return (
                   <div key={field.id}>
                      {field.type === LessonContentType.TEXT ? (
-                        <div className={"flex gap-2 items-start"}>
+                        <div className={"flex gap-2 mt-5 sm:mt-0 items-start"}>
                            <TextForm index={index}/>
                            <Button
                               theme={ButtonThemes.TEXT}
+                              className={'!px-2 !py-0 rounded-md'}
                               type="button"
                               onClick={() => remove(index)}
                            >
@@ -133,10 +134,11 @@ const CreateLessonContent: FC<Props> = ({initialData, lessonId}) => {
                            </Button>
                         </div>
                      ) : field.type === LessonContentType.IMAGE ? (
-                        <div className={"flex gap-2 items-start"}>
+                        <div className={"flex gap-2 mt-5 sm:mt-0 items-start"}>
                            <ImageForm index={index}/>
                            <Button
                               theme={ButtonThemes.TEXT}
+                              className={'!px-2 !py-0 rounded-md'}
                               type="button"
                               onClick={() => remove(index)}
                            >
@@ -144,10 +146,11 @@ const CreateLessonContent: FC<Props> = ({initialData, lessonId}) => {
                            </Button>
                         </div>
                      ) : field.type === LessonContentType.CODE ? (
-                        <div className={"flex gap-2 items-start"}>
+                        <div className={"flex gap-2 mt-5 sm:mt-0 items-start"}>
                            <CodeForm index={index}/>
                            <Button
                               theme={ButtonThemes.TEXT}
+                              className={'!px-2 !py-0 rounded-md'}
                               type="button"
                               onClick={() => remove(index)}
                            >
@@ -155,10 +158,11 @@ const CreateLessonContent: FC<Props> = ({initialData, lessonId}) => {
                            </Button>
                         </div>
                      ) : field.type === LessonContentType.VIDEO ? (
-                        <div className={"flex gap-2 items-start"}>
+                        <div className={"flex gap-2 mt-5 sm:mt-0 items-start"}>
                            <VideoForm index={index}/>
                            <Button
                               theme={ButtonThemes.TEXT}
+                              className={'!px-2 !py-0 rounded-md'}
                               type="button"
                               onClick={() => remove(index)}
                            >
@@ -169,7 +173,7 @@ const CreateLessonContent: FC<Props> = ({initialData, lessonId}) => {
                   </div>
                );
             })}
-            <div className={"flex gap-3"}>
+            <div className={"flex flex-col mt-5 sm:mt-0 sm:flex-row gap-3"}>
                <Button theme={ButtonThemes.FILLED} onClick={addTextBlock}>
                   Add Text Block
                </Button>

@@ -71,16 +71,16 @@ const EditUserProfileModal: FC<Props> = ({user}) => {
                         {...register("role")}
                      >
                         <option
-                           className={"bg-dark-background"}
+                           className={"bg-light-background dark:bg-dark-background"}
                            value={UserRoles.ADMIN}
                         >
                            {UserRoles.ADMIN}
                         </option>
-                        <option className={"bg-dark-background"} value={UserRoles.USER}>
+                        <option className={"bg-light-background dark:bg-dark-background"} value={UserRoles.USER}>
                            {UserRoles.USER}
                         </option>
                         <option
-                           className={"bg-dark-background"}
+                           className={"bg-light-background dark:bg-dark-background"}
                            value={UserRoles.TEACHER}
                         >
                            {UserRoles.TEACHER}

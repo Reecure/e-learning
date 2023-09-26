@@ -46,7 +46,7 @@ const CoursesPage = () => {
                <div
                   className={`${
                      courseRendered === CourseType.SubscribedCourses &&
-                     "pb-3 border-b-4 border-dark-primary-main z-[1]"
+                     "pb-3 border-b-4 border-light-primary-main dark:border-dark-primary-main z-[1]"
                   }`}
                >
                   <Button
@@ -59,7 +59,7 @@ const CoursesPage = () => {
                <div
                   className={`${
                      courseRendered === CourseType.MyCourses &&
-                     "pb-3 border-b-4 border-dark-primary-main z-[1]"
+                     "pb-3 border-b-4 border-light-primary-main dark:border-dark-primary-main z-[1]"
                   }`}
                >
                   {
@@ -74,7 +74,7 @@ const CoursesPage = () => {
             </div>
             <div
                className={
-                  "w-full h-[1px] bg-dark-primary-main absolute bottom-[1px]"
+                  "w-full h-[1px]  bg-light-primary-main dark:bg-dark-primary-main absolute bottom-[1px]"
                }
             ></div>
          </div>
@@ -83,14 +83,14 @@ const CoursesPage = () => {
                (
                   <>
                      {courseRendered === CourseType.MyCourses ? (
-                        <div className={"grid grid-cols-4 gap-5"}>
+                        <div className={"grid grid-cols-1 gap-5"}>
                            {subscribedCourses.status === "success" &&
                               myselfCourses.data?.map((item) => {
                                  return <SmallCard key={item.id} course={item as Course}/>;
                               })}
                         </div>
                      ) : (
-                        <div className={"grid grid-cols-4 gap-5"}>
+                        <div className={"grid grid-cols-1 gap-5"}>
                            {myselfCourses.status === "success" &&
                               subscribedCourses.data?.map((item) => {
                                  return <SmallCard key={item.id} course={item as Course}/>;

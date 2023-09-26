@@ -39,6 +39,7 @@ const TextForm: FC<{ index: number; initFields?: any }> = ({ index }) => {
                   />
                   <Button
                      theme={ButtonThemes.TEXT}
+                     className={'!px-2 !py-0 rounded-md'}
                      type="button"
                      onClick={() => remove(paragraphIndex)}
                   >

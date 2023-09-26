@@ -128,7 +128,7 @@ const CreateLessonQuizContent: FC<Props> = ({initialData, lessonId}) => {
                   </div>
                );
             })}
-            <div className={"flex gap-3"}>
+            <div className={"flex flex-col sm:flex-row gap-3"}>
                <Button theme={ButtonThemes.FILLED} onClick={addQuestionAnswerBlock}>
                   Add Question Answer
                </Button>

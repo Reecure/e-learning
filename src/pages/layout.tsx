@@ -2,7 +2,7 @@ import {FC, ReactNode, useEffect, useState} from "react";
 import {Roboto} from "next/font/google";
 import {Themes} from "@/widgets/ThemeTogler";
 import {Navbar} from "@/widgets/Navbar";
-import "@uploadthing/react/styles.css";
+// import "@uploadthing/react/styles.css";
 
 const roboto = Roboto({
    subsets: ["latin"],

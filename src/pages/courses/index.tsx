@@ -35,10 +35,10 @@ const CoursesPage = () => {
                {
                   Array(4).fill(null).map(item => {
                      return <select className={"inputField max-w-[250px]"}>
-                        <option className={"bg-dark-background"} value={LessonType.TEXT}>
+                        <option className={"bg-light-background dark:bg-dark-background"} value={LessonType.TEXT}>
                            1
                         </option>
-                        <option className={"bg-dark-background"} value={LessonType.QUIZ}>
+                        <option className={"bg-light-background dark:bg-dark-background"} value={LessonType.QUIZ}>
                            2
                         </option>
                      </select>;

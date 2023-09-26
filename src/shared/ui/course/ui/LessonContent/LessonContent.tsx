@@ -71,10 +71,6 @@ const LessonContent: FC<Props> = ({lesson_id}) => {
       }
    };
 
-   // useEffect(() => {
-   //    dispatch(setPreviewVisible(true));
-   // }, []);
-
    const editableLessonHandle = () => {
       setLessonEditable((prev) => !prev);
    };
@@ -88,9 +84,9 @@ const LessonContent: FC<Props> = ({lesson_id}) => {
 
    return (
       <div>
-         <div className={"flex justify-between items-center gap-2 items-center"}>
+         <div className={"flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-5"}>
             <div className={"flex gap-2 items-center"}>
-               <h4 className={"text-5xl font-extrabold my-5"}>
+               <h4 className={"text-3xl sm:text-5xl font-extrabold my-3 sm:my-5"}>
                   {lessonQuery.data?.title}
                </h4>
                <Badge
