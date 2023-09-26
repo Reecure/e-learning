@@ -1,5 +1,4 @@
 import { FC, ReactNode, useEffect, useRef } from "react";
-import { useSpring, animated, useTransition } from "@react-spring/web";
 import Overlay from "@/shared/ui/Overlay/Overlay";
 import { CSSTransition } from "react-transition-group";
 
