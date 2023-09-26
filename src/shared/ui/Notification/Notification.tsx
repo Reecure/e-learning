@@ -32,16 +32,16 @@ const Notification: FC<Props> = ({
     }, [open]);
 
     return (
-        // <CSSTransition
-        //     in={open}
-        //     timeout={400}
-        //     mountOnEnter
-        //     unmountOnExit
-        //     classNames={{
-        //         enterActive: "animate-slide-from-top",
-        //         exitActive: "animate-slide-to-top",
-        //     }}
-        // >
+        <CSSTransition
+            in={open}
+            timeout={400}
+            mountOnEnter
+            unmountOnExit
+            classNames={{
+                enterActive: "animate-slide-from-top",
+                exitActive: "animate-slide-to-top",
+            }}
+        >
             <div
                 className={`${
                     isSuccess ? "text-green-600" : "text-dark-error-main"
@@ -49,7 +49,7 @@ const Notification: FC<Props> = ({
             >
                 {children}
             </div>
-        // </CSSTransition>
+        </CSSTransition>
     );
 };
 
