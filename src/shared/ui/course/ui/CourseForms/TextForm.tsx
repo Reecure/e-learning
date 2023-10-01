@@ -4,10 +4,11 @@ import {v4 as uuidv4} from "uuid";
 import {Label} from "@/shared/ui/Label";
 import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
+import {ITextBlock} from "@/enteties/Lesson";
 
 type Props = Record<string, unknown>;
 
-const TextForm: FC<{index: number; initFields?: any}> = ({index}) => {
+const TextForm: FC<{ index: number; initFields?: ITextBlock }> = ({index}) => {
 	const {register, control} = useFormContext();
 	const {
 		fields,
@@ -44,12 +45,12 @@ const TextForm: FC<{index: number; initFields?: any}> = ({index}) => {
 							remove(paragraphIndex);
 						}}
 					>
-              x
+                        x
 					</Button>
 				</div>
 			))}
 			<Button theme={ButtonThemes.FILLED} onClick={appendEmptyParagraph}>
-        Add paragraph
+                Add paragraph
 			</Button>
 		</div>
 	);

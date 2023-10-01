@@ -4,7 +4,7 @@ import {z} from "zod";
 import {PrismaClient} from "@prisma/client";
 import {UserRoles} from "@/enteties/User";
 import bcrypt from "bcrypt";
-import {LessonType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
+import {LessonType} from "@/enteties/Lesson/model/types/lesson";
 
 const prisma = new PrismaClient();
 
@@ -455,10 +455,7 @@ const appRouter = t.router({
 					order: input.order,
 				},
 			});
-
-			// Добавьте дополнительное сообщение или данные, которые вы хотите вернуть
-			const additionalMessage = "Модуль успешно создан";
-
+			const additionalMessage = "Module create success";
 			return {
 				module: createdModule,
 				message: additionalMessage,
@@ -468,30 +465,34 @@ const appRouter = t.router({
 		.input(
 			z.object({
 				title: z.string(),
+				lesson_type: z.nativeEnum(LessonType),
 				order: z.number(),
 				module_id: z.string(),
-				author_id: z.string(),
-				lesson_type: z.string(),
-				lesson_content: z.any(),
-			}),
+				author_id: z.string().min(1),
+				lesson_content: z.object({
+					blocks: z.array(z.any())
+				})
+			})
 		)
 		.mutation(async ({input}) => prisma.lessons.create({
 			data: {
 				title: input.title,
+				lesson_type: input.lesson_type,
 				order: input.order,
 				author_id: input.author_id,
 				module_id: input.module_id,
-				lesson_type: input.lesson_type,
-				lesson_content: input.lesson_content,
+				lesson_content: input.lesson_content
 			},
 		})),
 	updateLessonContent: t.procedure
 		.input(
 			z.object({
 				id: z.string(),
-				lesson_content: z.any(),
-			}),
-		)
+				lesson_content: z.object({
+					blocks: z.array(z.any())
+				})
+			}
+			))
 		.mutation(async ({input}) => prisma.lessons.update({
 			where: {
 				id: input.id,
@@ -681,3 +682,28 @@ export default trpcNext.createNextApiHandler({
 		}
 	},
 });
+
+
+// z.union([z.object({
+// 	id: z.string(),
+// 	title: z.string(),
+// 	paragraphs: z.array(z.object({
+// 		id: z.string(),
+// 		text: z.string(),
+// 	})),
+// 	type: z.literal(LessonContentType.TEXT),
+// }), z.object({
+// 	id: z.string(),
+// 	type: z.literal(LessonContentType.CODE),
+// 	code: z.string(),
+// }), z.object({
+// 	id: z.string(),
+// 	type: z.literal(LessonContentType.IMAGE),
+// 	src: z.string(),
+// 	title: z.string(),
+// }), z.object({
+// 	id: z.string(),
+// 	url: z.string(),
+// 	type: z.literal(LessonContentType.VIDEO)
+// })
+// ])

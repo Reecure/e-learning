@@ -1,13 +1,12 @@
 import {type FC, useEffect} from "react";
 import DragAndDrop from "@/shared/ui/DragAndDrop/DragAndDrop";
-import {Module} from "@/enteties/Module";
 import {trpc} from "@/shared/utils/trpc";
 import {Loader} from "@/shared/ui/Loader";
 
 type Props = {
-	moduleId: string;
-	courseModulesEdit: boolean;
-	isUserAuthor: boolean;
+    moduleId: string;
+    courseModulesEdit: boolean;
+    isUserAuthor: boolean;
 };
 
 const CourseModules: FC<Props> = ({

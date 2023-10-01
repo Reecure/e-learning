@@ -1,4 +1,4 @@
-import {type FC, useState} from "react";
+import {type FC, useEffect, useState} from "react";
 import {type User, UserRoles} from "@/enteties/User";
 import {Button} from "@/shared/ui";
 import {trpc} from "@/shared/utils/trpc";
@@ -7,14 +7,17 @@ import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {Label} from "@/shared/ui/Label";
 import {useSession} from "next-auth/react";
 import {Text} from "@/shared/ui/Text";
+import Notification from "@/shared/ui/Notification/Notification";
 
-type Props = {
-	user: User;
-};
+interface Props {
+    user: User
+}
 
 const EditUserProfileModal: FC<Props> = ({user}) => {
 	const session = useSession();
 	const [userDefault, setUserDefault] = useState(user);
+	const [notificationOpen, setNotificationOpen] = useState(false);
+	const [submitError, setSubmitError] = useState(false);
 
 	const userMutation = trpc.updateUser.useMutation();
 
@@ -22,31 +25,46 @@ const EditUserProfileModal: FC<Props> = ({user}) => {
 		register,
 		handleSubmit,
 		reset,
-		formState: {errors, isSubmitted},
+		formState: {errors}
 	} = useForm({
 		defaultValues: {
 			...user,
 			firstname: user.firstname,
 			lastname: user.lastname,
 			email: user.email,
-			role: user.role,
-		},
+			role: user.role
+		}
 	});
 
-	const onSubmitFormHandler: SubmitHandler<User> = async data => {
-		await userMutation.mutate(data);
-		await setUserDefault(data);
+	useEffect(() => {
+		console.log("register change");
+	}, [userDefault]);
+
+	const notificationOpenHandler = () => {
+		setNotificationOpen(prev => !prev);
 	};
 
 	const cancelFormHandler = () => {
 		reset(userDefault);
 	};
 
+	const onSubmitFormHandler: SubmitHandler<User> = data => {
+		notificationOpenHandler();
+		try {
+			userMutation.mutate(data);
+			setUserDefault(data);
+		} catch (e) {
+			setSubmitError(true);
+		} finally {
+			setSubmitError(false);
+		}
+	};
+
 	return (
 		<div className={""}>
 			<form
 				action=''
-				className={"flex flex-col gap-5 w-[400px]"}
+				className={"flex flex-col gap-5 w-full"}
 				onSubmit={handleSubmit(onSubmitFormHandler)}
 			>
 				<p className={"mb-5 text-3xl text-center"}>Edit profile</p>
@@ -55,14 +73,14 @@ const EditUserProfileModal: FC<Props> = ({user}) => {
 						className='inputField'
 						{...register("firstname", {required: true})}
 					/>
-					{errors.firstname && <Text error text={"Firstname is required"}/>}
+					{(errors.firstname != null) && <Text error text={"Firstname is required"}/>}
 				</Label>
 				<Label htmlFor={"lastname"} labelText={"Lastname"}>
 					<input
 						className='inputField'
 						{...register("lastname", {required: true})}
 					/>
-					{errors.lastname && <Text error text={"Lastname is required"}/>}
+					{(errors.lastname != null) && <Text error text={"Lastname is required"}/>}
 				</Label>
 				{session.data?.user.role === UserRoles.ADMIN && (
 					<>
@@ -77,7 +95,8 @@ const EditUserProfileModal: FC<Props> = ({user}) => {
 								>
 									{UserRoles.ADMIN}
 								</option>
-								<option className={"bg-light-background dark:bg-dark-background"} value={UserRoles.USER}>
+								<option className={"bg-light-background dark:bg-dark-background"}
+									value={UserRoles.USER}>
 									{UserRoles.USER}
 								</option>
 								<option
@@ -91,19 +110,23 @@ const EditUserProfileModal: FC<Props> = ({user}) => {
 					</>
 				)}
 				<>
-					<Button type={"submit"} theme={ButtonThemes.OUTLINED}>
-                  Save
+					<Button type={"submit"} theme={ButtonThemes.FILLED}>
+                        Save
 					</Button>
 					<Button
-						theme={ButtonThemes.OUTLINED}
+						theme={ButtonThemes.FILLED}
 						onClick={() => {
 							cancelFormHandler();
 						}}
 					>
-                  Reset
+                        Reset
 					</Button>
 				</>
 			</form>
+			<Notification open={notificationOpen} onClose={notificationOpenHandler} timeoutDelay={3000}
+				isSuccess={!submitError}>
+                success
+			</Notification>
 		</div>
 	);
 };

@@ -11,9 +11,9 @@ import {useSession} from "next-auth/react";
 import {trpc} from "@/shared/utils/trpc";
 
 type Props = {
-	item: Module;
-	disabled: boolean;
-	deleteOpen: () => void;
+    item: Module;
+    disabled: boolean;
+    deleteOpen: () => void;
 };
 
 const SortableModuleItem: FC<Props> = ({item, disabled, deleteOpen}) => {

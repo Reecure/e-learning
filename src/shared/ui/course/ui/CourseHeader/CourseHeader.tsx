@@ -7,17 +7,23 @@ import Image from "next/image";
 import {trpc} from "@/shared/utils/trpc";
 import {useSession} from "next-auth/react";
 import {type Course} from "@/enteties/Course";
+import DeleteModal from "@/shared/ui/Modal/DeleteModal";
+import {useRouter} from "next/router";
+import {Routes} from "@/shared/config/routes";
 
 type Props = {
-	data: Course;
-	isUserCourse: boolean;
+    data: Course;
+    isUserCourse: boolean;
 };
 
 const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
 	const [userHaveCourse, setUserHaveCourse] = useState(false);
 	const [editModalOpen, setEditModalOpen] = useState(false);
+	const [deleteCourseModalOpen, setDeleteCourseModalOpen] = useState(false);
 
+	const router = useRouter();
 	const session = useSession();
+
 
 	const user = trpc.getUser.useQuery({email: session.data?.user.email!});
 	const deleteCourseFromUserCourses = trpc.deleteUserCourses.useMutation();
@@ -29,13 +35,32 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
 	useEffect(() => {
 		user.refetch();
 		const courseHaveStudentId
-         = user.data?.courses !== null
-         && user?.data?.courses.find(id => id === data?.id);
+            = user.data?.courses !== null
+            && user?.data?.courses.find(id => id === data?.id);
 		setUserHaveCourse(courseHaveStudentId !== undefined);
 	}, [deleteCourseFromUserCourses, addToCourses]);
 
+	useEffect(() => {
+	}, [data]);
+
 	const openEditHandler = () => {
 		setEditModalOpen(prev => !prev);
+	};
+
+	const deleteCourseModalOpenHandler = () => {
+		setDeleteCourseModalOpen(prev => !prev);
+	};
+
+	const deleteCourseHandler = () => {
+		try {
+			deleteCourse.mutate({
+				id: data.id,
+			});
+			deleteCourseModalOpenHandler();
+			router.push(Routes.USER_COURSES);
+		} catch (e) {
+			console.log(e);
+		}
 	};
 
 	const updateCourseHandler = async (data: any) => {
@@ -43,6 +68,7 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
 			...data,
 		});
 	};
+
 
 	return (
 		<div className={"flex justify-between mb-14"}>
@@ -81,7 +107,7 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
 									}
 								}}
 							>
-                        Remove from Courses
+                                Remove from Courses
 							</Button>
 						) : (
 							<Button
@@ -105,19 +131,21 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
 									}
 								}}
 							>
-                        Add to courses
+                                Add to courses
 							</Button>
 						)}
 						{isUserCourse && (
 							<>
 								<Button theme={ButtonThemes.FILLED} onClick={openEditHandler}>
-                           Edit course
+                                    Edit course
 								</Button>
 								<Button theme={ButtonThemes.FILLED} onClick={() => {
-									deleteCourse.mutate({
-										id: data.id,
-									});
+									deleteCourseModalOpenHandler();
+
 								}}>Delete course</Button>
+								<DeleteModal itemName={data.title} deleteIsOpen={deleteCourseModalOpen}
+									deleteOpenHandler={deleteCourseModalOpenHandler}
+									deleteFunc={deleteCourseHandler}/>
 							</>
 						)}
 					</div>

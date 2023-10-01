@@ -4,75 +4,77 @@ import TextBlock from "@/shared/ui/course/ui/CourseBlocks/TextBlock";
 import CodeBlock from "@/shared/ui/course/ui/CourseBlocks/CodeBlock";
 import ImageBlock from "@/shared/ui/course/ui/CourseBlocks/ImageBlock";
 import Badge, {BadgeColors} from "@/shared/ui/Badge/Badge";
-import CreateLessonContent from "@/shared/ui/course/ui/CreateLessonContent/CreateLessonContent";
-import {Button, Modal} from "@/shared/ui";
+import {Button,} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
-import CreateLesson from "@/shared/ui/course/ui/CreateLesson/CreateLesson";
-import {Label} from "@/shared/ui/Label";
-import {useForm} from "react-hook-form";
 import {useSession} from "next-auth/react";
 import {Loader} from "@/shared/ui/Loader";
 import CourseLessonForm from "@/shared/ui/course/ui/CourseLessonForm/CourseLessonForm";
 import VideoBlock from "@/shared/ui/course/ui/CourseBlocks/VideoBlock";
-import CourseQuizGameQuestionWithAnswer from "@/shared/ui/course/ui/CourseQuizGames/CourseQuizGameQuestionWithAnswer";
+import {
+	ICodeBlock,
+	IImageBlock,
+	ITextBlock,
+	IVideoBlock,
+	LessonBlocks,
+	LessonContentType,
+	LessonType
+} from "@/enteties/Lesson";
 import CreateLessonQuizContent from "@/shared/ui/course/ui/CreateLessonQuizContent/CreateLessonQuizContent";
-import CourseQuizGameAnswerWithFixedLetters
-	from "@/shared/ui/course/ui/CourseQuizGames/CourseQuizGameAnswerWithFixedLetters";
+import CreateLessonContent from "@/shared/ui/course/ui/CreateLessonContent/CreateLessonContent";
 import QuizComponent from "@/shared/ui/course/ui/QuizComponent/QuizComponent";
-import {useAppDispatch, useAppSelector} from "@/app/ReduxProvider/config/hooks";
-import {isLessonPreviewVisible} from "@/shared/ui/course/model/selectors/currentLessonSelector";
-import {setPreviewVisible} from "@/shared/ui/course/model";
-
-export enum LessonContentType {
-	TEXT = "TEXT",
-	IMAGE = "IMAGE",
-	CODE = "CODE",
-	VIDEO = "VIDEO",
-}
-
-export enum QuizContentType {
-	DRAG_BLOCKS = " DRAG_BLOCKS",
-	QUESTION_ANSWER = "QUESTION_ANSWER",
-	ANSWER_WITH_FIXED_LETTERS = "ANSWER_WITH_FIXED_LETTERS",
-	SORT_ANSWER = "SORT_ANSWER",
-}
-
-export enum LessonType {
-	TEXT = "TEXT",
-	QUIZ = "QUIZ",
-}
 
 type Props = {
-	lesson_id: string;
+    lesson_id: string;
 };
 
 const LessonContent: FC<Props> = ({lesson_id}) => {
 	const [lessonContentEditable, setLessonContentEditable] = useState(false);
 	const [quizContentEditable, setQuizContentEditable] = useState(false);
 	const [editableLesson, setLessonEditable] = useState(false);
+
+	const [isLessonUpdateSuccess, setIsLessonUpdateSuccess] = useState({
+		id: "",
+		visible: false,
+		isSuccess: false,
+		error: ""
+	});
 	const lessonQuery = trpc.getLessonById.useQuery({lesson_id});
 
 	const session = useSession();
-	const dispatch = useAppDispatch();
 
 	const contentRender = (
-		contentType: LessonContentType | string,
-		block: any,
+		contentType: LessonContentType,
+		block: LessonBlocks,
 	) => {
 		switch (contentType) {
 		case LessonContentType.TEXT:
-			return <TextBlock textBlock={block}/>;
+			return <TextBlock textBlock={block as ITextBlock}/>;
 		case LessonContentType.CODE:
-			return <CodeBlock codeBlock={block}/>;
+			return <CodeBlock codeBlock={block as ICodeBlock}/>;
 		case LessonContentType.IMAGE:
-			return <ImageBlock imageBlock={block}/>;
+			return <ImageBlock imageBlock={block as IImageBlock}/>;
 		case LessonContentType.VIDEO:
-			return <VideoBlock videoBlock={block}/>;
+			return <VideoBlock videoBlock={block as IVideoBlock}/>;
 		}
 	};
 
+	useEffect(() => {
+		console.log(lessonQuery.data);
+	}, [lessonQuery]);
+
 	const editableLessonHandle = () => {
 		setLessonEditable(prev => !prev);
+	};
+
+	const LessonContentEditableHandler = () => {
+		setLessonContentEditable(prev => !prev);
+	};
+	const QuizContentEditableHandler = () => {
+		setQuizContentEditable(prev => !prev);
+	};
+
+	const setIsLessonUpdateSuccessHandler = (id: string, visible: boolean, isSuccess: boolean, error?: string) => {
+		setIsLessonUpdateSuccess({id: id, visible: visible, isSuccess: isSuccess, error: error || ""});
 	};
 
 	if (lessonQuery.isLoading) {
@@ -92,31 +94,27 @@ const LessonContent: FC<Props> = ({lesson_id}) => {
 					</h4>
 					<Badge
 						color={BadgeColors.GREEN}
-						text={lessonQuery.data?.lesson_type!}
+						text={lessonQuery.data?.lesson_type || ""}
 					/>
 				</div>
 				{lessonQuery.data?.author_id === session.data?.user.id && (
 					<div className={"flex gap-2 items-center"}>
 						<Button theme={ButtonThemes.FILLED} onClick={editableLessonHandle}>
-                     Edit Lesson
+                            Edit Lesson
 						</Button>
 						{lessonQuery.data?.lesson_type === LessonType.TEXT ? (
 							<Button
 								theme={ButtonThemes.FILLED}
-								onClick={() => {
-									setLessonContentEditable(prev => !prev);
-								}}
+								onClick={LessonContentEditableHandler}
 							>
-                        Edit Content
+                                Edit Content
 							</Button>
 						) : (
 							<Button
 								theme={ButtonThemes.FILLED}
-								onClick={() => {
-									setQuizContentEditable(prev => !prev);
-								}}
+								onClick={QuizContentEditableHandler}
 							>
-                        Edit Content
+                                Edit Content
 							</Button>
 						)}
 					</div>
@@ -124,36 +122,54 @@ const LessonContent: FC<Props> = ({lesson_id}) => {
 			</div>
 			{lessonQuery.data?.lesson_type === LessonType.TEXT ? (
 				lessonContentEditable ? (
-					<CreateLessonContent
-						lessonId={lesson_id}
-						initialData={lessonQuery.data?.lesson_content?.blocks as any}
-					/>
+					<>
+						<CreateLessonContent
+							lessonId={lesson_id}
+							setLessonContentEditable={LessonContentEditableHandler}
+							setIsSuccessVisible={setIsLessonUpdateSuccessHandler}
+							initialData={lessonQuery.data?.lesson_content?.blocks}
+						/>
+					</>
 				) : (
-
-					lessonQuery.data?.lesson_content?.blocks?.map(lesson =>
-					// @ts-expect-error
-						contentRender(lesson?.type, lesson),
-					)
+					<>
+						<>
+							{isLessonUpdateSuccess.id === lesson_id && isLessonUpdateSuccess.visible && (isLessonUpdateSuccess.isSuccess ? <>all
+                                ok</> : <>some
+                                error</>)}
+						</>
+						<div>
+							{
+								lessonQuery.data?.lesson_content.blocks.map(lesson =>
+									contentRender(lesson.type, lesson),
+								)
+							}
+						</div>
+					</>
 				)
 			) : quizContentEditable ? (
 
 				<CreateLessonQuizContent
 					lessonId={lesson_id}
-					initialData={lessonQuery.data?.lesson_content?.blocks as any}
+					setQuizContentEditable={QuizContentEditableHandler}
+					setIsSuccessVisible={setIsLessonUpdateSuccessHandler}
+					initialData={lessonQuery.data?.lesson_content.blocks as any}
 				/>
 			) : (
-
-				<QuizComponent
-					lesson_id={lesson_id}
-					blocks={lessonQuery.data?.lesson_content?.blocks as any}
-				/>
+				<>
+					<QuizComponent
+						updateInfo={isLessonUpdateSuccess}
+						lesson_id={lesson_id}
+						blocks={lessonQuery.data?.lesson_content.blocks as any}
+					/>
+				</>
 			)}
 			<CourseLessonForm
 				lessonId={lesson_id}
 				title={lessonQuery.data?.title || ""}
-				type={lessonQuery.data?.lesson_type || ""}
+				type={lessonQuery.data?.lesson_type}
 				openModal={editableLesson}
 				setModalOpen={editableLessonHandle}
+				refetch={lessonQuery.refetch}
 			/>
 		</div>
 	);

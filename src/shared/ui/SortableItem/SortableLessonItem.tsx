@@ -1,21 +1,20 @@
 import React, {type FC, useEffect, useState} from "react";
-import {LessonType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
 import {AiOutlineCheck, AiOutlineClose, AiOutlineFileText} from "react-icons/ai";
 import {MdOutlineQuiz} from "react-icons/md";
 import {setCurrentLessonId, setPreviewVisible} from "@/shared/ui/course/model";
 import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {BsTrash} from "react-icons/bs";
-import {type Lesson} from "@/enteties/Lesson";
+import {type Lesson, LessonType} from "@/enteties/Lesson";
 import {useAppDispatch} from "@/app/ReduxProvider/config/hooks";
 import {trpc} from "@/shared/utils/trpc";
 import {useSession} from "next-auth/react";
 import {Loader} from "@/shared/ui/Loader";
 
 type Props = {
-	item: Lesson;
-	disabled: boolean;
-	deleteOpen: () => void;
+    item: Lesson;
+    disabled: boolean;
+    deleteOpen: () => void;
 };
 
 const SortableLessonItem: FC<Props> = ({item, deleteOpen, disabled}) => {
@@ -88,7 +87,7 @@ const SortableLessonItem: FC<Props> = ({item, deleteOpen, disabled}) => {
 			</div>
 			<div className={"flex flex-nowrap"}>
 				{disabled
-               && item?.lesson_type === LessonType.TEXT && (
+                    && item?.lesson_type === LessonType.TEXT && (
 					<Button
 						type={"submit"}
 

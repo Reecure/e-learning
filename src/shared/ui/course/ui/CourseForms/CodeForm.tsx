@@ -2,7 +2,6 @@ import {type FC} from "react";
 import {useFormContext} from "react-hook-form";
 import {Label} from "@/shared/ui/Label";
 
-type Props = Record<string, unknown>;
 
 const CodeForm: FC<{ index: number }> = ({index}) => {
 	const {register} = useFormContext();
@@ -10,10 +9,8 @@ const CodeForm: FC<{ index: number }> = ({index}) => {
 	return (
 		<div className={"flex flex-col gap-5 w-full"}>
 			<Label htmlFor={`blocks.${index}.code`} labelText={"Code"}>
-				  <textarea
-					id={"myTextarea"}
-					className={"inputField whitespace-pre-wrap"}
-					{...register(`blocks.${index}.code`)}
+				     <textarea id={"myTextarea"}
+					className={"inputField whitespace-pre-wrap"} {...register(`blocks.${index}.code`)}
 				/>
 			</Label>
 		</div>

@@ -9,11 +9,30 @@ datasource db {
 }
 
 type LessonsLessonContent {
-  blocks Json[]
+  blocks LessonsLessonContentBlocks[]
+}
+
+type LessonsLessonContentBlocks {
+  /// Multiple data types found: String: 40%, Array(LessonsLessonContentBlocksAnswer): 60% out of 5 sampled entries
+  answer        Json?
+  code          String?
+  correctAnswer String?
+  id            String
+  paragraphs    LessonsLessonContentBlocksParagraphs[]
+  question      String?
+  src           String?
+  title         String?
+  type          String
+  url           String?
 }
 
 type LessonsLessonContentBlocksAnswer {
   otherAnswer String
+}
+
+type LessonsLessonContentBlocksParagraphs {
+  id   String
+  text String
 }
 
 type UsersCoursesProgress {
@@ -25,7 +44,7 @@ type UsersLessonsProgress {
   is_completed Boolean
   lessonType   String
   lesson_id    String
-  quizScore    Int?
+  quizScore    Int
 }
 
 type UsersModulesProgress {
@@ -67,11 +86,11 @@ model grades_and_progress {
 }
 
 model lessons {
-  id             String                @id @default(auto()) @map("_id") @db.ObjectId
-  author_id      String                @db.ObjectId
-  lesson_content LessonsLessonContent?
+  id             String               @id @default(auto()) @map("_id") @db.ObjectId
+  author_id      String               @db.ObjectId
+  lesson_content LessonsLessonContent
   lesson_type    String
-  module_id      String                @db.ObjectId
+  module_id      String               @db.ObjectId
   order          Int
   title          String
 }

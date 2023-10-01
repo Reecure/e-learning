@@ -1,12 +1,8 @@
 import {type FC} from "react";
-import {type LessonContentType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
+import {ICodeBlock} from "@/enteties/Lesson";
 
 type Props = {
-	codeBlock: {
-		id?: string;
-		type?: LessonContentType;
-		code: string;
-	};
+    codeBlock: ICodeBlock
 };
 
 const CodeBlock: FC<Props> = ({codeBlock}) => (

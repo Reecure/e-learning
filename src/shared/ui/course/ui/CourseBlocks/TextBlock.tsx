@@ -1,17 +1,9 @@
-import {type FC, ReactNode} from "react";
+import {type FC} from "react";
+import {ITextBlock} from "@/enteties/Lesson";
 
-enum BlockTypes {}
 
 type Props = {
-	textBlock: {
-		id: string;
-		title: string;
-		paragraphs: Array<{
-			id: string;
-			text: string;
-		}>;
-		type: BlockTypes;
-	};
+    textBlock: ITextBlock
 };
 
 const TextBlock: FC<Props> = ({textBlock}) => (

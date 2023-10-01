@@ -29,7 +29,7 @@ const CoursePage = () => {
 	const router = useRouter();
 	const session = useSession();
 
-	const {data, isLoading, error} = trpc.getCourseById.useQuery({
+	const {data, isLoading} = trpc.getCourseById.useQuery({
 		course_id: router.query.id as string,
 	});
 
@@ -39,17 +39,21 @@ const CoursePage = () => {
 		}
 	}, [session.data?.user.id, data?.author_id]);
 
+	useEffect(() => {
+		console.log(data?.id);
+	}, [data]);
+
 	const courseModuleEditHandler = () => {
 		setCourseModuleEdit(prev => !prev);
-	};
-
-	const moduleCreatedHandler = () => {
-		setModuleCreated(prev => !prev);
 	};
 
 	const setCurrentTabHandler = (current: Tabs) => {
 		setCurrentTab(current);
 	};
+
+	if (data?.id === undefined) {
+		return <>course doesnt exist</>;
+	}
 
 	if (isLoading) {
 		return <Loader/>;

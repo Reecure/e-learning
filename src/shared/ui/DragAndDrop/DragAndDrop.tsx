@@ -7,22 +7,22 @@ import {
 	KeyboardSensor,
 	PointerSensor,
 	useSensor,
-	useSensors,
+	useSensors
 } from "@dnd-kit/core";
-import {arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy,} from "@dnd-kit/sortable";
+import {arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy} from "@dnd-kit/sortable";
 import {SortableModule} from "@/shared/ui/SortableItem/SortableModule";
 import {type Lesson} from "@/enteties/Lesson";
 import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {trpc} from "@/shared/utils/trpc";
 
-type Props<T> = {
-    items: T[];
-    canEdit: boolean;
-    isModule: boolean;
-    isUserAuthor: boolean;
-    refetch: () => void;
-};
+interface Props<T> {
+    items: T[]
+    canEdit: boolean
+    isModule: boolean
+    isUserAuthor: boolean
+    refetch: () => void
+}
 
 export const sortByOrder = <T extends { order: number }>(items: T[]): T[] => items.sort((a, b) => a.order - b.order);
 
@@ -31,8 +31,9 @@ const DragAndDrop: FC<Props<Lesson | Module>> = ({
 	isUserAuthor,
 	items,
 	isModule,
-	refetch,
+	refetch
 }) => {
+	const [startPropsItems, setStartPropsItems] = useState<Array<Lesson | Module>>(items);
 	const [propsItems, setPropsItems] = useState<Array<Lesson | Module>>(items);
 	const [orderChange, setOrderChange] = useState(false);
 
@@ -42,8 +43,8 @@ const DragAndDrop: FC<Props<Lesson | Module>> = ({
 	const sensors = useSensors(
 		useSensor(PointerSensor),
 		useSensor(KeyboardSensor, {
-			coordinateGetter: sortableKeyboardCoordinates,
-		}),
+			coordinateGetter: sortableKeyboardCoordinates
+		})
 	);
 
 	useEffect(() => {
@@ -76,10 +77,10 @@ const DragAndDrop: FC<Props<Lesson | Module>> = ({
 				propsItems.map(async item => {
 					await updateLessons.mutate({
 						id: item.id,
-						order: item.order,
+						order: item.order
 					});
 					return item;
-				}),
+				})
 			);
 		} catch (e) {
 			console.log(e);
@@ -92,10 +93,10 @@ const DragAndDrop: FC<Props<Lesson | Module>> = ({
 				propsItems.map(async item => {
 					await updateModules.mutate({
 						id: item.id,
-						order: item.order,
+						order: item.order
 					});
 					return item;
-				}),
+				})
 			);
 			setOrderChange(false);
 		} catch (e) {
@@ -103,53 +104,76 @@ const DragAndDrop: FC<Props<Lesson | Module>> = ({
 		}
 	};
 
+	const resetHandler = () => {
+		setPropsItems(startPropsItems);
+	};
+
 	return (
 		<div className={"mt-5"}>
 			<div className={"flex justify-center mb-2"}>
-				{isUserAuthor && canEdit && items.length > 1 && (isModule ? (
-					<div>
-						<Button
-							disabled={!orderChange}
-							theme={ButtonThemes.FILLED}
-							onClick={saveModules}
-						>
-                            Save Order
-						</Button>
-					</div>
-				) : (
-					<div>
-						<Button
-							disabled={!orderChange}
-							theme={ButtonThemes.FILLED}
-							onClick={saveLessons}
-						>
-                            Save Order
-						</Button>
-					</div>
-				))}
+				{isUserAuthor && canEdit && items.length > 1 && (isModule
+					? (
+						<div className={"flex gap-5"}>
+							<Button
+								disabled={!orderChange}
+								theme={ButtonThemes.FILLED}
+								onClick={saveModules}
+							>
+                                Save Order
+							</Button>
+							<Button
+								disabled={!orderChange}
+								theme={ButtonThemes.FILLED}
+								onClick={resetHandler}
+							>
+                                Reset
+							</Button>
+						</div>
+
+					)
+					: (
+						<div className={"flex gap-5"}>
+							<Button
+								disabled={!orderChange}
+								theme={ButtonThemes.FILLED}
+								onClick={saveLessons}
+							>
+                                Save Order
+							</Button>
+							<Button
+								disabled={!orderChange}
+								theme={ButtonThemes.FILLED}
+								onClick={resetHandler}
+							>
+                                Reset
+							</Button>
+						</div>
+					))}
 			</div>
 			{
-				propsItems.length === 0 ? <>empty</> : <DndContext
-					sensors={sensors}
-					collisionDetection={closestCenter}
-					onDragEnd={handleDragEnd}
-				>
-					<SortableContext
-						items={propsItems}
-						strategy={verticalListSortingStrategy}
-						disabled={!canEdit}
+				propsItems.length === 0
+					? <>empty</>
+					: <DndContext
+						sensors={sensors}
+						collisionDetection={closestCenter}
+						onDragEnd={handleDragEnd}
 					>
-						{propsItems?.map(propsItem => (
-							<SortableModule
-								disabled={!canEdit}
-								key={propsItem.id}
-								item={propsItem}
-								refetch={refetch}
-								isModule={isModule}
-							/>
-						))}
-					</SortableContext>
-				</DndContext>
+						<SortableContext
+							items={propsItems}
+							strategy={verticalListSortingStrategy}
+							disabled={!canEdit}
+						>
+							{propsItems?.map(propsItem => (
+								<SortableModule
+									disabled={!canEdit}
+									key={propsItem.id}
+									item={propsItem}
+									refetch={refetch}
+									isModule={isModule}
+								/>
+							))}
+						</SortableContext>
+					</DndContext>
 			}
 		</div>
 	);

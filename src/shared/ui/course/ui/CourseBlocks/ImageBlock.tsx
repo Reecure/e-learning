@@ -1,14 +1,9 @@
 import {type FC} from "react";
-import {type LessonContentType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
 import Image from "next/image";
+import {IImageBlock} from "@/enteties/Lesson";
 
 type Props = {
-	imageBlock: {
-		id?: string;
-		type?: LessonContentType;
-		src: string;
-		title: string;
-	};
+    imageBlock: IImageBlock
 };
 
 const ImageBlock: FC<Props> = ({imageBlock}) => (

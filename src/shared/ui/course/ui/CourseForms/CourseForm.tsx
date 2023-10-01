@@ -7,9 +7,9 @@ import {useForm} from "react-hook-form";
 import Notification from "@/shared/ui/Notification/Notification";
 
 type Props = {
-	courseData: any;
-	onSubmit: any;
-	isCreating: boolean;
+    courseData: any;
+    onSubmit: any;
+    isCreating: boolean;
 };
 
 const TIMEOUT = 3000;
@@ -57,7 +57,7 @@ const CourseForm: FC<Props> = ({courseData, isCreating, onSubmit}) => {
 	return (
 		<>
 			<form
-				className={"flex flex-col gap-5 w-[450px]"}
+				className={"flex flex-col gap-5"}
 				onSubmit={handleSubmit(submitHandler)}
 			>
 				<p className={"text-3xl mb-5 text-center font-extrabold"}>
@@ -85,16 +85,16 @@ const CourseForm: FC<Props> = ({courseData, isCreating, onSubmit}) => {
 					defaultValue={DifficultLevels.EASY}
 				>
 					<option className={"bg-light-background dark:bg-dark-background"} value={DifficultLevels.EASY}>
-                  Easy
+                        Easy
 					</option>
 					<option
 						className={"bg-dark-background"}
 						value={DifficultLevels.MEDIUM}
 					>
-                  Medium
+                        Medium
 					</option>
 					<option className={"bg-light-background dark:bg-dark-background"} value={DifficultLevels.HARD}>
-                  Hard
+                        Hard
 					</option>
 				</select>
 
@@ -105,10 +105,10 @@ const CourseForm: FC<Props> = ({courseData, isCreating, onSubmit}) => {
 							{...register("isVisible")}
 							className={
 								"peer relative top-[2px] appearance-none mr-2 w-4 h-4 rounded-sm border-[1px] "
-                        + "border-neutral-950 dark:border-dark-neutral-950 "
-                        + "checked:bg-light-primary-main "
-                        + "dark:checked:bg-dark-primary-main "
-                        + "checked:border-none"
+                                + "border-neutral-950 dark:border-dark-neutral-950 "
+                                + "checked:bg-light-primary-main "
+                                + "dark:checked:bg-dark-primary-main "
+                                + "checked:border-none"
 							}
 						/>
 						<svg
@@ -140,7 +140,7 @@ const CourseForm: FC<Props> = ({courseData, isCreating, onSubmit}) => {
 						reset();
 					}}
 				>
-               Reset
+                    Reset
 				</Button>
 			</form>
 			<Notification isSuccess={!submitError} open={notificationOpen} onClose={notificationOpenHandler}

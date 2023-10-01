@@ -1,55 +1,36 @@
 import {type FC, useEffect} from "react";
 import {FormProvider, useFieldArray, useForm} from "react-hook-form";
 import {trpc} from "@/shared/utils/trpc";
-import {QuizContentType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
 import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {v4 as uuidv4} from "uuid";
 import QuestionAnswerForm from "@/shared/ui/course/ui/CourseQuizForms/QuestionAnswerForm";
 import QuestionAnswerFormWithFixedLettersAnswer
 	from "@/shared/ui/course/ui/CourseQuizForms/QuestionAnswerFormWithFixedLettersAnswer";
+import {QuizBlocks, QuizContentType} from "@/enteties/Lesson";
 
-export type QuestionAnswerBlock = {
-	id: string;
-	type: QuizContentType.QUESTION_ANSWER;
-	question: string;
-	correctAnswer: string;
-	answer: Array<{
-		otherAnswer: string;
-	}>;
-};
-
-export type AnswerWithFixedLetters = {
-	id: string;
-	type: QuizContentType.ANSWER_WITH_FIXED_LETTERS;
-	question: string;
-	answer: string;
-};
-
-export type Block = QuestionAnswerBlock | AnswerWithFixedLetters;
 
 type FormData = {
-	blocks: Block[];
+    blocks: QuizBlocks[];
 };
 
 type Props = {
-	lessonId: string;
-	initialData: FormData;
+    lessonId: string;
+    initialData: FormData;
+    setQuizContentEditable: () => void
+    setIsSuccessVisible: (id: string, visible: boolean, isSuccess: boolean, error?: string) => void
 };
 
-const CreateLessonQuizContent: FC<Props> = ({initialData, lessonId}) => {
+const CreateLessonQuizContent: FC<Props> = ({initialData, setQuizContentEditable, setIsSuccessVisible, lessonId}) => {
 	const lessonUpdateContentQuery = trpc.updateLessonContent.useMutation();
 
 	const methods = useForm<FormData>({
-
-		// @ts-expect-error
-		defaultValues: {blocks: initialData || []},
+		defaultValues: {blocks: initialData || [] as any},
 	});
 	const {handleSubmit, reset} = methods;
 
 	useEffect(() => {
-		// @ts-expect-error
-		reset({blocks: initialData || []});
+		reset({blocks: initialData || [] as any});
 	}, [initialData, reset]);
 
 	const onSubmit = (data: FormData) => {
@@ -60,6 +41,10 @@ const CreateLessonQuizContent: FC<Props> = ({initialData, lessonId}) => {
 			});
 		} catch (e) {
 			console.log(e);
+		} finally {
+			setQuizContentEditable();
+			setIsSuccessVisible(lessonId, true, true);
+
 		}
 	};
 
@@ -110,7 +95,7 @@ const CreateLessonQuizContent: FC<Props> = ({initialData, lessonId}) => {
 										remove(index);
 									}}
 								>
-                              x
+                                    x
 								</Button>
 							</div>
 						) : field.type === QuizContentType.ANSWER_WITH_FIXED_LETTERS ? (
@@ -124,7 +109,7 @@ const CreateLessonQuizContent: FC<Props> = ({initialData, lessonId}) => {
 										remove(index);
 									}}
 								>
-                              x
+                                    x
 								</Button>
 							</div>
 						) : null}
@@ -132,17 +117,17 @@ const CreateLessonQuizContent: FC<Props> = ({initialData, lessonId}) => {
 				))}
 				<div className={"flex flex-col sm:flex-row gap-3"}>
 					<Button theme={ButtonThemes.FILLED} onClick={addQuestionAnswerBlock}>
-                  Add Question Answer
+                        Add Question Answer
 					</Button>
 					<Button
 						theme={ButtonThemes.FILLED}
 						onClick={addAnswerWithFixedLetters}
 					>
-                  Add Answer with fixed letters
+                        Add Answer with fixed letters
 					</Button>
 				</div>
 				<Button theme={ButtonThemes.FILLED} type='submit'>
-               Save
+                    Save
 				</Button>
 			</form>
 		</FormProvider>

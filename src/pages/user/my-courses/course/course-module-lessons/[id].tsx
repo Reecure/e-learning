@@ -1,19 +1,19 @@
-import {type ReactElement, useEffect, useState} from "react";
+import { type ReactElement, useEffect, useState } from "react";
 import Layout from "@/pages/layout";
 import UserLayout from "@/pages/user/layout";
-import {trpc} from "@/shared/utils/trpc";
-import {useRouter} from "next/router";
+import { trpc } from "@/shared/utils/trpc";
+import { useRouter } from "next/router";
 import LessonContent from "@/shared/ui/course/ui/LessonContent/LessonContent";
 import CreateLesson from "@/shared/ui/course/ui/CreateLesson/CreateLesson";
-import {Button} from "@/shared/ui";
-import {ButtonThemes} from "@/shared/ui/Button/Button";
+import { Button } from "@/shared/ui";
+import { ButtonThemes } from "@/shared/ui/Button/Button";
 import CourseLessons from "@/shared/ui/course/ui/CourseLessons/CourseLessons";
-import {useAppDispatch, useAppSelector} from "@/app/ReduxProvider/config/hooks";
-import {currentLessonSelector} from "../../../../../shared/ui/course/model";
-import {useCurrentUser} from "@/shared/hooks";
-import {Loader} from "@/shared/ui/Loader";
-import {isLessonPreviewVisible} from "@/shared/ui/course/model/selectors/currentLessonSelector";
-import {AiOutlineClose} from "react-icons/ai";
+import { useAppDispatch, useAppSelector } from "@/app/ReduxProvider/config/hooks";
+import { currentLessonSelector } from "../../../../../shared/ui/course/model";
+import { useCurrentUser } from "@/shared/hooks";
+import { Loader } from "@/shared/ui/Loader";
+import { isLessonPreviewVisible } from "@/shared/ui/course/model/selectors/currentLessonSelector";
+import { AiOutlineClose } from "react-icons/ai";
 import Overlay from "@/shared/ui/Overlay/Overlay";
 
 const CourseModuleLessonsPage = () => {
@@ -26,10 +26,10 @@ const CourseModuleLessonsPage = () => {
 	const currentUserId = useCurrentUser();
 
 	const lessons = trpc.getLessonsByModuleId.useQuery({
-		module_id: router.query.id! as string,
+		module_id: router.query.id! as string
 	});
 	const moduleQuery = trpc.getModuleById.useQuery({
-		module_id: router.query.id! as string,
+		module_id: router.query.id! as string
 	});
 
 	const currentLesson = useAppSelector(currentLessonSelector);
@@ -67,22 +67,24 @@ const CourseModuleLessonsPage = () => {
 
 					<div className={"flex justify-between items-center mb-5"}>
 						<p className={"text-xl mb-5"}>Lessons</p>
-						{isUserCourse && (!canLessonEdit ? (
-							<Button
-								theme={ButtonThemes.FILLED}
-								onClick={CanLessonEditHandler}
-								className={"p-1!"}
-							>
+						{isUserCourse && (!canLessonEdit
+							? (
+								<Button
+									theme={ButtonThemes.FILLED}
+									onClick={CanLessonEditHandler}
+									className={"p-1!"}
+								>
                                 Edit
-							</Button>
-						) : (
-							<Button
-								theme={ButtonThemes.FILLED}
-								onClick={CanLessonEditHandler}
-							>
+								</Button>
+							)
+							: (
+								<Button
+									theme={ButtonThemes.FILLED}
+									onClick={CanLessonEditHandler}
+								>
                                 Close
-							</Button>
-						))}
+								</Button>
+							))}
 					</div>
 					{isUserCourse && canLessonEdit && (
 						<CreateLesson moduleId={router.query.id as string}/>
@@ -115,7 +117,7 @@ const CourseModuleLessonsPage = () => {
 	);
 };
 
-CourseModuleLessonsPage.getLayout = function getLayout(page: ReactElement) {
+CourseModuleLessonsPage.getLayout = function getLayout (page: ReactElement) {
 	return (
 		<Layout>
 			<UserLayout contentClassName={"!p-0"}>{page}</UserLayout>

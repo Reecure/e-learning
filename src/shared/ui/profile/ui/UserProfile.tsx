@@ -10,8 +10,8 @@ import Image from "next/image";
 import Notification from "@/shared/ui/Notification/Notification";
 
 type Props = {
-	user: User;
-	refetch: () => void;
+    user: User;
+    refetch: () => void;
 };
 
 const UserProfileComponent: FC<Props> = ({user, refetch}) => {
@@ -72,13 +72,13 @@ const UserProfileComponent: FC<Props> = ({user, refetch}) => {
 							<UploadButton
 								appearance={{
 									button:
-                              "bg-dark-primary-hover-second hover:opacity-70 duration-300",
+                                        "bg-dark-primary-hover-second hover:opacity-70 duration-300",
 								}}
 								endpoint='imageUploader'
 								onClientUploadComplete={res => {
 									uploadAvatar.mutateAsync({
 										email: user.email,
-										// @ts-expect-error
+										// @ts-ignore
 										avatar: res[0].fileUrl,
 									});
 									setUploadError(false);
@@ -124,10 +124,10 @@ const UserProfileComponent: FC<Props> = ({user, refetch}) => {
 
 				<div className={"flex items-start mt-5 sm:mt-0 sm:items-end gap-x-2"}>
 					<Button theme={ButtonThemes.FILLED} onClick={openHandler}>
-                  Edit
+                        Edit
 					</Button>
 					{(user.role === UserRoles.ADMIN
-                  || user.role === UserRoles.TEACHER) && <CreateCourse/>}
+                        || user.role === UserRoles.TEACHER) && <CreateCourse/>}
 				</div>
 			</div>
 

@@ -1,12 +1,8 @@
 import {type FC} from "react";
-import {type LessonContentType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
+import {IVideoBlock} from "@/enteties/Lesson";
 
 type Props = {
-	videoBlock: {
-		id: string;
-		url: string;
-		type: LessonContentType;
-	};
+    videoBlock: IVideoBlock
 };
 
 function getVideoIdFromUrl(url: string) {
@@ -20,7 +16,7 @@ const VideoBlock: FC<Props> = ({videoBlock}) => {
 	if (!videoId) {
 		return (
 			<div>
-        Error: URL shoud have{" "}
+                Error: URL shoud have{" "}
 				<span className={"text-dark-primary-main"}>v=</span> flag{" "}
 				<span className={"text-neutral-500"}>
           https://www.youtube.com/watch?

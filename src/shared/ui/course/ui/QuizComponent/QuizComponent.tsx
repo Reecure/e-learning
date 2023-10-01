@@ -1,25 +1,27 @@
 import {type FC, useEffect, useState} from "react";
-import {
-	type AnswerWithFixedLetters,
-	type Block,
-	type QuestionAnswerBlock,
-} from "@/shared/ui/course/ui/CreateLessonQuizContent/CreateLessonQuizContent";
+
 import CourseQuizGameQuestionWithAnswer from "@/shared/ui/course/ui/CourseQuizGames/CourseQuizGameQuestionWithAnswer";
 import CourseQuizGameAnswerWithFixedLetters
 	from "@/shared/ui/course/ui/CourseQuizGames/CourseQuizGameAnswerWithFixedLetters";
-import {QuizContentType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
 import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {trpc} from "@/shared/utils/trpc";
 import {useSession} from "next-auth/react";
 import {Loader} from "@/shared/ui/Loader";
+import {AnswerWithFixedLetters, LessonBlocks, QuestionAnswerBlock, QuizContentType} from "@/enteties/Lesson";
 
 type Props = {
-	lesson_id: string;
-	blocks: Block[];
+    updateInfo: {
+        id: string,
+        visible: boolean,
+        isSuccess: boolean,
+        error?: string
+    }
+    lesson_id: string;
+    blocks: LessonBlocks[];
 };
 
-const QuizComponent: FC<Props> = ({blocks, lesson_id}) => {
+const QuizComponent: FC<Props> = ({blocks, lesson_id, updateInfo}) => {
 	const [currentQuestion, setCurrentQuestion] = useState(0);
 	const [showScore, setShowScore] = useState(false);
 	const [score, setScore] = useState(0);
@@ -127,6 +129,10 @@ const QuizComponent: FC<Props> = ({blocks, lesson_id}) => {
 
 	return (
 		<div className={"flex flex-col items-center justify-center "}>
+			<>
+				{lesson_id === updateInfo.id && updateInfo.visible && (updateInfo.isSuccess ? <>all ok</> : <>some
+                    error</>)}
+			</>
 			<div>
 				{showScore ? (
 					<div className={" flex flex-col gap-5"}>
@@ -140,7 +146,7 @@ const QuizComponent: FC<Props> = ({blocks, lesson_id}) => {
 								setCurrentQuestion(0);
 							}}
 						>
-                     Try again
+                            Try again
 						</Button>
 					</div>
 				) : (
@@ -148,7 +154,7 @@ const QuizComponent: FC<Props> = ({blocks, lesson_id}) => {
 						<div>
 							{blocks?.length && (
 								<div>
-                           Previous res = {getLessonProgressById.data?.quizScore}
+                                    Previous res = {getLessonProgressById.data?.quizScore}
 								</div>
 							)}
 						</div>

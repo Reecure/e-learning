@@ -1,16 +1,15 @@
 import {type FC, useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import {type Lesson} from "@/enteties/Lesson";
+import {type Lesson, LessonType} from "@/enteties/Lesson";
 import {trpc} from "@/shared/utils/trpc";
 import {Button, Modal} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {Label} from "@/shared/ui/Label";
 import Notification from "@/shared/ui/Notification/Notification";
-import {LessonType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
 import {useSession} from "next-auth/react";
 
 type Props = {
-	moduleId: string;
+    moduleId: string;
 };
 
 const CreateLesson: FC<Props> = ({moduleId}) => {
@@ -31,7 +30,6 @@ const CreateLesson: FC<Props> = ({moduleId}) => {
 			lesson_type: LessonType.TEXT,
 			module_id: moduleId,
 			lesson_content: {
-				// @ts-expect-error
 				blocks: [],
 			},
 			order: getLessons.data?.length,
@@ -39,8 +37,17 @@ const CreateLesson: FC<Props> = ({moduleId}) => {
 	});
 
 	useEffect(() => {
+		if (createLesson.isError) {
+			setSubmitError({isError: true, error: "some error"});
+		} else if (!createLesson.isError) {
+			setSubmitError({isError: false, error: ""});
+		}
+	}, [createLesson.isError]);
+
+	useEffect(() => {
 		getLessons.refetch();
-	}, [createLesson.isLoading]);
+	}, [createLesson.isLoading,]);
+
 
 	useEffect(() => {
 		let timeoutId: NodeJS.Timeout;
@@ -70,8 +77,8 @@ const CreateLesson: FC<Props> = ({moduleId}) => {
 				onClick={modalOpenHandler}
 				className={
 					"mb-5 flex items-center justify-center w-full border-dashed border-[1px] py-2 "
-               + "border-light-primary-main dark:border-dark-primary-main hover:border-opacity-60 "
-               + "hover:text-opacity-60 cursor-pointer text-light-primary-main dark:text-dark-primary-main"
+                    + "border-light-primary-main dark:border-dark-primary-main hover:border-opacity-60 "
+                    + "hover:text-opacity-60 cursor-pointer text-light-primary-main dark:text-dark-primary-main"
 				}
 			>
 				<p>Add Lesson</p>
@@ -79,16 +86,19 @@ const CreateLesson: FC<Props> = ({moduleId}) => {
 
 			<Modal isOpen={modalOpen} setIsOpen={modalOpenHandler}>
 				<form
-					onSubmit={handleSubmit(async data => {
-						console.log({...data});
+					onSubmit={handleSubmit(data => {
 						try {
-							const res = await createLesson.mutate({
-								...data,
-								author_id: session.data?.user.id!,
+							createLesson.mutate({
+								author_id: session.data?.user.id || "",
 								lesson_type: data.lesson_type,
-								order: getLessons.data?.length!,
+								order: getLessons.data?.length || 0,
+								module_id: moduleId,
+								lesson_content: {
+									blocks: []
+								},
+								title: data.title,
 							});
-							setSubmitError({isError: false, error: ""});
+
 							setNotificationOpenHandler();
 							setButtonDisabled(true);
 						} catch (error) {
@@ -125,7 +135,7 @@ const CreateLesson: FC<Props> = ({moduleId}) => {
 						theme={ButtonThemes.FILLED}
 						className={"mt-5 w-full"}
 					>
-                  Create lesson
+                        Create lesson
 					</Button>
 				</form>
 			</Modal>
