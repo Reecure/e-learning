@@ -19,9 +19,16 @@ type Props = {
     lessonId: string;
     setLessonContentEditable: () => void
     setIsSuccessVisible: (id: string, visible: boolean, isSuccess: boolean, error?: string) => void
+    refetch: () => void
 };
 
-const CreateLessonContent: FC<Props> = ({initialData, setIsSuccessVisible, setLessonContentEditable, lessonId}) => {
+const CreateLessonContent: FC<Props> = ({
+	initialData,
+	setIsSuccessVisible,
+	setLessonContentEditable,
+	lessonId,
+	refetch
+}) => {
 
 	const lessonUpdateContentQuery = trpc.updateLessonContent.useMutation();
 

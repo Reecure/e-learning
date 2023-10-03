@@ -38,18 +38,23 @@ type LessonsLessonContentBlocksParagraphs {
 type UsersCoursesProgress {
   course_id    String
   is_completed Boolean
+  course_name  String
 }
 
 type UsersLessonsProgress {
+  lesson_name  String
   is_completed Boolean
   lessonType   String
+  module_id    String
   lesson_id    String
   quizScore    Int
 }
 
 type UsersModulesProgress {
+  module_name  String
   is_completed Boolean
   module_id    String
+  course_id    String
 }
 
 model course_categories {
@@ -68,7 +73,7 @@ model courses {
   description       String
   difficulty_level  String
   duration          String
-  isVisible         Boolean
+  is_visible        Boolean
   rating            Int
   title             String
 }
@@ -92,15 +97,17 @@ model lessons {
   lesson_type    String
   module_id      String               @db.ObjectId
   order          Int
+  is_visible     Boolean
   title          String
 }
 
 model modules {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
-  course_id String @map(" course_id") @db.ObjectId
-  author_id String @db.ObjectId
-  order     Int
-  title     String
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  course_id  String  @map(" course_id") @db.ObjectId
+  author_id  String  @db.ObjectId
+  order      Int
+  is_visible Boolean
+  title      String
 }
 
 model reviews {

@@ -1,14 +1,12 @@
-import {type FC, useEffect, useState} from "react";
+import {type FC} from "react";
 import {trpc} from "@/shared/utils/trpc";
 import DragAndDrop from "@/shared/ui/DragAndDrop/DragAndDrop";
 import {Loader} from "@/shared/ui/Loader";
-import {Button} from "@/shared/ui";
-import {ButtonThemes} from "@/shared/ui/Button/Button";
 
 type Props = {
-	moduleId: string;
-	lessonCanEdit: boolean;
-	isUserLessons: boolean;
+    moduleId: string;
+    lessonCanEdit: boolean;
+    isUserLessons: boolean;
 };
 
 const CourseLessons: FC<Props> = ({
@@ -19,10 +17,6 @@ const CourseLessons: FC<Props> = ({
 	const lessonsQuery = trpc.getLessonsByModuleId.useQuery({
 		module_id: moduleId,
 	});
-
-	useEffect(() => {
-		console.log(lessonsQuery.data);
-	}, [lessonsQuery]);
 
 	if (lessonsQuery.isLoading) {
 		return <Loader/>;

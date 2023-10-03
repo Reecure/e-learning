@@ -9,7 +9,7 @@ import Notification from "@/shared/ui/Notification/Notification";
 import {useSession} from "next-auth/react";
 
 type Props = {
-	courseId: string;
+    courseId: string;
 };
 
 const confirmDelay = 3000;
@@ -30,6 +30,7 @@ const CreateModule: FC<Props> = ({courseId}) => {
 		defaultValues: {
 			course_id: "",
 			order: getModules.data?.length,
+			is_visible: true,
 			title: "",
 		},
 	});
@@ -104,7 +105,7 @@ const CreateModule: FC<Props> = ({courseId}) => {
 						theme={ButtonThemes.FILLED}
 						className={"mt-5 w-full"}
 					>
-                  Create module
+                        Create module
 					</Button>
 				</form>
 			</Modal>

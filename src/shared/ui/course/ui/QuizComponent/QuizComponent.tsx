@@ -9,6 +9,7 @@ import {trpc} from "@/shared/utils/trpc";
 import {useSession} from "next-auth/react";
 import {Loader} from "@/shared/ui/Loader";
 import {AnswerWithFixedLetters, LessonBlocks, QuestionAnswerBlock, QuizContentType} from "@/enteties/Lesson";
+import InfoForUser from "@/shared/ui/InfoForUser/InfoForUser";
 
 type Props = {
     updateInfo: {
@@ -84,15 +85,16 @@ const QuizComponent: FC<Props> = ({blocks, lesson_id, updateInfo}) => {
 
 	useEffect(() => {
 		if (showScore) {
-			console.log("showScore called");
 			try {
 				updateLessonProgress.mutate({
 					id: session.data?.user.id!,
 					lesson_progress: {
 						lesson_id,
+						lesson_name: getLessonProgressById.data?.lesson_name || "",
+						module_id: getLessonProgressById.data?.module_id || "",
 						is_completed: true,
 						quizScore: score,
-						lessonType: "",
+						lessonType: getLessonProgressById.data?.lessonType || "",
 					},
 				});
 			} catch (e) {
@@ -129,10 +131,11 @@ const QuizComponent: FC<Props> = ({blocks, lesson_id, updateInfo}) => {
 
 	return (
 		<div className={"flex flex-col items-center justify-center "}>
-			<>
-				{lesson_id === updateInfo.id && updateInfo.visible && (updateInfo.isSuccess ? <>all ok</> : <>some
-                    error</>)}
-			</>
+			<div className={"mb-5 w-full"}>
+				{lesson_id === updateInfo.id && updateInfo.visible && (updateInfo.isSuccess ?
+					<InfoForUser isSuccess text={"Success"}/> :
+					<InfoForUser isSuccess={false} text={"Error"}/>)}
+			</div>
 			<div>
 				{showScore ? (
 					<div className={" flex flex-col gap-5"}>

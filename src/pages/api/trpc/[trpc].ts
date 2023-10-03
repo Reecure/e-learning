@@ -6,6 +6,7 @@ import {UserRoles} from "@/enteties/User";
 import bcrypt from "bcrypt";
 import {LessonType} from "@/enteties/Lesson/model/types/lesson";
 
+
 const prisma = new PrismaClient();
 
 const t = initTRPC.create();
@@ -13,78 +14,69 @@ const t = initTRPC.create();
 const appRouter = t.router({
 	// ----------------User action--------------
 	getUsers: t.procedure.query(async ({input}) => prisma.users.findMany()),
-	getUser: t.procedure
-		.input(
-			z.object({
-				email: z.string(),
-			}),
-		)
-		.query(async ({input}) => prisma.users.findUnique({
+	getUser: t.procedure.input(z.object({
+		email: z.string(),
+	}),
+	).query(async ({input}) => prisma.users.findUnique({
+		where: {
+			email: input.email,
+		},
+	})),
+	createUser: t.procedure.input(z.object({
+		email: z.string(),
+		firstname: z.string(),
+		lastname: z.string(),
+		password: z.string(),
+	}),
+	).mutation(async ({input}) => {
+		const hashedPassword = await bcrypt.hash(input.password, 10);
+
+		const user = await prisma.users.findFirst({
 			where: {
 				email: input.email,
 			},
-		})),
-	createUser: t.procedure
-		.input(
-			z.object({
-				email: z.string(),
-				firstname: z.string(),
-				lastname: z.string(),
-				password: z.string(),
-			}),
-		)
-		.mutation(async ({input}) => {
-			const hashedPassword = await bcrypt.hash(input.password, 10);
-
-			const user = await prisma.users.findFirst({
-				where: {
+		});
+		if (user) {
+			throw new TRPCError({
+				code: "CONFLICT",
+				message: "User with this email exist",
+			});
+		} else {
+			return prisma.users.create({
+				data: {
+					firstname: input.firstname,
+					lastname: input.lastname,
 					email: input.email,
+					password: hashedPassword,
+					avatar: "",
+					role: UserRoles.USER,
+					courses: [],
+					is_new_user: true,
+					registration_date: new Date().toISOString(),
+					courses_progress: [],
+					modules_progress: [],
+					lessons_progress: [],
 				},
 			});
-			if (user) {
-				throw new TRPCError({
-					code: "CONFLICT",
-					message: "User with this email exist",
-				});
-			} else {
-				return prisma.users.create({
-					data: {
-						firstname: input.firstname,
-						lastname: input.lastname,
-						email: input.email,
-						password: hashedPassword,
-						avatar: "",
-						role: UserRoles.USER,
-						courses: [],
-						is_new_user: true,
-						registration_date: new Date().toISOString(),
-						courses_progress: [],
-						modules_progress: [],
-						lessons_progress: [],
-					},
-				});
-			}
-		}),
-	updateUser: t.procedure
-		.input(
-			z.object({
-				email: z.string(),
-				firstname: z.string(),
-				lastname: z.string(),
-				role: z.string(),
-			}),
-		)
-		.mutation(async ({input}) => prisma.users.update({
-			where: {
-				email: input.email,
-			},
-			data: {
-				email: input.email,
-				firstname: input.firstname,
-				lastname: input.lastname,
-				role: input.role,
-			},
-		})),
+		}
+	}),
+	updateUser: t.procedure.input(z.object({
+		email: z.string(),
+		firstname: z.string(),
+		lastname: z.string(),
+		role: z.string(),
+	}),
+	).mutation(async ({input}) => prisma.users.update({
+		where: {
+			email: input.email,
+		},
+		data: {
+			email: input.email,
+			firstname: input.firstname,
+			lastname: input.lastname,
+			role: input.role,
+		},
+	})),
 	deleteUser: t.procedure
 		.input(
 			z.object({
@@ -113,7 +105,7 @@ const appRouter = t.router({
 		})),
 	getAllVisibleCourses: t.procedure.query(async ({input}) => prisma.courses.findMany({
 		where: {
-			isVisible: true,
+			is_visible: true,
 		},
 	})),
 	getUserSubscribedCourses: t.procedure
@@ -138,6 +130,73 @@ const appRouter = t.router({
 				},
 			});
 		}),
+	getUserCoursesProgress: t.procedure.input(z.object({
+		user_id: z.string(),
+	})).query(async ({input}) => {
+		const user = await prisma.users.findUnique({
+			where: {
+				id: input.user_id
+			}
+		});
+		if (user === null) {
+			throw new Error("user not found");
+		}
+
+		return user.courses_progress;
+	}),
+	getUserProgressOnCourse: t.procedure.input(z.object({
+		user_id: z.string(),
+		course_id: z.string()
+	})).query(async ({input}) => {
+
+		const userForProgress = await prisma.users.findUnique({
+			where: {
+				id: input.user_id
+			}
+		});
+		if (userForProgress === null) {
+			throw new Error("user not found");
+		}
+		const courseProgress = userForProgress.courses_progress.findIndex(item => item.course_id === input.course_id
+		);
+
+		const lessonsProgress = userForProgress.lessons_progress.findIndex(item => item.lesson_id === input.course_id
+		);
+
+		if (courseProgress === -1) {
+			throw new Error("User have not course");
+		}
+
+		const modulesOfCourseByCourseId = await prisma.modules.findMany({
+			where: {
+				course_id: input.course_id
+			}
+		});
+
+		const modulesIds = modulesOfCourseByCourseId.map(items => items.id);
+
+		const modulesProgress = userForProgress.modules_progress.filter(module => modulesIds.includes(module.module_id));
+
+		const lessonsByModulesIds = await prisma.lessons.findMany({
+			where: {
+				id: {
+					in: modulesIds
+				}
+			}
+		});
+
+		const lessonsProgres = userForProgress.lessons_progress.filter(lesson => modulesIds.includes(lesson.module_id));
+
+		const TOTAL_LESSONS = lessonsByModulesIds.length;
+
+
+		return {
+			lessonsProgress: {lessonsProgres},
+			modulesProgress: {modulesProgress},
+			courseProgress: {userProgress: userForProgress.courses_progress[courseProgress]},
+			totalLessons: {TOTAL_LESSONS}
+		};
+	}),
 	getUserCustomCourses: t.procedure
 		.input(
 			z.object({
@@ -149,83 +208,82 @@ const appRouter = t.router({
 				author_id: input.user_id,
 			},
 		})),
-	updateUserCourseProgress: t.procedure
-		.input(
-			z.object({
-				id: z.string(),
-				course_progress: z.object({
-					course_id: z.string(),
-					is_completed: z.boolean(),
-				}),
-			}),
-		)
-		.mutation(async ({input}) => {
-			const user = await prisma.users.findUnique({
-				where: {
-					id: input.id,
-				},
-			});
-
-			const existingProgressIndex = user?.courses_progress.findIndex(
-				item => item?.course_id === input.course_progress.course_id,
-			);
-
-			if (existingProgressIndex !== -1) {
-				return 0;
-			}
-
-			return prisma.users.update({
-				where: {
-					id: input.id,
-				},
-				data: {
-					courses_progress: {
-						push: input.course_progress,
-					},
-				},
-			});
+	updateUserCourseProgress: t.procedure.input(z.object({
+		id: z.string(),
+		course_progress: z.object({
+			course_id: z.string(),
+			course_name: z.string(),
+			is_completed: z.boolean(),
 		}),
-	updateUserModulesProgress: t.procedure
-		.input(
-			z.object({
-				id: z.string(),
-				module_progress: z.object({
-					module_id: z.string(),
-					is_completed: z.boolean(),
-				}),
-			}),
-		)
-		.mutation(async ({input}) => {
-			const user = await prisma.users.findUnique({
-				where: {
-					id: input.id,
-				},
-			});
+	}),
+	).mutation(async ({input}) => {
+		const user = await prisma.users.findUnique({
+			where: {
+				id: input.id,
+			},
+		});
 
-			const existingProgressIndex = user?.modules_progress.findIndex(
-				item => item?.module_id === input.module_progress.module_id,
-			);
+		const existingProgressIndex = user?.courses_progress.findIndex(
+			item => item?.course_id === input.course_progress.course_id,
+		);
 
-			if (existingProgressIndex !== -1) {
-				return 0;
-			}
+		if (existingProgressIndex !== -1) {
+			return 0;
+		}
 
-			return prisma.users.update({
-				where: {
-					id: input.id,
+		return prisma.users.update({
+			where: {
+				id: input.id,
+			},
+			data: {
+				courses_progress: {
+					push: input.course_progress,
 				},
-				data: {
-					modules_progress: {
-						push: input.module_progress,
-					},
-				},
-			});
+			},
+		});
+	}),
+	updateUserModulesProgress: t.procedure.input(z.object({
+		id: z.string(),
+		module_progress: z.object({
+			module_name: z.string(),
+			module_id: z.string(),
+			course_id: z.string(),
+			is_completed: z.boolean(),
 		}),
+	}),
+	).mutation(async ({input}) => {
+		const user = await prisma.users.findUnique({
+			where: {
+				id: input.id,
+			},
+		});
+
+		const existingProgressIndex = user?.modules_progress.findIndex(
+			item => item?.module_id === input.module_progress.module_id,
+		);
+
+		if (existingProgressIndex !== -1) {
+			return 0;
+		}
+
+		return prisma.users.update({
+			where: {
+				id: input.id,
+			},
+			data: {
+				modules_progress: {
+					push: input.module_progress,
+				},
+			},
+		});
+	}),
 	updateUserLessonsProgress: t.procedure
 		.input(
 			z.object({
 				id: z.string(),
 				lesson_progress: z.object({
+					lesson_name: z.string(),
+					module_id: z.string(),
 					lesson_id: z.string(),
 					lessonType: z.string(),
 					quizScore: z.number(),
@@ -256,7 +314,7 @@ const appRouter = t.router({
 				user.lessons_progress.push(lesson_progress);
 			}
 
-			const updatedUser = await prisma.users.update({
+			const updatedUserLessonProgress = await prisma.users.update({
 				where: {
 					id,
 				},
@@ -265,7 +323,7 @@ const appRouter = t.router({
 				},
 			});
 
-			return updatedUser;
+			return updatedUserLessonProgress;
 		}),
 	getUserLessonsProgressById: t.procedure
 		.input(
@@ -430,7 +488,7 @@ const appRouter = t.router({
 				cover_description: input.cover_description,
 				rating: input.rating,
 				creation_date: input.creation_date,
-				isVisible: input.isVisible,
+				is_visible: input.isVisible,
 				author_id: input.author_id,
 				category_id: input.category_id,
 				difficulty_level: input.difficulty_level,
@@ -443,6 +501,7 @@ const appRouter = t.router({
 				title: z.string(),
 				course_id: z.string(),
 				author_id: z.string(),
+				is_visible: z.boolean(),
 				order: z.number(),
 			}),
 		)
@@ -452,6 +511,7 @@ const appRouter = t.router({
 					title: input.title,
 					author_id: input.author_id,
 					course_id: input.course_id,
+					is_visible: input.is_visible,
 					order: input.order,
 				},
 			});
@@ -468,6 +528,7 @@ const appRouter = t.router({
 				lesson_type: z.nativeEnum(LessonType),
 				order: z.number(),
 				module_id: z.string(),
+				is_visible: z.boolean(),
 				author_id: z.string().min(1),
 				lesson_content: z.object({
 					blocks: z.array(z.any())
@@ -480,6 +541,7 @@ const appRouter = t.router({
 				lesson_type: input.lesson_type,
 				order: input.order,
 				author_id: input.author_id,
+				is_visible: input.is_visible,
 				module_id: input.module_id,
 				lesson_content: input.lesson_content
 			},
@@ -499,6 +561,36 @@ const appRouter = t.router({
 			},
 			data: {
 				lesson_content: input.lesson_content,
+			},
+		})),
+	updateLessonVisibility: t.procedure
+		.input(
+			z.object({
+				id: z.string(),
+				is_visible: z.boolean(),
+			}),
+		)
+		.mutation(async ({input}) => prisma.lessons.update({
+			where: {
+				id: input.id,
+			},
+			data: {
+				is_visible: input.is_visible,
+			},
+		})),
+	updateModuleVisibility: t.procedure
+		.input(
+			z.object({
+				id: z.string(),
+				is_visible: z.boolean(),
+			}),
+		)
+		.mutation(async ({input}) => prisma.modules.update({
+			where: {
+				id: input.id,
+			},
+			data: {
+				is_visible: input.is_visible,
 			},
 		})),
 	updateLessonOrder: t.procedure
@@ -595,7 +687,7 @@ const appRouter = t.router({
 				title: input.title,
 				description: input.description,
 				cover_description: input.cover_description,
-				isVisible: input.isVisible,
+				is_visible: input.isVisible,
 				difficulty_level: input.difficulty_level,
 				duration: input.duration,
 			},
@@ -682,28 +774,3 @@ export default trpcNext.createNextApiHandler({
 		}
 	},
 });
-
-
-// z.union([z.object({
-// 	id: z.string(),
-// 	title: z.string(),
-// 	paragraphs: z.array(z.object({
-// 		id: z.string(),
-// 		text: z.string(),
-// 	})),
-// 	type: z.literal(LessonContentType.TEXT),
-// }), z.object({
-// 	id: z.string(),
-// 	type: z.literal(LessonContentType.CODE),
-// 	code: z.string(),
-// }), z.object({
-// 	id: z.string(),
-// 	type: z.literal(LessonContentType.IMAGE),
-// 	src: z.string(),
-// 	title: z.string(),
-// }), z.object({
-// 	id: z.string(),
-// 	url: z.string(),
-// 	type: z.literal(LessonContentType.VIDEO)
-// })
-// ])

@@ -29,6 +29,7 @@ const CreateLesson: FC<Props> = ({moduleId}) => {
 			title: "",
 			lesson_type: LessonType.TEXT,
 			module_id: moduleId,
+			is_visible: true,
 			lesson_content: {
 				blocks: [],
 			},
@@ -93,6 +94,7 @@ const CreateLesson: FC<Props> = ({moduleId}) => {
 								lesson_type: data.lesson_type,
 								order: getLessons.data?.length || 0,
 								module_id: moduleId,
+								is_visible: true,
 								lesson_content: {
 									blocks: []
 								},

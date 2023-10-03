@@ -22,13 +22,9 @@ export const SortableModule: FC<Props<Lesson | Module>> = ({
 	refetch,
 }) => {
 	const [deleteIsOpen, setDeleteIsOpen] = useState(false);
-
+	const [notificationOpen, setNotificationOpen] = useState(false);
 	const {attributes, listeners, setNodeRef, transform, transition}
         = useSortable({id: item?.id});
-	const [notificationOpen, setNotificationOpen] = useState(false);
-	const [submitError, setSubmitError] = useState({isError: false, error: ""});
-
-
 	const style = {
 		transform: CSS.Transform.toString(transform),
 		transition,
@@ -81,11 +77,11 @@ export const SortableModule: FC<Props<Lesson | Module>> = ({
 		>
 			{isModule ? (
 			// Module
-				<SortableModuleItem item={item as Module} disabled={disabled}
+				<SortableModuleItem refetch={refetch} item={item as Module} disabled={disabled}
 					deleteOpen={deleteOpenHandler}/>
 			) : (
 			// Lesson
-				<SortableLessonItem item={item as Lesson} disabled={disabled}
+				<SortableLessonItem refetch={refetch} item={item as Lesson} disabled={disabled}
 					deleteOpen={deleteOpenHandler}/>
 			)}
 

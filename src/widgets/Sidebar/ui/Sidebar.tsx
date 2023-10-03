@@ -1,9 +1,7 @@
-import {useEffect} from "react";
 import Link from "next/link";
 import {Routes} from "@/shared/config/routes";
 import {AiOutlineUser} from "react-icons/ai";
 import {PiCertificateBold, PiStudentDuotone} from "react-icons/pi";
-import {IoCreateOutline} from "react-icons/io5";
 import {RiAdminLine} from "react-icons/ri";
 import {RxExit} from "react-icons/rx";
 import {signOut, useSession} from "next-auth/react";
@@ -12,10 +10,6 @@ import {ButtonThemes} from "@/shared/ui/Button/Button";
 
 const Sidebar = () => {
 	const session = useSession();
-
-	useEffect(() => {
-		console.log(session);
-	}, [session]);
 
 	return (
 		<aside
@@ -28,19 +22,19 @@ const Sidebar = () => {
 					href={Routes.USER_PROFILE}
 					className={"hover:opacity-70 hover:scale-[1.2]"}
 				>
-					<AiOutlineUser />
+					<AiOutlineUser/>
 				</Link>
 				<Link
 					href={Routes.USER_COURSES}
 					className={"hover:opacity-70 hover:scale-[1.2]"}
 				>
-					<PiStudentDuotone />
+					<PiStudentDuotone/>
 				</Link>
 				<Link
 					href={Routes.USER_GRADES}
 					className={"hover:opacity-70 hover:scale-[1.2]"}
 				>
-					<PiCertificateBold />
+					<PiCertificateBold/>
 				</Link>
 				{session.data?.user.role === "admin" && (
 					<>
@@ -48,7 +42,7 @@ const Sidebar = () => {
 							href={Routes.ADMIN_PANEL}
 							className={"hover:opacity-70 hover:scale-[1.2]"}
 						>
-							<RiAdminLine />
+							<RiAdminLine/>
 						</Link>
 					</>
 				)}
@@ -60,7 +54,7 @@ const Sidebar = () => {
 					signOut({callbackUrl: "/"});
 				}}
 			>
-				<RxExit />
+				<RxExit/>
 			</Button>
 		</aside>
 	);

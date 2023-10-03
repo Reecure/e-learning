@@ -1,4 +1,4 @@
-import {type FC, useEffect, useState} from "react";
+import {type FC, useState} from "react";
 import {type User, UserRoles} from "@/enteties/User";
 import {Button} from "@/shared/ui";
 import {trpc} from "@/shared/utils/trpc";
@@ -35,10 +35,6 @@ const EditUserProfileModal: FC<Props> = ({user}) => {
 			role: user.role
 		}
 	});
-
-	useEffect(() => {
-		console.log("register change");
-	}, [userDefault]);
 
 	const notificationOpenHandler = () => {
 		setNotificationOpen(prev => !prev);

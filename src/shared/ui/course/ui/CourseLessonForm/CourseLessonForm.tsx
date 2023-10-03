@@ -7,6 +7,7 @@ import {trpc} from "@/shared/utils/trpc";
 import {LessonType} from "@/enteties/Lesson";
 import {AiOutlineQuestionCircle} from "react-icons/ai";
 import Notification from "@/shared/ui/Notification/Notification";
+import {useRouter} from "next/router";
 
 type Props = {
     lessonId: string;
@@ -16,6 +17,8 @@ type Props = {
     refetch: () => void
     setModalOpen: () => void;
 };
+
+const disableTiming = 3000;
 
 const CourseLessonForm: FC<Props> = ({
 	lessonId,
@@ -29,7 +32,7 @@ const CourseLessonForm: FC<Props> = ({
 	const [startLessonType, setStartLessonType] = useState(type);
 	const [visibleMessage, setVisibleMessage] = useState(false);
 	const [isOpenNotification, setIsOpenNotification] = useState(false);
-
+	const [buttonIsDisabled, setButtonIsDisabled] = useState(false);
 
 	const {register, handleSubmit, watch} = useForm({
 		values: {
@@ -37,6 +40,8 @@ const CourseLessonForm: FC<Props> = ({
 			lesson_type: type,
 		},
 	});
+
+	const router = useRouter();
 
 	const lessonType = watch("lesson_type");
 
@@ -54,6 +59,17 @@ const CourseLessonForm: FC<Props> = ({
 		setStartLessonType(type);
 	}, [type]);
 
+	useEffect(() => {
+
+		const buttonTimer = setTimeout(() => {
+			setButtonIsDisabled(false);
+		}, disableTiming);
+
+		return () => {
+			clearTimeout(buttonTimer);
+		};
+	}, [isOpenNotification]);
+
 	const openNotificationHandler = () => {
 		setIsOpenNotification(prev => !prev);
 	};
@@ -63,6 +79,8 @@ const CourseLessonForm: FC<Props> = ({
 			<Modal isOpen={openModal} setIsOpen={setModalOpen}>
 				<form
 					onSubmit={handleSubmit(async data => {
+						openNotificationHandler();
+						setButtonIsDisabled(true);
 						try {
 							updateLesson.mutate({
 								id: lessonId,
@@ -72,11 +90,10 @@ const CourseLessonForm: FC<Props> = ({
 									blocks: [],
 								},
 							});
-							refetch();
-						} catch (error) {
-							console.log(error);
+						} catch (e) {
+							console.log(e);
 						} finally {
-							openNotificationHandler();
+							router.reload();
 						}
 					})}
 					className={"flex flex-col gap-5 w-[300px]"}
@@ -104,6 +121,7 @@ const CourseLessonForm: FC<Props> = ({
 						type={"submit"}
 						theme={ButtonThemes.FILLED}
 						className={"mb-2 w-full"}
+						disabled={buttonIsDisabled}
 					>
                         Update Lesson
 					</Button>
@@ -123,8 +141,9 @@ const CourseLessonForm: FC<Props> = ({
 						</p>
 					</div> : ""}
 			</Modal>
-			<Notification open={isOpenNotification} onClose={openNotificationHandler} timeoutDelay={3000}>
-                success
+			<Notification open={isOpenNotification} onClose={openNotificationHandler} isSuccess={true}
+				timeoutDelay={disableTiming}>
+                Success
 			</Notification>
 		</div>
 	);

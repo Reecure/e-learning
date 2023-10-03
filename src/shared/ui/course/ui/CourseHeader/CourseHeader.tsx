@@ -122,6 +122,7 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
 										await updateUserCourseProgress.mutate({
 											id: session.data?.user.id!,
 											course_progress: {
+												course_name: data.title,
 												course_id: data?.id,
 												is_completed: false,
 											},

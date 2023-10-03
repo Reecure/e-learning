@@ -1,4 +1,4 @@
-import {type FC, useEffect} from "react";
+import {type FC} from "react";
 import DragAndDrop from "@/shared/ui/DragAndDrop/DragAndDrop";
 import {trpc} from "@/shared/utils/trpc";
 import {Loader} from "@/shared/ui/Loader";
@@ -17,10 +17,6 @@ const CourseModules: FC<Props> = ({
 	const modulesQuery = trpc.getModulesByCourseId.useQuery({
 		course_id: moduleId,
 	});
-
-	useEffect(() => {
-		console.log(modulesQuery.data);
-	}, [modulesQuery]);
 
 	if (modulesQuery.isLoading) {
 		return <Loader/>;

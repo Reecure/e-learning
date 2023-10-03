@@ -1,27 +1,17 @@
 import {type FC, useEffect, useState} from "react";
 import {trpc} from "@/shared/utils/trpc";
-import TextBlock from "@/shared/ui/course/ui/CourseBlocks/TextBlock";
-import CodeBlock from "@/shared/ui/course/ui/CourseBlocks/CodeBlock";
-import ImageBlock from "@/shared/ui/course/ui/CourseBlocks/ImageBlock";
 import Badge, {BadgeColors} from "@/shared/ui/Badge/Badge";
 import {Button,} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {useSession} from "next-auth/react";
 import {Loader} from "@/shared/ui/Loader";
 import CourseLessonForm from "@/shared/ui/course/ui/CourseLessonForm/CourseLessonForm";
-import VideoBlock from "@/shared/ui/course/ui/CourseBlocks/VideoBlock";
-import {
-	ICodeBlock,
-	IImageBlock,
-	ITextBlock,
-	IVideoBlock,
-	LessonBlocks,
-	LessonContentType,
-	LessonType
-} from "@/enteties/Lesson";
+import {LessonType} from "@/enteties/Lesson";
 import CreateLessonQuizContent from "@/shared/ui/course/ui/CreateLessonQuizContent/CreateLessonQuizContent";
 import CreateLessonContent from "@/shared/ui/course/ui/CreateLessonContent/CreateLessonContent";
 import QuizComponent from "@/shared/ui/course/ui/QuizComponent/QuizComponent";
+import InfoForUser from "@/shared/ui/InfoForUser/InfoForUser";
+import LessonComponent from "@/shared/ui/course/ui/LessonComponent/LessonComponent";
 
 type Props = {
     lesson_id: string;
@@ -42,25 +32,10 @@ const LessonContent: FC<Props> = ({lesson_id}) => {
 
 	const session = useSession();
 
-	const contentRender = (
-		contentType: LessonContentType,
-		block: LessonBlocks,
-	) => {
-		switch (contentType) {
-		case LessonContentType.TEXT:
-			return <TextBlock textBlock={block as ITextBlock}/>;
-		case LessonContentType.CODE:
-			return <CodeBlock codeBlock={block as ICodeBlock}/>;
-		case LessonContentType.IMAGE:
-			return <ImageBlock imageBlock={block as IImageBlock}/>;
-		case LessonContentType.VIDEO:
-			return <VideoBlock videoBlock={block as IVideoBlock}/>;
-		}
-	};
-
 	useEffect(() => {
+		lessonQuery.refetch();
 		console.log(lessonQuery.data);
-	}, [lessonQuery]);
+	}, [lessonContentEditable, quizContentEditable]);
 
 	const editableLessonHandle = () => {
 		setLessonEditable(prev => !prev);
@@ -76,6 +51,7 @@ const LessonContent: FC<Props> = ({lesson_id}) => {
 	const setIsLessonUpdateSuccessHandler = (id: string, visible: boolean, isSuccess: boolean, error?: string) => {
 		setIsLessonUpdateSuccess({id: id, visible: visible, isSuccess: isSuccess, error: error || ""});
 	};
+
 
 	if (lessonQuery.isLoading) {
 		return <Loader/>;
@@ -127,23 +103,18 @@ const LessonContent: FC<Props> = ({lesson_id}) => {
 							lessonId={lesson_id}
 							setLessonContentEditable={LessonContentEditableHandler}
 							setIsSuccessVisible={setIsLessonUpdateSuccessHandler}
-							initialData={lessonQuery.data?.lesson_content?.blocks}
+							initialData={lessonQuery.data?.lesson_content.blocks}
+							refetch={lessonQuery.refetch}
 						/>
 					</>
 				) : (
 					<>
-						<>
-							{isLessonUpdateSuccess.id === lesson_id && isLessonUpdateSuccess.visible && (isLessonUpdateSuccess.isSuccess ? <>all
-                                ok</> : <>some
-                                error</>)}
-						</>
-						<div>
-							{
-								lessonQuery.data?.lesson_content.blocks.map(lesson =>
-									contentRender(lesson.type, lesson),
-								)
-							}
+						<div className={"mb-5 w-full"}>
+							{isLessonUpdateSuccess.id === lesson_id && isLessonUpdateSuccess.visible && (isLessonUpdateSuccess.isSuccess ?
+								<InfoForUser isSuccess text={"Success"}/> :
+								<InfoForUser isSuccess={false} text={"Error"}/>)}
 						</div>
+						<LessonComponent items={lessonQuery.data}/>
 					</>
 				)
 			) : quizContentEditable ? (

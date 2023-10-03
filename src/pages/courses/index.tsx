@@ -5,7 +5,7 @@ import {SmallCard} from "@/shared/ui";
 import Layout from "@/pages/layout";
 import {type Course} from "@/enteties/Course";
 import {BsSearch} from "react-icons/bs";
-import {LessonType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
+import {LessonType} from "@/enteties/Lesson";
 
 type Props = Record<string, unknown>;
 

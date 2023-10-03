@@ -42,7 +42,7 @@ const UserProfileComponent: FC<Props> = ({user, refetch}) => {
 		<>
 			{/* User hero */}
 			<div className={"sm:flex sm:justify-between bg-neutral-200 dark:bg-neutral-800 p-5 rounded-md"}>
-				<div className={"sm:flex   items-center "}>
+				<div className={"sm:flex items-center "}>
 					{/* {Avatar} */}
 					<div>
 						{user.avatar.length === 0 ? (

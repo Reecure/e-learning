@@ -3,17 +3,13 @@ import {PrismaClient} from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-	await prisma.modules.delete({
+	const res = await prisma.lessons.findUnique({
 		where: {
-			id: "64f9a151ca76ef7a5860ad97",
-		},
+			id: "6519875003478186b143e69a",
+		}
 	});
 
-	await prisma.lessons.deleteMany({
-		where: {
-			module_id: "64f9a151ca76ef7a5860ad97",
-		},
-	});
+	console.log(res);
 }
 
 main()

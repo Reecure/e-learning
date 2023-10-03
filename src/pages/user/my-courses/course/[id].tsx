@@ -39,10 +39,6 @@ const CoursePage = () => {
 		}
 	}, [session.data?.user.id, data?.author_id]);
 
-	useEffect(() => {
-		console.log(data?.id);
-	}, [data]);
-
 	const courseModuleEditHandler = () => {
 		setCourseModuleEdit(prev => !prev);
 	};

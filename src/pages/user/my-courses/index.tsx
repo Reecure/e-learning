@@ -1,4 +1,4 @@
-import React, {type ReactElement, useEffect, useState} from "react";
+import React, {type ReactElement, useState} from "react";
 import Layout from "@/pages/layout";
 import {Button, SmallCard} from "@/shared/ui";
 import {useSession} from "next-auth/react";
@@ -11,8 +11,8 @@ import {UserRoles} from "@/enteties/User";
 import {type Course} from "@/enteties/Course";
 
 enum CourseType {
-	MyCourses = "My Courses",
-	SubscribedCourses = "Subscribed",
+    MyCourses = "My Courses",
+    SubscribedCourses = "Subscribed",
 }
 
 const CoursesPage = () => {
@@ -23,10 +23,6 @@ const CoursesPage = () => {
 	);
 
 	const role = useRole();
-
-	useEffect(() => {
-		console.log(role);
-	}, []);
 
 	const subscribedCourses = trpc.getUserSubscribedCourses.useQuery({
 		user_id: session.data?.user?.id || "",
@@ -46,7 +42,7 @@ const CoursesPage = () => {
 					<div
 						className={`${
 							courseRendered === CourseType.SubscribedCourses
-                     && "pb-3 border-b-4 border-light-primary-main dark:border-dark-primary-main z-[1]"
+                            && "pb-3 border-b-4 border-light-primary-main dark:border-dark-primary-main z-[1]"
 						}`}
 					>
 						<Button
@@ -61,7 +57,7 @@ const CoursesPage = () => {
 					<div
 						className={`${
 							courseRendered === CourseType.MyCourses
-                     && "pb-3 border-b-4 border-light-primary-main dark:border-dark-primary-main z-[1]"
+                            && "pb-3 border-b-4 border-light-primary-main dark:border-dark-primary-main z-[1]"
 						}`}
 					>
 						{
@@ -89,12 +85,14 @@ const CoursesPage = () => {
 							{courseRendered === CourseType.MyCourses ? (
 								<div className={"grid grid-cols-1 gap-5"}>
 									{subscribedCourses.status === "success"
-                              && myselfCourses.data?.map(item => <SmallCard key={item.id} course={item as Course}/>)}
+                                        && myselfCourses.data?.map(item => <SmallCard key={item.id}
+                                        	course={item as Course}/>)}
 								</div>
 							) : (
 								<div className={"grid grid-cols-1 gap-5"}>
 									{myselfCourses.status === "success"
-                              && subscribedCourses.data?.map(item => <SmallCard key={item.id} course={item as Course}/>)}
+                                        && subscribedCourses.data?.map(item => <SmallCard key={item.id}
+                                        	course={item as Course}/>)}
 								</div>
 							)}
 						</>

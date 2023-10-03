@@ -1,13 +1,13 @@
-import {type ChangeEvent, type FC, useRef, useState} from "react";
+import {type ChangeEvent, type FC, useEffect, useRef, useState} from "react";
 import {type AnswerWithFixedLetters} from "@/shared/ui/course/ui/CreateLessonQuizContent/CreateLessonQuizContent";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {Button} from "@/shared/ui";
 
 type Props = {
-	block: AnswerWithFixedLetters;
-	handleAnswer: (correct: string, userSelect: string) => void;
-	isLast: boolean;
-	submitHandler: () => void;
+    block: AnswerWithFixedLetters;
+    handleAnswer: (correct: string, userSelect: string) => void;
+    isLast: boolean;
+    submitHandler: () => void;
 };
 
 const CourseQuizGameAnswerWithFixedLetters: FC<Props> = ({
@@ -20,6 +20,10 @@ const CourseQuizGameAnswerWithFixedLetters: FC<Props> = ({
 		new Array(block.answer.length).fill(""),
 	);
 	const inputRefs = useRef<HTMLInputElement[]>([]);
+
+	useEffect(() => {
+		setInputValues(new Array(block.answer.length).fill(""));
+	}, [handleAnswer]);
 
 	const handleInputChange = (
 		e: ChangeEvent<HTMLInputElement>,
