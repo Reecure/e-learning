@@ -40,7 +40,7 @@ const LessonComponent: FC<Props> = ({items}) => {
 		<div>
 			{
 				items.lesson_content.blocks.map(lesson =>
-					contentRender(lesson.type, lesson),
+					contentRender(lesson.type as LessonContentType, lesson as LessonBlocks),
 				)
 			}
 		</div>

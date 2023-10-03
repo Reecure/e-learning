@@ -6,7 +6,7 @@ import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {useSession} from "next-auth/react";
 import {Loader} from "@/shared/ui/Loader";
 import CourseLessonForm from "@/shared/ui/course/ui/CourseLessonForm/CourseLessonForm";
-import {LessonType} from "@/enteties/Lesson";
+import {Lesson, LessonBlocks, LessonType, QuizBlocks} from "@/enteties/Lesson";
 import CreateLessonQuizContent from "@/shared/ui/course/ui/CreateLessonQuizContent/CreateLessonQuizContent";
 import CreateLessonContent from "@/shared/ui/course/ui/CreateLessonContent/CreateLessonContent";
 import QuizComponent from "@/shared/ui/course/ui/QuizComponent/QuizComponent";
@@ -103,7 +103,7 @@ const LessonContent: FC<Props> = ({lesson_id}) => {
 							lessonId={lesson_id}
 							setLessonContentEditable={LessonContentEditableHandler}
 							setIsSuccessVisible={setIsLessonUpdateSuccessHandler}
-							initialData={lessonQuery.data?.lesson_content.blocks}
+							initialData={lessonQuery.data?.lesson_content.blocks as LessonBlocks[]}
 							refetch={lessonQuery.refetch}
 						/>
 					</>
@@ -114,7 +114,7 @@ const LessonContent: FC<Props> = ({lesson_id}) => {
 								<InfoForUser isSuccess text={"Success"}/> :
 								<InfoForUser isSuccess={false} text={"Error"}/>)}
 						</div>
-						<LessonComponent items={lessonQuery.data}/>
+						<LessonComponent items={lessonQuery.data as Lesson}/>
 					</>
 				)
 			) : quizContentEditable ? (
@@ -123,21 +123,21 @@ const LessonContent: FC<Props> = ({lesson_id}) => {
 					lessonId={lesson_id}
 					setQuizContentEditable={QuizContentEditableHandler}
 					setIsSuccessVisible={setIsLessonUpdateSuccessHandler}
-					initialData={lessonQuery.data?.lesson_content.blocks as any}
+					initialData={lessonQuery.data?.lesson_content.blocks as QuizBlocks[]}
 				/>
 			) : (
 				<>
 					<QuizComponent
 						updateInfo={isLessonUpdateSuccess}
 						lesson_id={lesson_id}
-						blocks={lessonQuery.data?.lesson_content.blocks as any}
+						blocks={lessonQuery.data?.lesson_content.blocks as QuizBlocks[]}
 					/>
 				</>
 			)}
 			<CourseLessonForm
 				lessonId={lesson_id}
 				title={lessonQuery.data?.title || ""}
-				type={lessonQuery.data?.lesson_type}
+				type={lessonQuery.data?.lesson_type as LessonType}
 				openModal={editableLesson}
 				setModalOpen={editableLessonHandle}
 				refetch={lessonQuery.refetch}

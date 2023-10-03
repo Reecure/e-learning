@@ -15,7 +15,7 @@ type FormData = {
 };
 
 type Props = {
-    initialData?: FormData;
+    initialData?: LessonBlocks[];
     lessonId: string;
     setLessonContentEditable: () => void
     setIsSuccessVisible: (id: string, visible: boolean, isSuccess: boolean, error?: string) => void
@@ -33,12 +33,12 @@ const CreateLessonContent: FC<Props> = ({
 	const lessonUpdateContentQuery = trpc.updateLessonContent.useMutation();
 
 	const methods = useForm<FormData>({
-		defaultValues: {blocks: initialData as any},
+		defaultValues: {blocks: initialData || []},
 	});
 	const {handleSubmit, reset} = methods;
 
 	useEffect(() => {
-		reset({blocks: initialData as any});
+		reset({blocks: initialData || []});
 	}, [initialData, reset]);
 
 	const onSubmit = (data: FormData) => {

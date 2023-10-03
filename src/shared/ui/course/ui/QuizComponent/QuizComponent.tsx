@@ -8,7 +8,13 @@ import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {trpc} from "@/shared/utils/trpc";
 import {useSession} from "next-auth/react";
 import {Loader} from "@/shared/ui/Loader";
-import {AnswerWithFixedLetters, LessonBlocks, QuestionAnswerBlock, QuizContentType} from "@/enteties/Lesson";
+import {
+	AnswerWithFixedLetters,
+	LessonBlocks,
+	QuestionAnswerBlock,
+	QuizBlocks,
+	QuizContentType
+} from "@/enteties/Lesson";
 import InfoForUser from "@/shared/ui/InfoForUser/InfoForUser";
 
 type Props = {
@@ -19,7 +25,7 @@ type Props = {
         error?: string
     }
     lesson_id: string;
-    blocks: LessonBlocks[];
+    blocks: QuizBlocks[];
 };
 
 const QuizComponent: FC<Props> = ({blocks, lesson_id, updateInfo}) => {
@@ -33,10 +39,10 @@ const QuizComponent: FC<Props> = ({blocks, lesson_id, updateInfo}) => {
 	const updateLessonProgress = trpc.updateUserLessonsProgress.useMutation();
 	const getLessonProgressById = trpc.getUserLessonsProgressById.useQuery({
 		lesson_id,
-		id: session.data?.user.id!,
+		id: session.data?.user.id || "",
 	});
 
-	const quizContentRender = (contentType: QuizContentType | string, block: Block, handleAnswer: (arg1: string, arg2: string) => void) => {
+	const quizContentRender = (contentType: QuizContentType | string, block: QuizBlocks | LessonBlocks, handleAnswer: (arg1: string, arg2: string) => void) => {
 		switch (contentType) {
 		case QuizContentType.QUESTION_ANSWER:
 			return (
@@ -87,7 +93,7 @@ const QuizComponent: FC<Props> = ({blocks, lesson_id, updateInfo}) => {
 		if (showScore) {
 			try {
 				updateLessonProgress.mutate({
-					id: session.data?.user.id!,
+					id: session.data?.user.id || "",
 					lesson_progress: {
 						lesson_id,
 						lesson_name: getLessonProgressById.data?.lesson_name || "",

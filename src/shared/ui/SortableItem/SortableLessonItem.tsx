@@ -26,7 +26,7 @@ const SortableLessonItem: FC<Props> = ({item, refetch, deleteOpen, disabled}) =>
 
 	const updateLessonProgress = trpc.updateUserLessonsProgress.useMutation();
 	const userProgressOnLesson = trpc.getUserLessonsProgressById.useQuery({
-		id: session.data?.user.id,
+		id: session.data?.user.id || "",
 		lesson_id: item.id,
 	});
 	const updateVisibility = trpc.updateLessonVisibility.useMutation();
@@ -54,7 +54,7 @@ const SortableLessonItem: FC<Props> = ({item, refetch, deleteOpen, disabled}) =>
 	const setIsCompletedHandler = () => {
 		try {
 			updateLessonProgress.mutate({
-				id: session.data?.user.id,
+				id: session.data?.user.id || "",
 				lesson_progress: {
 					lesson_id: item.id,
 					module_id: item.module_id,
@@ -97,7 +97,7 @@ const SortableLessonItem: FC<Props> = ({item, refetch, deleteOpen, disabled}) =>
 						dispatch(setCurrentLessonId(item.id));
 						dispatch(setPreviewVisible(false));
 						updateLessonProgress.mutate({
-							id: session.data?.user.id!,
+							id: session.data?.user.id || "",
 							lesson_progress: {
 								lesson_id: item.id,
 								lesson_name: item.title,

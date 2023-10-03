@@ -8,17 +8,9 @@ import {trpc} from "@/shared/utils/trpc";
 import {Loader} from "@/shared/ui/Loader";
 import {UserProfileComponent} from "@/shared/ui/profile";
 import {ErrorWidget} from "@/widgets/ErrorWidget";
-import {
-	useAppDispatch,
-	useAppSelector,
-} from "@/app/ReduxProvider/config/hooks";
-import {
-	counterSelector,
-	decreaseCount,
-	increaseCount,
-} from "../../../shared/ui/profile/model";
-import {Button} from "@/shared/ui";
-import {ButtonThemes} from "@/shared/ui/Button/Button";
+import {useAppDispatch, useAppSelector,} from "@/app/ReduxProvider/config/hooks";
+import {counterSelector,} from "../../../shared/ui/profile/model";
+import {User} from "@/enteties/User";
 
 const UserProfile = () => {
 	const session = useSession();
@@ -27,7 +19,7 @@ const UserProfile = () => {
 
 	const counter = useAppSelector(counterSelector);
 	const {data, isLoading, refetch} = trpc.getUser.useQuery({
-		email: session.data?.user?.email!,
+		email: session.data?.user?.email || "",
 	});
 
 	useEffect(() => {
@@ -45,7 +37,7 @@ const UserProfile = () => {
 	return (
 		<div>
 			<UserProfileComponent
-				user={data}
+				user={data as User}
 				refetch={refetch}
 			/>
 		</div>

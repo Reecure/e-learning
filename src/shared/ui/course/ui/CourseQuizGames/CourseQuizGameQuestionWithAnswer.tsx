@@ -1,7 +1,7 @@
 import {type FC, useEffect, useState} from "react";
-import {type QuestionAnswerBlock} from "@/shared/ui/course/ui/CreateLessonQuizContent/CreateLessonQuizContent";
 import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
+import {QuestionAnswerBlock} from "@/enteties/Lesson";
 
 type Props = {
     block: QuestionAnswerBlock;
@@ -31,8 +31,7 @@ const CourseQuizGameQuestionWithAnswer: FC<Props> = ({
 	isLast,
 }) => {
 	const [answers, setAnswers] = useState<string[]>([]);
-	// @ts-ignore
-	const [isSelected, setSelected] = useState<IsCorrect | undefined>(null);
+	const [isSelected, setSelected] = useState<IsCorrect | null>(null);
 
 	useEffect(() => {
 	}, [isLast]);
@@ -72,7 +71,6 @@ const CourseQuizGameQuestionWithAnswer: FC<Props> = ({
 				onClick={() => {
 					handleAnswer(block.correctAnswer, isSelected?.value || "");
 					if (!isLast) {
-						// @ts-ignore
 						setSelected(null);
 					} else if (isLast) {
 						submitHandler();

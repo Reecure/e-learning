@@ -13,6 +13,7 @@ import CourseHeader from "@/shared/ui/course/ui/CourseHeader/CourseHeader";
 import CourseAboutTab from "@/shared/ui/course/ui/CourseTabs/CourseAboutTab";
 import CourseReviewsTab from "@/shared/ui/course/ui/CourseTabs/CourseReviewsTab";
 import CourseContentTab from "@/shared/ui/course/ui/CourseTabs/CourseContentTab";
+import {Course} from "@/enteties/Course";
 
 export enum Tabs {
     ABOUT = "About",
@@ -59,7 +60,7 @@ const CoursePage = () => {
 		<div>
 			{data && (
 				<CourseHeader
-					data={data}
+					data={data as Course}
 					isUserCourse={isUserCourse}
 				/>
 			)}

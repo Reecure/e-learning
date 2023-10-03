@@ -1,7 +1,7 @@
 import {type ChangeEvent, type FC, useEffect, useRef, useState} from "react";
-import {type AnswerWithFixedLetters} from "@/shared/ui/course/ui/CreateLessonQuizContent/CreateLessonQuizContent";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {Button} from "@/shared/ui";
+import {AnswerWithFixedLetters} from "@/enteties/Lesson";
 
 type Props = {
     block: AnswerWithFixedLetters;

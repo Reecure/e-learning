@@ -6,15 +6,16 @@ export enum DifficultLevels {
 
 export type Course = {
     id: string;
+    author_id: string;
+    category_id: string;
     title: string;
     description: string;
     cover_description: string;
     cover_image: string;
     creation_date: string;
     duration: string;
-    category_id: string;
     is_visible: boolean;
-    author_id: string;
-    difficulty_level: DifficultLevels | string;
+    difficulty_level: DifficultLevels;
     rating: number;
 };
+

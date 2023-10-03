@@ -1,14 +1,14 @@
 import {type FC, useEffect, useState} from "react";
 import {Label} from "@/shared/ui/Label";
-import {DifficultLevels} from "@/enteties/Course/model/types/course";
+import {Course, DifficultLevels} from "@/enteties/Course/model/types/course";
 import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {useForm} from "react-hook-form";
 import Notification from "@/shared/ui/Notification/Notification";
 
 type Props = {
-    courseData: any;
-    onSubmit: any;
+    courseData: Course;
+    onSubmit: (data: Course) => void;
     isCreating: boolean;
 };
 
@@ -42,7 +42,7 @@ const CourseForm: FC<Props> = ({courseData, isCreating, onSubmit}) => {
 		setNotificationOpen(prev => !prev);
 	};
 
-	const submitHandler = async (data: any) => {
+	const submitHandler = async (data: Course) => {
 		setButtonDisabled(true);
 		notificationOpenHandler();
 		try {
@@ -102,7 +102,7 @@ const CourseForm: FC<Props> = ({courseData, isCreating, onSubmit}) => {
 					<label className={"relative"}>
 						<input
 							type={"checkbox"}
-							{...register("isVisible")}
+							{...register("is_visible")}
 							className={
 								"peer relative top-[2px] appearance-none mr-2 w-4 h-4 rounded-sm border-[1px] "
                                 + "border-neutral-950 dark:border-dark-neutral-950 "

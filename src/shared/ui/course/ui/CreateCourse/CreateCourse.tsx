@@ -1,13 +1,9 @@
-import {type FC, useEffect, useState} from "react";
-import {useForm} from "react-hook-form";
+import {type FC, useState} from "react";
 import {Course} from "@/enteties/Course";
 import {useSession} from "next-auth/react";
-import {DifficultLevels} from "@/enteties/Course/model/types/course";
 import {Button, Modal} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
-import {Label} from "@/shared/ui/Label";
 import {trpc} from "@/shared/utils/trpc";
-import {Text} from "@/shared/ui/Text";
 import CourseForm from "@/shared/ui/course/ui/CourseForms/CourseForm";
 
 type Props = Record<string, unknown>;
@@ -23,9 +19,15 @@ const CreateCourse: FC<Props> = () => {
 		setCreateCourseModalOpen(prev => !prev);
 	};
 
-	const createCourseHandler = async (data: any) => {
+	const createCourseHandler = async (data: Course) => {
 		const res = await createCourse.mutate({
-			...data,
+			title: data.title,
+			cover_description: data.cover_description,
+			cover_image: data.cover_image,
+			description: data.description,
+			difficulty_level: data.difficulty_level,
+			duration: data.duration,
+			isVisible: data.is_visible,
 			rating: 0,
 			creation_date: new Date().toISOString(),
 			category_id: "",
@@ -39,7 +41,7 @@ const CreateCourse: FC<Props> = () => {
 				theme={ButtonThemes.OUTLINED}
 				onClick={openModalCreateCourseHandler}
 			>
-            Create course
+                Create course
 			</Button>
 			<Modal
 				isOpen={createCourseModalOpen}
@@ -47,7 +49,7 @@ const CreateCourse: FC<Props> = () => {
 			>
 				<div className={"w-full max-w-[500px]"}>
 					<CourseForm
-						courseData={{}}
+						courseData={{} as Course}
 						onSubmit={createCourseHandler}
 						isCreating={true}
 					/>

@@ -84,15 +84,15 @@ const CoursesPage = () => {
 						<>
 							{courseRendered === CourseType.MyCourses ? (
 								<div className={"grid grid-cols-1 gap-5"}>
-									{subscribedCourses.status === "success"
-                                        && myselfCourses.data?.map(item => <SmallCard key={item.id}
-                                        	course={item as Course}/>)}
+									{subscribedCourses.status === "success" && myselfCourses.data?.map(item =>
+										<SmallCard key={item.id}
+											course={item as Course}/>)}
 								</div>
 							) : (
 								<div className={"grid grid-cols-1 gap-5"}>
-									{myselfCourses.status === "success"
-                                        && subscribedCourses.data?.map(item => <SmallCard key={item.id}
-                                        	course={item as Course}/>)}
+									{myselfCourses.status === "success" && subscribedCourses.data?.map(item =>
+										<SmallCard key={item.id}
+											course={item as Course}/>)}
 								</div>
 							)}
 						</>

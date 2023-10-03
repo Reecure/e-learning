@@ -9,7 +9,8 @@ const CodeForm: FC<{ index: number }> = ({index}) => {
 	return (
 		<div className={"flex flex-col gap-5 w-full"}>
 			<Label htmlFor={`blocks.${index}.code`} labelText={"Code"}>
-				     <textarea id={"myTextarea"}
+				{/* eslint-disable-next-line no-mixed-spaces-and-tabs */}
+				<textarea id={"myTextarea"}
 					className={"inputField whitespace-pre-wrap"} {...register(`blocks.${index}.code`)}
 				/>
 			</Label>

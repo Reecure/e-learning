@@ -2,11 +2,10 @@ import {type FC} from "react";
 import {Button} from "@/shared/ui";
 import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {Tabs} from "@/pages/user/my-courses/course/[id]";
-import {LessonType} from "@/shared/ui/course/ui/LessonContent/LessonContent";
 
 type Props = {
-	currentTab: Tabs;
-	setCurrentTab: (currentTab: Tabs) => void;
+    currentTab: Tabs;
+    setCurrentTab: (currentTab: Tabs) => void;
 };
 
 const CourseTabs: FC<Props> = ({currentTab, setCurrentTab}) => (

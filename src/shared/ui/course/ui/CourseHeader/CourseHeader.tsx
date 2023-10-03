@@ -25,7 +25,7 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
 	const session = useSession();
 
 
-	const user = trpc.getUser.useQuery({email: session.data?.user.email!});
+	const user = trpc.getUser.useQuery({email: session.data?.user.email || ""});
 	const deleteCourseFromUserCourses = trpc.deleteUserCourses.useMutation();
 	const addToCourses = trpc.updateUserCourses.useMutation();
 	const updateCourse = trpc.updateCourse.useMutation();
@@ -63,9 +63,16 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
 		}
 	};
 
-	const updateCourseHandler = async (data: any) => {
+	const updateCourseHandler = async (data: Course) => {
 		await updateCourse.mutate({
-			...data,
+			isVisible: data.is_visible,
+			cover_description: data.cover_description,
+			duration: data.duration,
+			description: data.description,
+			difficulty_level: data.difficulty_level,
+			cover_image: data.cover_image,
+			title: data.title,
+			id: data.id
 		});
 	};
 
@@ -99,7 +106,7 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
 								onClick={async () => {
 									try {
 										await deleteCourseFromUserCourses.mutate({
-											id: session.data?.user.id!,
+											id: session.data?.user.id || "",
 											course_id: data?.id,
 										});
 									} catch (e) {
@@ -115,12 +122,12 @@ const CourseHeader: FC<Props> = ({data, isUserCourse}) => {
 								onClick={async () => {
 									try {
 										await addToCourses.mutate({
-											id: session.data?.user.id!,
+											id: session.data?.user.id || "",
 											course_id: data?.id,
 										});
 
 										await updateUserCourseProgress.mutate({
-											id: session.data?.user.id!,
+											id: session.data?.user.id || "",
 											course_progress: {
 												course_name: data.title,
 												course_id: data?.id,

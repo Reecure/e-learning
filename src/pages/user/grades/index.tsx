@@ -10,17 +10,20 @@ import {Loader} from "@/shared/ui/Loader";
 const UserGrades = () => {
 
 	const session = useSession();
-	const coursesWithProgress = trpc.getUserCoursesProgress.useQuery({user_id: session.data?.user.id});
+	const coursesWithProgress = trpc.getUserCoursesProgress.useQuery({user_id: session.data?.user.id || ""});
 	// const user = trpc.getUserProgressOnCourse.useQuery({user_id: session.data?.user.id,});
 
 	useEffect(() => {
 		console.log(coursesWithProgress.data);
 	}, [coursesWithProgress.isLoading]);
 
-	if (coursesWithProgress.isLoading) {
+	if (coursesWithProgress.isLoading || coursesWithProgress.data === undefined) {
 		return <Loader/>;
 	}
 
+	if (coursesWithProgress.data?.length === 0) {
+		return <div>You have not course</div>;
+	}
 	return (
 		<div>
 			{

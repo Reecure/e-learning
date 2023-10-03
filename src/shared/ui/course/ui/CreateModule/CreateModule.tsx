@@ -78,7 +78,7 @@ const CreateModule: FC<Props> = ({courseId}) => {
 							const res = await createModules.mutate({
 								...data,
 								course_id: courseId,
-								author_id: session.data?.user.id!,
+								author_id: session.data?.user.id || "",
 							});
 							setSubmitError({isError: false, error: ""});
 							setNotificationOpenHandler();

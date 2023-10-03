@@ -59,7 +59,7 @@ const SortableModuleItem: FC<Props> = ({item, refetch, disabled, deleteOpen}) =>
 					onClick={() => {
 						dispatch(setPreviewVisible(true));
 						updateModuleProgress.mutate({
-							id: session.data?.user.id!,
+							id: session.data?.user.id || "",
 							module_progress: {
 								module_id: item.id,
 								course_id: item.course_id,

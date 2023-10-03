@@ -1,13 +1,12 @@
-import {type ReactElement, useEffect} from "react";
+import {type ReactElement} from "react";
 import Layout from "@/pages/layout";
 import UserLayout from "@/pages/user/layout";
 import {trpc} from "@/shared/utils/trpc";
-import {Button} from "@/shared/ui";
-import {ButtonThemes} from "@/shared/ui/Button/Button";
 import {useSession} from "next-auth/react";
 import {AccessDenied} from "@/widgets/AccesDenied";
 import {Loader} from "@/shared/ui/Loader";
 import UserRaw from "@/shared/ui/adminComponents/userRaw/UserRaw";
+import {User} from "@/enteties/User";
 
 const UserAdmin = () => {
 	const {data} = useSession();
@@ -41,34 +40,34 @@ const UserAdmin = () => {
 								"p-3  text-center border-light-primary-main border-r-2"
 							}
 						>
-                  Firstname
+                        Firstname
 						</td>
 						<td
 							className={
 								"p-3  text-center border-light-primary-main border-r-2"
 							}
 						>
-                  Lastname
+                        Lastname
 						</td>
 						<td
 							className={
 								"p-3  text-center border-light-primary-main border-r-2"
 							}
 						>
-                  Email
+                        Email
 						</td>
 						<td
 							className={
 								"p-3  text-center border-light-primary-main border-r-2"
 							}
 						>
-                  Role
+                        Role
 						</td>
 						<td className={"p-3  text-center w-[300px]"}></td>
 					</tr>
 				</thead>
 				<tbody>
-					{users.data?.map((user, i) => <UserRaw user={user} index={i} key={user.id}/>)}
+					{users.data?.map((user, i) => <UserRaw user={user as User} index={i} key={user.id}/>)}
 				</tbody>
 			</table>
 		</div>

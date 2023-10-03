@@ -2,6 +2,7 @@ import {type FC} from "react";
 import {trpc} from "@/shared/utils/trpc";
 import DragAndDrop from "@/shared/ui/DragAndDrop/DragAndDrop";
 import {Loader} from "@/shared/ui/Loader";
+import {Lesson} from "@/enteties/Lesson";
 
 type Props = {
     moduleId: string;
@@ -25,7 +26,7 @@ const CourseLessons: FC<Props> = ({
 	return (
 		<div className={"mt-5"}>
 			<DragAndDrop
-				items={lessonsQuery?.data?.sort((a, b) => a.order - b.order) as any}
+				items={lessonsQuery?.data?.sort((a, b) => a.order - b.order) as Lesson[]}
 				canEdit={lessonCanEdit}
 				isModule={false}
 				refetch={lessonsQuery.refetch}

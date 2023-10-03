@@ -10,13 +10,13 @@ import QuestionAnswerFormWithFixedLettersAnswer
 import {QuizBlocks, QuizContentType} from "@/enteties/Lesson";
 
 
-type FormData = {
+export type FormData = {
     blocks: QuizBlocks[];
 };
 
 type Props = {
     lessonId: string;
-    initialData: FormData;
+    initialData: QuizBlocks[];
     setQuizContentEditable: () => void
     setIsSuccessVisible: (id: string, visible: boolean, isSuccess: boolean, error?: string) => void
 };
@@ -25,12 +25,12 @@ const CreateLessonQuizContent: FC<Props> = ({initialData, setQuizContentEditable
 	const lessonUpdateContentQuery = trpc.updateLessonContent.useMutation();
 
 	const methods = useForm<FormData>({
-		defaultValues: {blocks: initialData || [] as any},
+		defaultValues: {blocks: initialData || []},
 	});
 	const {handleSubmit, reset} = methods;
 
 	useEffect(() => {
-		reset({blocks: initialData || [] as any});
+		reset({blocks: initialData || []});
 	}, [initialData, reset]);
 
 	const onSubmit = (data: FormData) => {

@@ -54,13 +54,13 @@ export const data = {
 };
 
 const CourseGradesPage = () => {
-	const [openModuleId, setOpenModuleId] = useState(null);
+	const [openModuleId, setOpenModuleId] = useState<string | null>(null);
 	const session = useSession();
 	const router = useRouter();
 
 	const courseInfo = trpc.getUserProgressOnCourse.useQuery({
-		user_id: session.data?.user.id,
-		course_id: router.query.id
+		user_id: session.data?.user.id || "",
+		course_id: router.query.id as string || ""
 	});
 
 	useEffect(() => {
@@ -75,7 +75,7 @@ const CourseGradesPage = () => {
 		<>
 			<div className={"flex justify-between bg-neutral-200 dark:bg-neutral-800 p-5 rounded-md"}>
 				<div>
-					<h5>{courseInfo.data.courseProgress.userProgress.course_name}</h5>
+					<h5>{courseInfo.data?.courseProgress.userProgress.course_name}</h5>
 					<div className={"flex gap-3"}>
 						<div>
                             Start course at 23.05.22
@@ -98,7 +98,7 @@ const CourseGradesPage = () => {
 			</div>
 
 			<div className={"mt-5"}>
-				{courseInfo.data.modulesProgress.modulesProgress.map(module => {
+				{courseInfo.data?.modulesProgress.modulesProgress.map(module => {
 					const isOpen = openModuleId === module.module_id;
 
 					return (

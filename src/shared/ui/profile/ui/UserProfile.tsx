@@ -78,8 +78,7 @@ const UserProfileComponent: FC<Props> = ({user, refetch}) => {
 								onClientUploadComplete={res => {
 									uploadAvatar.mutateAsync({
 										email: user.email,
-										// @ts-ignore
-										avatar: res[0].fileUrl,
+										avatar: res !== undefined && res[0].fileUrl || "",
 									});
 									setUploadError(false);
 									setUploadNotificationOpenHandler();
