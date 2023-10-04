@@ -11,7 +11,7 @@ const roboto = Roboto({
 });
 
 type Props = {
-	children: ReactNode | ReactNode[];
+    children: ReactNode | ReactNode[];
 };
 
 const Layout: FC<Props> = ({children}) => {
@@ -42,7 +42,7 @@ const Layout: FC<Props> = ({children}) => {
 				toggleTheme={toggleTheme}
 			/>
 			<main
-				className={`${roboto.className} h-[calc(100vh_-_58px)] overflow-y-auto max-w-[1920px]
+				className={`${roboto.className} h-[calc(100vh_-_58px)] overflow-y-auto max-w-[1920px] mx-auto
               w-full bg-light-background  dark:bg-dark-background  text-light-text dark:text-dark-text`}
 			>
 				{children}

@@ -757,6 +757,28 @@ const appRouter = t.router({
 				},
 			});
 		}),
+
+	searchCourseByName: t.procedure.input(z.object({
+		limit: z.number().min(1).max(100).nullish(),
+		cursor: z.string().nullish(),
+	})).query(async (opts) => {
+		const {input} = opts;
+		const limit = input.limit ?? 50;
+		const {cursor} = input;
+		const items = await prisma.courses.findMany({
+			take: limit + 1, // get an extra item at the end which we'll use as next cursor
+			cursor: cursor ? {id: cursor} : undefined,
+		});
+		let nextCursor: typeof cursor | undefined = undefined;
+		if (items.length > limit) {
+			const nextItem = items.pop();
+			nextCursor = nextItem!.id;
+		}
+		return {
+			items,
+			nextCursor,
+		};
+	}),
 });
 
 export type AppRouter = typeof appRouter;

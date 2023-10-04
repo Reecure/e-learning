@@ -14,21 +14,21 @@ import Image from "next/image";
 const Links = [{
 	name: "Main",
 	link: Routes.MAIN,
+	protected: false
 }, {
 	name: "Courses",
 	link: Routes.COURSES,
+	protected: false
 }, {
 	name: "Blog",
 	link: Routes.BLOG,
-}, {
-	name: "About us",
-	link: Routes.ABOUT_US,
+	protected: true
 }];
 
 type Props = {
-	className?: string;
-	theme: Themes;
-	toggleTheme: () => void;
+    className?: string;
+    theme: Themes;
+    toggleTheme: () => void;
 };
 
 const Navbar: FC<Props> = ({className, theme, toggleTheme}) => {
@@ -56,14 +56,14 @@ const Navbar: FC<Props> = ({className, theme, toggleTheme}) => {
 					{!hamburgerOpen && <GiHamburgerMenu/>}
 
 				</Button>
-				<ul className='hidden sm:flex space-x-4 text-lg font-bold'>
+				<ul className='hidden sm:flex text-lg space-x-4 font-bold'>
 					{
-						Links.map(item => <li key={item.link} className={""}>
-							<Link
+						Links.map(item => !item.protected && <li key={item.link} className={""}>
+							{<Link
 								href={item.link}
 							>
 								{item.name}
-							</Link>
+							</Link>}
 						</li>)
 					}
 				</ul>
@@ -85,13 +85,13 @@ const Navbar: FC<Props> = ({className, theme, toggleTheme}) => {
 
 					{
 						Links.map(item => <li key={item.link}>
-							<Link
+							{!item.protected && <Link
 								href={item.link}
 								className='uppercase font-bold'
 								onClick={openHamburgerHandler}
 							>
 								{item.name}
-							</Link>
+							</Link>}
 						</li>)
 					}
 				</ul>

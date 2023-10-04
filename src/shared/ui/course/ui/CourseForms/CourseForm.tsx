@@ -47,7 +47,7 @@ const CourseForm: FC<Props> = ({courseData, isCreating, onSubmit}) => {
 		notificationOpenHandler();
 		try {
 			await onSubmit(data);
-			isCreating && reset();
+			// isCreating && reset();
 		} catch (e) {
 			setSubmitError(true);
 			console.log(e);

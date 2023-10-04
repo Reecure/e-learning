@@ -5,7 +5,7 @@ import hero from "../../assets/Hero.svg";
 type Props = Record<string, unknown>;
 
 const Hero: FC<Props> = () => (
-	<div className={"relative"}>
+	<div className={"relative mb-10"}>
 		<Image
 			src={hero}
 			alt={"hero"}
@@ -17,7 +17,7 @@ const Hero: FC<Props> = () => (
 			}
 		>
 			<h1 className={"tracking-wider text-white"}>
-               Elevate Education: Unleash Your Heroic Potential with Our Community.
+                Elevate Education: Unleash Your Heroic Potential with Our Community.
 			</h1>
 		</div>
 	</div>
